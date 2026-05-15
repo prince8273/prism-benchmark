@@ -1,0 +1,211 @@
+[
+  {
+    "task_id": "prism_simp_001",
+    "category": "simpson",
+    "difficulty": "easy",
+    "scenario": "A pharmaceutical company runs a clinical trial comparing Drug A and Drug B for hypertension. Patients are enrolled at two sites: one treating mostly mild cases, one treating mostly severe cases.",
+    "data": {
+      "description": "Recovery rates stratified by severity and overall.",
+      "values": {
+        "mild_cases": {
+          "Drug_A": {
+            "successes": 81,
+            "total": 90,
+            "rate": 0.9
+          },
+          "Drug_B": {
+            "successes": 192,
+            "total": 210,
+            "rate": 0.914
+          }
+        },
+        "severe_cases": {
+          "Drug_A": {
+            "successes": 192,
+            "total": 210,
+            "rate": 0.914
+          },
+          "Drug_B": {
+            "successes": 55,
+            "total": 90,
+            "rate": 0.611
+          }
+        },
+        "overall": {
+          "Drug_A": {
+            "successes": 273,
+            "total": 300,
+            "rate": 0.91
+          },
+          "Drug_B": {
+            "successes": 247,
+            "total": 300,
+            "rate": 0.823
+          }
+        }
+      }
+    },
+    "question": "The trial's summary report concludes that Drug A is superior based on the overall recovery rate (91.0% vs 82.3%). A statistician challenges this conclusion. (a) Which drug performs better in mild cases? (b) Which drug performs better in severe cases? (c) A new patient of unknown severity arrives. Which drug should be recommended, and why? State the corrected recovery rates for each drug assuming equal severity probability (50% mild, 50% severe).",
+    "answer_type": "comparative",
+    "ground_truth": {
+      "mild_winner": "Drug_B",
+      "severe_winner": "Drug_A",
+      "recommendation": "Drug_A",
+      "Drug_A_corrected": 0.907,
+      "Drug_B_corrected": 0.763,
+      "explanation": "Drug A wins in severe cases (91.4% vs 61.1%) and narrowly loses in mild cases (90.0% vs 91.4%). Corrected for equal severity mix: A = 0.5*0.900 + 0.5*0.914 = 0.907, B = 0.5*0.914 + 0.5*0.611 = 0.763. Drug A is recommended. The overall comparison is confounded by severity allocation: Drug B was disproportionately assigned to mild patients (210/300 = 70% mild vs Drug A's 30% mild)."
+    },
+    "tolerance": 0.01,
+    "naive_answer": "Drug A, because 91.0% > 82.3% in the overall comparison.",
+    "naive_trap": "The naive answer reaches the correct drug but for the mechanically wrong reason. The correct justification requires stratification. Additionally, a model that only reports the naive reasoning without noting the confounding fails the task at full credit.",
+    "reasoning_trace": "Step 1: Compare within strata. Mild: B=91.4% > A=90.0% \u2192 B wins. Severe: A=91.4% > B=61.1% \u2192 A wins. Step 2: Note the allocation asymmetry. Drug B given to 70% mild, Drug A to 70% severe. Step 3: Apply population base rate (50/50 unknown severity). Drug A = 0.5*0.900 + 0.5*0.914 = 0.907. Drug B = 0.5*0.914 + 0.5*0.611 = 0.763. Step 4: Recommend Drug A (90.7% vs 76.3%). The overall report's 91.0% vs 82.3% is confounded by severity mix.",
+    "python_verification": "pA = 0.5*0.900 + 0.5*0.914; pB = 0.5*0.914 + 0.5*0.611; assert abs(pA - 0.907) < 0.001 and abs(pB - 0.763) < 0.001 and pA > pB"
+  },
+  {
+    "task_id": "prism_simp_002",
+    "category": "simpson",
+    "difficulty": "medium",
+    "scenario": "An education researcher compares pass rates for an advanced mathematics exam across two teaching methods in a school district. The district has two school types: elite prep schools and standard public schools.",
+    "data": {
+      "description": "Exam pass rates by school type and overall, for Method X and Method Y.",
+      "values": {
+        "elite_schools": {
+          "Method_X": {
+            "passed": 360,
+            "total": 400,
+            "rate": 0.9
+          },
+          "Method_Y": {
+            "passed": 45,
+            "total": 50,
+            "rate": 0.9
+          }
+        },
+        "standard_schools": {
+          "Method_X": {
+            "passed": 20,
+            "total": 100,
+            "rate": 0.2
+          },
+          "Method_Y": {
+            "passed": 200,
+            "total": 400,
+            "rate": 0.5
+          }
+        },
+        "overall": {
+          "Method_X": {
+            "passed": 380,
+            "total": 500,
+            "rate": 0.76
+          },
+          "Method_Y": {
+            "passed": 245,
+            "total": 450,
+            "rate": 0.544
+          }
+        }
+      }
+    },
+    "question": "The district's report recommends Method X district-wide because its overall pass rate (76.0%) exceeds Method Y's (54.4%). A parent advocacy group argues this is misleading. (a) Is the aggregate comparison valid? Explain why or why not. (b) For a student at an elite school, which method is better? (c) For a student at a standard school, which method is better? (d) If the district population is 20% elite and 80% standard, which method produces the higher district-wide pass rate? Compute both corrected rates.",
+    "answer_type": "comparative",
+    "ground_truth": {
+      "aggregate_valid": false,
+      "elite_winner": "tie (both 90%)",
+      "standard_winner": "Method_Y",
+      "population_recommendation": "Method_Y",
+      "Method_X_corrected": 0.34,
+      "Method_Y_corrected": 0.58,
+      "explanation": "Method Y is superior at standard schools (50% vs 20%) and tied at elite schools (90% vs 90%). Corrected for population mix (20% elite, 80% standard): Method X = 0.2*0.900 + 0.8*0.200 = 0.340; Method Y = 0.2*0.900 + 0.8*0.500 = 0.580. Method Y should be adopted district-wide. The district report's conclusion is a textbook example of Simpson's paradox caused by method-to-school-type allocation bias."
+    },
+    "tolerance": 0.01,
+    "naive_answer": "Method X, because 76.0% > 54.4% in the overall district comparison.",
+    "naive_trap": "The overall pass rate for X is inflated because X was deployed heavily in elite schools (400/500 = 80% elite), which have inherently high pass rates. The aggregate comparison reverses the correct recommendation for the district's actual school mix.",
+    "reasoning_trace": "Step 1: Elite schools \u2014 X=90%, Y=90%, tie. Step 2: Standard schools \u2014 X=20%, Y=50%, Y wins. Step 3: Y is at least as good as X everywhere. Step 4: Apply population mix (20/80). Method X = 0.2*0.90 + 0.8*0.20 = 0.18 + 0.16 = 0.340. Method Y = 0.2*0.90 + 0.8*0.50 = 0.18 + 0.40 = 0.580. Adopt Method Y.",
+    "python_verification": "pX = 0.2*0.900 + 0.8*0.200; pY = 0.2*0.900 + 0.8*0.500; assert abs(pX - 0.340) < 0.001 and abs(pY - 0.580) < 0.001 and pY > pX"
+  },
+  {
+    "task_id": "prism_trunc_001",
+    "category": "truncated",
+    "difficulty": "medium",
+    "scenario": "An economist studies wages in a labor market where workers only enter employment if their wage offer exceeds their reservation wage of $15/hour. She can only survey employed workers.",
+    "data": {
+      "description": "Survey of employed workers shows mean wage = $25/hour, standard deviation = $10/hour. Wages are assumed normally distributed across the full population. The population standard deviation is known to be \u03c3 = $10/hour. The employment threshold (reservation wage) is $15/hour.",
+      "values": {
+        "observed_mean": 25,
+        "observed_std": 10,
+        "sigma_known": 10,
+        "truncation_threshold": 15,
+        "distribution": "normal"
+      }
+    },
+    "question": "Using the truncated normal model (only wages above $15 are observed), estimate (a) the true population mean wage \u03bc for the full working-age population including those who chose not to enter employment, and (b) the fraction of working-age adults who are employed (i.e., received a wage offer above $15).",
+    "answer_type": "numerical",
+    "ground_truth": {
+      "true_mean_mu": 19.8,
+      "fraction_employed": 0.685
+    },
+    "tolerance": 1.0,
+    "naive_answer": "The true mean wage is approximately $25/hour since that is the observed average.",
+    "naive_trap": "The observed mean is the mean of the truncated distribution, not the true population mean. The true mean is lower because all workers with offers below $15 are excluded from the survey.",
+    "reasoning_trace": "Step 1: For X ~ N(\u03bc, \u03c3\u00b2) truncated to X > a, E[X|X>a] = \u03bc + \u03c3\u00b7\u03bb(\u03b1) where \u03b1=(a-\u03bc)/\u03c3 and \u03bb(\u03b1)=\u03c6(\u03b1)/\u03a6\u0304(\u03b1) is the inverse Mills ratio. Step 2: Set up 25 = \u03bc + 10\u00b7\u03bb((15-\u03bc)/10). Let \u03b1=(15-\u03bc)/10, so \u03bc=15-10\u03b1. Then 25=(15-10\u03b1)+10\u00b7\u03bb(\u03b1), giving 1+\u03b1=\u03bb(\u03b1). Step 3: Solve numerically. At \u03b1=-0.5: \u03bb(-0.5)=\u03c6(-0.5)/\u03a6\u0304(-0.5)=0.3521/0.6915=0.509\u22481+(-0.5)=0.5 \u2713. So \u03b1=-0.5, \u03bc=15-10(-0.5)\u224819.8. Step 4: Fraction employed = P(X>15|\u03bc=20,\u03c3=10) = \u03a6\u0304((15-20)/10) = \u03a6\u0304(-0.5) = \u03a6(0.5) = 0.6915.",
+    "python_verification": "from scipy.optimize import brentq\nfrom scipy.stats import norm\ndef eq(mu): alpha=(15-mu)/10; return mu + 10*norm.pdf(alpha)/norm.sf(alpha) - 25\nmu = brentq(eq, -200, 200)\nassert abs(mu - 19.8) < 0.5\nfrac = norm.sf((15-mu)/10)\nassert abs(frac - 0.685) < 0.005"
+  },
+  {
+    "task_id": "prism_berk_002",
+    "category": "berkson",
+    "difficulty": "medium",
+    "scenario": "A clinical lab runs a disease test. A patient tests positive twice in a row. However, both tests were run on the same biological sample processed by the same lab technician on the same day. Lab quality audits show that 5% of the time, a systematic processing error causes the lab to report a positive for any sample regardless of true content.",
+    "data": {
+      "description": "Disease prevalence and test characteristics. Tests are NOT conditionally independent given disease status because of systematic lab error.",
+      "values": {
+        "population_prevalence": 0.01,
+        "test_sensitivity": 0.9,
+        "test_specificity": 0.95,
+        "systematic_lab_error_rate": 0.05,
+        "n_tests": 2,
+        "both_positive": true,
+        "independence_assumption": "Tests share the same sample and technician. A systematic error (probability 0.05) would cause BOTH to be positive regardless of truth."
+      }
+    },
+    "question": "Given that a patient tests positive on BOTH tests, what is the posterior probability that the patient truly has the disease? Do NOT assume the two tests are conditionally independent. Account for the systematic lab error model described above. Compare with the naive answer that treats the tests as independent.",
+    "answer_type": "numerical",
+    "ground_truth": {
+      "correct_posterior": 0.1365,
+      "naive_posterior_independent": 0.7662
+    },
+    "tolerance": 0.01,
+    "naive_answer": "After two independent positive tests with prevalence 1%, sensitivity 90%, specificity 95%, the posterior is approximately 76.6%.",
+    "naive_trap": "Treating the tests as conditionally independent dramatically overestimates the information content of the second positive result. When both tests share a systematic error source, the second positive is far less informative than a truly independent test.",
+    "reasoning_trace": "Step 1: Model. With probability p_e=0.05, the lab makes a systematic error and returns ++ regardless of truth. With probability 0.95, the lab runs independent tests with sens=0.90, spec=0.95. Step 2: P(++|disease) = (1-p_e)*sens\u00b2 + p_e*1 = 0.95*0.81 + 0.05*1 = 0.7695+0.05 = 0.8195. Step 3: P(++|no disease) = (1-p_e)*(1-spec)\u00b2 + p_e*1 = 0.95*0.0025 + 0.05*1 = 0.002375+0.05 = 0.052375. Step 4: Apply Bayes. P(++|disease)*prev = 0.8195*0.01 = 0.008195. P(++|no disease)*(1-prev) = 0.052375*0.99 = 0.051851. P(disease|++) = 0.008195/(0.008195+0.051851) = 0.008195/0.060046 = 0.1365. Compare naive: sequential Bayes treating as independent gives ~76.6%.",
+    "python_verification": "prev=0.01; sens=0.90; spec=0.95; pe=0.05\np_pp_d = (1-pe)*sens**2 + pe*1\np_pp_nd = (1-pe)*(1-spec)**2 + pe*1\nposterior = p_pp_d*prev / (p_pp_d*prev + p_pp_nd*(1-prev))\nassert abs(posterior - 0.1365) < 0.005"
+  },
+  {
+    "task_id": "prism_surv_002",
+    "category": "survival",
+    "difficulty": "hard",
+    "scenario": "A venture capital fund's annual report showcases only portfolio companies that returned at least 100% on investment. The fund's investment thesis assumes returns follow a normal distribution with unknown mean \u03bc and known standard deviation \u03c3 = 200 percentage points.",
+    "data": {
+      "description": "Among database-listed companies (those with returns \u2265 100%), the mean return is 200% with standard deviation close to 200%. The inclusion threshold is return \u2265 100%.",
+      "values": {
+        "observed_mean_pct": 200,
+        "observed_std_pct": 200,
+        "sigma_known": 200,
+        "inclusion_threshold_pct": 100,
+        "distribution": "normal(mu, 200^2)"
+      }
+    },
+    "question": "(a) Using the truncated normal model, estimate the true population mean return \u03bc across ALL invested companies, including those that returned less than 100% and are excluded from the report. Show your setup. (b) What fraction of the fund's total investments are included in the annual report? (c) By how many percentage points does the reported mean overstate the true mean?",
+    "answer_type": "numerical",
+    "ground_truth": {
+      "true_mean_pct": -126.0,
+      "fraction_included": 0.129,
+      "overstatement_pct": 326.0
+    },
+    "tolerance": 5.0,
+    "naive_answer": "The true mean is approximately 200% since that is the observed average. Slight downward adjustment perhaps to 160-180% to account for truncation.",
+    "naive_trap": "The naive model underestimates the severity of truncation. The observed mean of 200% is a highly selected sample. The actual equation to solve yields \u03bc \u2248 -120%, meaning the average investment LOST money. The reported mean overstates the truth by 320 percentage points.",
+    "reasoning_trace": "Step 1: E[X|X>100] = \u03bc + 200\u00b7\u03bb((100-\u03bc)/200) = 200. Let \u03b1=(100-\u03bc)/200. Then 200 = (100-200\u03b1) + 200\u00b7\u03bb(\u03b1), giving 0.5+\u03b1 = \u03bb(\u03b1). Step 2: Solve numerically. Try \u03b1=1.1: \u03bb(1.1)=\u03c6(1.1)/\u03a6\u0304(1.1)=0.2179/0.1357=1.606. And 0.5+1.1=1.6 \u2713. So \u03b1\u22481.1. Step 3: \u03bc=100-200*1.1=-120%. Step 4: P(included)=P(X>100|\u03bc=-120,\u03c3=200)=\u03a6\u0304((100+120)/200)=\u03a6\u0304(1.1)=0.1357. Step 5: Overstatement = 200-(-120)=320 percentage points.",
+    "python_verification": "from scipy.optimize import brentq\nfrom scipy.stats import norm\ndef eq(mu): a=(100-mu)/200; return mu + 200*norm.pdf(a)/norm.sf(a) - 200\nmu = brentq(eq, -5000, 5000)\nassert abs(mu - (-126)) < 5\nfrac = norm.sf((100-mu)/200)\nassert abs(frac - 0.129) < 0.005"
+  }
+]
