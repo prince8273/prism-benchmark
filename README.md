@@ -132,9 +132,9 @@ If you use PRISM in your research, please cite:
 ```bibtex
 @misc{prism2025,
   title  = {PRISM: Probabilistic Reasoning under Implicit Selection Mechanisms},
-  author = {YOUR NAME},
-  year   = {2025},
-  url    = {https://github.com/YOUR_HANDLE/prism-benchmark}
+  author = {PRINCE KUMAR},
+  year   = {2026},
+  url    = {https://github.com/prince8273/prism-benchmark}
 }
 ```
 
