@@ -16,7 +16,7 @@ def main() -> int:
     failed = 0
 
     for fpath in sorted(tasks_dir.glob("*.json")):
-        with open(fpath, encoding="utf-8") as handle:
+        with open(fpath, encoding="utf-8-sig") as handle:
             task = json.load(handle)
 
         code = task.get("python_verification", "").strip()
