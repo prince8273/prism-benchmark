@@ -88,12 +88,11 @@ prism-benchmark/
 |-- data/
 |   `-- tasks/                     # 150 total task files
 |       |-- prism_simp_001.json
-|       |-- prism_simp_002.json
 |       |-- prism_berk_002.json
 |       |-- prism_trunc_001.json
 |       |-- prism_surv_002.json
-|       |-- prism_simp_150.json
-|       `-- ...
+|       |-- prism_simp_101.json
+|       `-- prism_surv_150.json
 |-- docs/
 |   |-- schema.md
 |   |-- scoring.md
@@ -105,6 +104,7 @@ prism-benchmark/
 |-- notebooks/
 |   `-- .gitkeep
 `-- results/
+    `-- RESULTS.TXT
 ```
 
 ---
