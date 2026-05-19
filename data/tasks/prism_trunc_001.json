@@ -1,0 +1,27 @@
+{
+  "task_id": "prism_trunc_001",
+  "category": "truncated",
+  "difficulty": "medium",
+  "scenario": "An economist studies wages in a labor market where workers only enter employment if their wage offer exceeds their reservation wage of $15/hour. She can only survey employed workers.",
+  "data": {
+    "description": "Survey of employed workers shows mean wage = $25/hour, standard deviation = $10/hour. Wages are assumed normally distributed across the full population. The population standard deviation is known to be sigma = $10/hour. The employment threshold (reservation wage) is $15/hour.",
+    "values": {
+      "observed_mean": 25,
+      "observed_std": 10,
+      "sigma_known": 10,
+      "truncation_threshold": 15,
+      "distribution": "normal"
+    }
+  },
+  "question": "Using the truncated normal model (only wages above $15 are observed), estimate (a) the true population mean wage mu for the full working-age population including those who chose not to enter employment, and (b) the fraction of working-age adults who are employed (i.e., received a wage offer above $15).",
+  "answer_type": "numerical",
+  "ground_truth": {
+    "true_mean_mu": 19.8,
+    "fraction_employed": 0.685
+  },
+  "tolerance": 1.0,
+  "naive_answer": "The true mean wage is approximately $25/hour since that is the observed average.",
+  "naive_trap": "The observed mean is the mean of the truncated distribution, not the true population mean. The true mean is lower because all workers with offers below $15 are excluded from the survey.",
+  "reasoning_trace": "Step 1: For X ~ N(mu, sigma^2) truncated to X > a, E[X|X>a] = mu + sigma*lambda(alpha) where alpha=(a-mu)/sigma and lambda(alpha)=phi(alpha)/Phi_bar(alpha) is the inverse Mills ratio. Step 2: Set up 25 = mu + 10*lambda((15-mu)/10). Let alpha=(15-mu)/10, so mu=15-10*alpha. Then 25=(15-10*alpha)+10*lambda(alpha), giving 1+alpha=lambda(alpha). Step 3: Solve numerically. At alpha=-0.5: lambda(-0.5)=phi(-0.5)/Phi_bar(-0.5)=0.3521/0.6915=0.509≈1+(-0.5)=0.5. So alpha≈-0.5, mu≈19.8. Step 4: Fraction employed = P(X>15|mu≈20,sigma=10) = Phi_bar((15-20)/10) = Phi(0.5) ≈ 0.6915.",
+  "python_verification": "from scipy.optimize import brentq\nfrom scipy.stats import norm\ndef eq(mu): alpha=(15-mu)/10; return mu + 10*norm.pdf(alpha)/norm.sf(alpha) - 25\nmu = brentq(eq, -200, 200)\nassert abs(mu - 19.8) < 0.5\nfrac = norm.sf((15-mu)/10)\nassert abs(frac - 0.685) < 0.005"
+}

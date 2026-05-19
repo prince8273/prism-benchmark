@@ -1,0 +1,63 @@
+{
+  "task_id": "prism_simp_002",
+  "category": "simpson",
+  "difficulty": "medium",
+  "scenario": "An education researcher compares pass rates for an advanced mathematics exam across two teaching methods in a school district. The district has two school types: elite prep schools and standard public schools.",
+  "data": {
+    "description": "Exam pass rates by school type and overall, for Method X and Method Y.",
+    "values": {
+      "elite_schools": {
+        "Method_X": {
+          "passed": 360,
+          "total": 400,
+          "rate": 0.9
+        },
+        "Method_Y": {
+          "passed": 45,
+          "total": 50,
+          "rate": 0.9
+        }
+      },
+      "standard_schools": {
+        "Method_X": {
+          "passed": 20,
+          "total": 100,
+          "rate": 0.2
+        },
+        "Method_Y": {
+          "passed": 200,
+          "total": 400,
+          "rate": 0.5
+        }
+      },
+      "overall": {
+        "Method_X": {
+          "passed": 380,
+          "total": 500,
+          "rate": 0.76
+        },
+        "Method_Y": {
+          "passed": 245,
+          "total": 450,
+          "rate": 0.544
+        }
+      }
+    }
+  },
+  "question": "The district's report recommends Method X district-wide because its overall pass rate (76.0%) exceeds Method Y's (54.4%). A parent advocacy group argues this is misleading. (a) Is the aggregate comparison valid? Explain why or why not. (b) For a student at an elite school, which method is better? (c) For a student at a standard school, which method is better? (d) If the district population is 20% elite and 80% standard, which method produces the higher district-wide pass rate? Compute both corrected rates.",
+  "answer_type": "comparative",
+  "ground_truth": {
+    "aggregate_valid": false,
+    "elite_winner": "tie (both 90%)",
+    "standard_winner": "Method_Y",
+    "population_recommendation": "Method_Y",
+    "Method_X_corrected": 0.34,
+    "Method_Y_corrected": 0.58,
+    "explanation": "Method Y is superior at standard schools (50% vs 20%) and tied at elite schools (90% vs 90%). Corrected for population mix (20% elite, 80% standard): Method X = 0.2*0.900 + 0.8*0.200 = 0.340; Method Y = 0.2*0.900 + 0.8*0.500 = 0.580. Method Y should be adopted district-wide. The district report's conclusion is a textbook example of Simpson's paradox caused by method-to-school-type allocation bias."
+  },
+  "tolerance": 0.01,
+  "naive_answer": "Method X, because 76.0% > 54.4% in the overall district comparison.",
+  "naive_trap": "The overall pass rate for X is inflated because X was deployed heavily in elite schools (400/500 = 80% elite), which have inherently high pass rates. The aggregate comparison reverses the correct recommendation for the district's actual school mix.",
+  "reasoning_trace": "Step 1: Elite schools - X=90%, Y=90%, tie. Step 2: Standard schools - X=20%, Y=50%, Y wins. Step 3: Y is at least as good as X everywhere. Step 4: Apply population mix (20/80). Method X = 0.2*0.90 + 0.8*0.20 = 0.18 + 0.16 = 0.340. Method Y = 0.2*0.90 + 0.8*0.50 = 0.18 + 0.40 = 0.580. Adopt Method Y.",
+  "python_verification": "pX = 0.2*0.900 + 0.8*0.200; pY = 0.2*0.900 + 0.8*0.500; assert abs(pX - 0.340) < 0.001 and abs(pY - 0.580) < 0.001 and pY > pX"
+}

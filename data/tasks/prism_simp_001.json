@@ -1,0 +1,62 @@
+{
+  "task_id": "prism_simp_001",
+  "category": "simpson",
+  "difficulty": "easy",
+  "scenario": "A pharmaceutical company runs a clinical trial comparing Drug A and Drug B for hypertension. Patients are enrolled at two sites: one treating mostly mild cases, one treating mostly severe cases.",
+  "data": {
+    "description": "Recovery rates stratified by severity and overall.",
+    "values": {
+      "mild_cases": {
+        "Drug_A": {
+          "successes": 81,
+          "total": 90,
+          "rate": 0.9
+        },
+        "Drug_B": {
+          "successes": 192,
+          "total": 210,
+          "rate": 0.914
+        }
+      },
+      "severe_cases": {
+        "Drug_A": {
+          "successes": 192,
+          "total": 210,
+          "rate": 0.914
+        },
+        "Drug_B": {
+          "successes": 55,
+          "total": 90,
+          "rate": 0.611
+        }
+      },
+      "overall": {
+        "Drug_A": {
+          "successes": 273,
+          "total": 300,
+          "rate": 0.91
+        },
+        "Drug_B": {
+          "successes": 247,
+          "total": 300,
+          "rate": 0.823
+        }
+      }
+    }
+  },
+  "question": "The trial's summary report concludes that Drug A is superior based on the overall recovery rate (91.0% vs 82.3%). A statistician challenges this conclusion. (a) Which drug performs better in mild cases? (b) Which drug performs better in severe cases? (c) A new patient of unknown severity arrives. Which drug should be recommended, and why? State the corrected recovery rates for each drug assuming equal severity probability (50% mild, 50% severe).",
+  "answer_type": "comparative",
+  "ground_truth": {
+    "mild_winner": "Drug_B",
+    "severe_winner": "Drug_A",
+    "recommendation": "Drug_A",
+    "Drug_A_corrected": 0.907,
+    "Drug_B_corrected": 0.763,
+    "explanation": "Drug A wins in severe cases (91.4% vs 61.1%) and narrowly loses in mild cases (90.0% vs 91.4%). Corrected for equal severity mix: A = 0.5*0.900 + 0.5*0.914 = 0.907, B = 0.5*0.914 + 0.5*0.611 = 0.763. Drug A is recommended. The overall comparison is confounded by severity allocation: Drug B was disproportionately assigned to mild patients (210/300 = 70% mild vs Drug A's 30% mild)."
+  },
+  "tolerance": 0.01,
+  "naive_answer": "Drug A, because 91.0% > 82.3% in the overall comparison.",
+  "naive_trap": "The naive answer reaches the correct drug but for the mechanically wrong reason. The correct justification requires stratification. Additionally, a model that only reports the naive reasoning without noting the confounding fails the task at full credit.",
+  "reasoning_trace": "Step 1: Compare within strata. Mild: B=91.4% > A=90.0% -> B wins. Severe: A=91.4% > B=61.1% -> A wins. Step 2: Note the allocation asymmetry. Drug B given to 70% mild, Drug A to 70% severe. Step 3: Apply population base rate (50/50 unknown severity). Drug A = 0.5*0.900 + 0.5*0.914 = 0.907. Drug B = 0.5*0.914 + 0.5*0.611 = 0.763. Step 4: Recommend Drug A (90.7% vs 76.3%). The overall report's 91.0% vs 82.3% is confounded by severity mix.",
+  "python_verification": "pA = 0.5*0.900 + 0.5*0.914; pB = 0.5*0.914 + 0.5*0.611; assert abs(pA - 0.907) < 0.001 and abs(pB - 0.763) < 0.001 and pA > pB"
+}

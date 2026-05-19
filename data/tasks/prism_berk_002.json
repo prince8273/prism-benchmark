@@ -1,0 +1,29 @@
+{
+  "task_id": "prism_berk_002",
+  "category": "berkson",
+  "difficulty": "medium",
+  "scenario": "A clinical lab runs a disease test. A patient tests positive twice in a row. However, both tests were run on the same biological sample processed by the same lab technician on the same day. Lab quality audits show that 5% of the time, a systematic processing error causes the lab to report a positive for any sample regardless of true content.",
+  "data": {
+    "description": "Disease prevalence and test characteristics. Tests are NOT conditionally independent given disease status because of systematic lab error.",
+    "values": {
+      "population_prevalence": 0.01,
+      "test_sensitivity": 0.9,
+      "test_specificity": 0.95,
+      "systematic_lab_error_rate": 0.05,
+      "n_tests": 2,
+      "both_positive": true,
+      "independence_assumption": "Tests share the same sample and technician. A systematic error (probability 0.05) would cause BOTH to be positive regardless of truth."
+    }
+  },
+  "question": "Given that a patient tests positive on BOTH tests, what is the posterior probability that the patient truly has the disease? Do NOT assume the two tests are conditionally independent. Account for the systematic lab error model described above. Compare with the naive answer that treats the tests as independent.",
+  "answer_type": "numerical",
+  "ground_truth": {
+    "correct_posterior": 0.1365,
+    "naive_posterior_independent": 0.7662
+  },
+  "tolerance": 0.01,
+  "naive_answer": "After two independent positive tests with prevalence 1%, sensitivity 90%, specificity 95%, the posterior is approximately 76.6%.",
+  "naive_trap": "Treating the tests as conditionally independent dramatically overestimates the information content of the second positive result. When both tests share a systematic error source, the second positive is far less informative than a truly independent test.",
+  "reasoning_trace": "Step 1: Model. With probability p_e=0.05, the lab makes a systematic error and returns ++ regardless of truth. With probability 0.95, the lab runs independent tests with sens=0.90, spec=0.95. Step 2: P(++|disease) = (1-p_e)*sens^2 + p_e*1 = 0.95*0.81 + 0.05 = 0.8195. Step 3: P(++|no disease) = (1-p_e)*(1-spec)^2 + p_e*1 = 0.95*0.0025 + 0.05 = 0.052375. Step 4: Apply Bayes. P(disease|++) = 0.8195*0.01 / (0.8195*0.01 + 0.052375*0.99) = 0.1365. Compare naive: treating tests as independent gives about 0.7662.",
+  "python_verification": "prev=0.01; sens=0.90; spec=0.95; pe=0.05\np_pp_d = (1-pe)*sens**2 + pe*1\np_pp_nd = (1-pe)*(1-spec)**2 + pe*1\nposterior = p_pp_d*prev / (p_pp_d*prev + p_pp_nd*(1-prev))\nassert abs(posterior - 0.1365) < 0.005"
+}

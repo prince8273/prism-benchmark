@@ -1,0 +1,28 @@
+{
+  "task_id": "prism_surv_002",
+  "category": "survival",
+  "difficulty": "hard",
+  "scenario": "A venture capital fund's annual report showcases only portfolio companies that returned at least 100% on investment. The fund's investment thesis assumes returns follow a normal distribution with unknown mean mu and known standard deviation sigma = 200 percentage points.",
+  "data": {
+    "description": "Among database-listed companies (those with returns >= 100%), the mean return is 200% with standard deviation close to 200%. The inclusion threshold is return >= 100%.",
+    "values": {
+      "observed_mean_pct": 200,
+      "observed_std_pct": 200,
+      "sigma_known": 200,
+      "inclusion_threshold_pct": 100,
+      "distribution": "normal(mu, 200^2)"
+    }
+  },
+  "question": "(a) Using the truncated normal model, estimate the true population mean return mu across ALL invested companies, including those that returned less than 100% and are excluded from the report. Show your setup. (b) What fraction of the fund's total investments are included in the annual report? (c) By how many percentage points does the reported mean overstate the true mean?",
+  "answer_type": "numerical",
+  "ground_truth": {
+    "true_mean_pct": -126.0,
+    "fraction_included": 0.129,
+    "overstatement_pct": 326.0
+  },
+  "tolerance": 5.0,
+  "naive_answer": "The true mean is approximately 200% since that is the observed average. Slight downward adjustment perhaps to 160-180% to account for truncation.",
+  "naive_trap": "The naive model underestimates the severity of truncation. The observed mean of 200% is a highly selected sample. The actual equation to solve yields mu ≈ -120%, meaning the average investment LOST money. The reported mean overstates the truth by 320 percentage points.",
+  "reasoning_trace": "Step 1: E[X|X>100] = mu + 200*lambda((100-mu)/200) = 200. Let alpha=(100-mu)/200. Then 200 = (100-200*alpha) + 200*lambda(alpha), giving 0.5+alpha = lambda(alpha). Step 2: Solve numerically. Try alpha=1.1: lambda(1.1)=phi(1.1)/Phi_bar(1.1)=0.2179/0.1357=1.606 and 0.5+1.1=1.6. So alpha≈1.1. Step 3: mu=100-200*1.1≈-120%. Step 4: P(included)=P(X>100|mu≈-120,sigma=200)=Phi_bar((100+120)/200)=Phi_bar(1.1)=0.1357. Step 5: Overstatement = 200 - (-120) = 320 percentage points.",
+  "python_verification": "from scipy.optimize import brentq\nfrom scipy.stats import norm\ndef eq(mu): a=(100-mu)/200; return mu + 200*norm.pdf(a)/norm.sf(a) - 200\nmu = brentq(eq, -5000, 5000)\nassert abs(mu - (-126)) < 5\nfrac = norm.sf((100-mu)/200)\nassert abs(frac - 0.129) < 0.005"
+}

@@ -3,26 +3,28 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Python 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/downloads/)
 
-A benchmark evaluating whether large language models can reason about data-generating processes when selection mechanisms make observed samples unrepresentative of the target population.
+A benchmark for evaluating whether large language models can reason about data-generating processes when selection mechanisms make observed samples unrepresentative of the target population.
+
+GitHub repo: [prince8273/prism-benchmark](https://github.com/prince8273/prism-benchmark)
 
 ---
 
 ## Motivation
 
-Language models perform reasonably on Bayes' theorem applied to stated probabilities, yet exhibit a systematic and explainable failure when probabilistic inference requires reasoning about *how the data was collected*. PRISM isolates this failure mode across four structured categories:
+Language models often do reasonably well on Bayes' theorem when probabilities are stated explicitly, but they fail much more often when correct inference depends on understanding how the data was collected. PRISM isolates that failure mode across four structured categories:
 
-- **Simpson's paradox** — aggregate statistics reverse when conditioning on a confounder
-- **Berkson's paradox** — conditioning on a collider induces spurious correlations
-- **Truncated sampling** — inference when only part of the distribution is observable
-- **Survivorship bias** — estimation when non-surviving units are systematically absent
+- **Simpson's paradox** - aggregate statistics reverse when conditioning on a confounder
+- **Berkson's paradox** - conditioning on a collider induces spurious correlations
+- **Truncated sampling** - inference when only part of a distribution is observable
+- **Survivorship bias** - estimation when non-surviving units are systematically absent
 
-In every task, the naive answer derived from reported statistics is numerically wrong — and the model must reason about the selection mechanism to recover the correct answer. The failure mode is not random noise; it is a consistent bias toward treating observed data as representative of the target distribution. PRISM makes this bias measurable.
+In every task, the naive answer derived from the observed statistics is wrong or incomplete, and the model must reason about the selection mechanism to recover the correct answer. PRISM is designed to make that bias measurable.
 
 ---
 
 ## Task Format
 
-Each task is a JSON object. Full schema documented in `docs/schema.md`.
+Each task is a JSON object. The full schema is documented in `docs/schema.md`.
 
 ```json
 {
@@ -30,10 +32,13 @@ Each task is a JSON object. Full schema documented in `docs/schema.md`.
   "category": "simpson",
   "difficulty": "easy | medium | hard",
   "scenario": "...",
-  "data": { "description": "...", "values": {} },
+  "data": {
+    "description": "...",
+    "values": {}
+  },
   "question": "...",
   "answer_type": "numerical | comparative | directional",
-  "ground_truth": "...",
+  "ground_truth": {},
   "tolerance": 0.01,
   "naive_answer": "...",
   "naive_trap": "...",
@@ -42,49 +47,50 @@ Each task is a JSON object. Full schema documented in `docs/schema.md`.
 }
 ```
 
-Every ground truth answer is independently verifiable with a `python_verification` field — a runnable Python snippet using `scipy.stats` that asserts the correct answer.
+Every ground-truth answer is independently verifiable with a `python_verification` snippet.
 
 ---
 
 ## Baseline Results
 
-*Results will be updated as evaluations complete.*
+_Results will be updated as evaluations complete._
 
 | Model | Overall ACC | Naive Trap Rate | Simpson | Berkson | Truncated | Survival |
 |-------|-------------|-----------------|---------|---------|-----------|----------|
-| GPT-4o | — | — | — | — | — | — |
-| Claude 3.5 Sonnet | — | — | — | — | — | — |
-| Gemini 1.5 Pro | — | — | — | — | — | — |
-| GPT-3.5 Turbo | — | — | — | — | — | — |
+| GPT-4o | - | - | - | - | - | - |
+| Claude 3.5 Sonnet | - | - | - | - | - | - |
+| Gemini 1.5 Pro | - | - | - | - | - | - |
+| GPT-3.5 Turbo | - | - | - | - | - | - |
 
-**Interpretation guide**: A model scoring 40–60% on overall ACC with a Naive Trap Rate above 30% indicates the benchmark is successfully probing the intended failure mode. If all models score above 80%, the tasks should be made harder. If all score below 20%, inspect whether prompting format is causing parsing failures before concluding the tasks are too difficult.
+Interpretation guide: if flagship models land around 40-60% overall ACC with a clearly non-trivial naive-trap rate, the benchmark is likely probing the intended failure mode. If all strong models score above 80%, the tasks are probably too easy. If all models score below 20%, inspect parsing and prompting before concluding the benchmark is too hard.
 
 ---
 
 ## Repo Structure
 
-```
+```text
 prism-benchmark/
-├── README.md                  — this file
-├── requirements.txt           — Python dependencies
-├── evaluate.py                — evaluation harness (load, run, score, report)
-├── data/
-│   └── tasks/                 — one JSON file per task (40 total)
-│       ├── prism_simp_001.json
-│       ├── prism_simp_002.json
-│       ├── prism_berk_001.json
-│       ├── ...
-├── results/                   — output directory for evaluation runs
-│   └── .gitkeep
-├── docs/
-│   ├── schema.md              — full task JSON schema with field descriptions
-│   ├── scoring.md             — rubric, partial credit rules, parsing details
-│   └── task_authoring.md      — guide for writing new tasks (for contributors)
-├── scripts/
-│   ├── verify_tasks.py        — run all python_verification snippets to confirm GT
-│   └── generate_report.py     — HTML report from results/ directory
-└── notebooks/
-    └── error_analysis.ipynb   — analysis of model failure modes by category
+|-- README.md
+|-- requirements.txt
+|-- evaluate.py
+|-- data/
+|   `-- tasks/
+|       |-- prism_simp_001.json
+|       |-- prism_simp_002.json
+|       |-- prism_berk_002.json
+|       |-- prism_trunc_001.json
+|       `-- prism_surv_002.json
+|-- docs/
+|   |-- schema.md
+|   |-- scoring.md
+|   |-- task_authoring.md
+|   `-- CHANGELOG.md
+|-- scripts/
+|   |-- verify_tasks.py
+|   `-- generate_report.py
+|-- notebooks/
+|   `-- .gitkeep
+`-- results/
 ```
 
 ---
@@ -92,36 +98,40 @@ prism-benchmark/
 ## Quickstart
 
 ```bash
-git clone https://github.com/YOUR_HANDLE/prism-benchmark
+git clone https://github.com/prince8273/prism-benchmark.git
 cd prism-benchmark
 pip install -r requirements.txt
 
 # Verify all ground truth answers are correct
 python scripts/verify_tasks.py
 
-# Run evaluation on a model
+# Run evaluation on an OpenAI model
 export OPENAI_API_KEY=sk-...
-python evaluate.py eval --model gpt-4o --tasks data/tasks/ --output results/
+python evaluate.py eval --model gpt-4o --tasks data/tasks --output results
 
+# Run evaluation on an Anthropic model
 export ANTHROPIC_API_KEY=sk-ant-...
-python evaluate.py eval --model claude-3-5-sonnet-20241022 --tasks data/tasks/ --output results/
+python evaluate.py eval --model claude-3-5-sonnet-20241022 --tasks data/tasks --output results
 
-# Generate leaderboard from all completed runs
-python evaluate.py report --results results/
+# Aggregate saved runs into a leaderboard
+python evaluate.py report --results results
+
+# Optional: generate a small HTML report
+python scripts/generate_report.py --results results --output results/report.html
 ```
 
 ---
 
-## How to Contribute
+## How To Contribute
 
-New tasks must satisfy all four criteria:
+New tasks should satisfy all of the following:
 
-1. **Verifiable**: the `python_verification` field must be a runnable assert that confirms the ground truth using `scipy`.
-2. **Novel domain**: don't duplicate the scenario of an existing task. Use a different field (law, ecology, economics, medicine, hiring, insurance).
-3. **Explainable failure mode**: the `naive_trap` field must explain precisely why a model anchoring on surface statistics will fail, and which selection mechanism creates the distortion.
-4. **Difficulty calibrated**: easy tasks should be solvable by a careful undergraduate. Hard tasks require setting up and numerically solving a truncated/censored model.
+1. **Verifiable**: `python_verification` must assert the ground truth with runnable Python.
+2. **Novel domain**: avoid duplicating the exact same scenario with renamed entities.
+3. **Explainable failure mode**: `naive_trap` should clearly describe why the shortcut answer fails.
+4. **Calibrated difficulty**: easy tasks should be solvable carefully by a strong undergraduate; hard tasks can require numerical solving or more subtle dependence reasoning.
 
-Submit a PR with your task JSON in `data/tasks/` and a line in `docs/CHANGELOG.md`.
+When contributing, add the task JSON to `data/tasks/` and note the change in `docs/CHANGELOG.md`.
 
 ---
 
@@ -130,7 +140,7 @@ Submit a PR with your task JSON in `data/tasks/` and a line in `docs/CHANGELOG.m
 If you use PRISM in your research, please cite:
 
 ```bibtex
-@misc{prism2025,
+@misc{prism2026,
   title  = {PRISM: Probabilistic Reasoning under Implicit Selection Mechanisms},
   author = {PRINCE KUMAR},
   year   = {2026},
