@@ -30,7 +30,7 @@
     "peer_to_peer_winner": "flow_B",
     "merchant_payment_winner": "flow_B",
     "recurring_mandate_winner": "flow_B",
-    "flow_A_corrected": 0.764,
+    "flow_A_corrected": 0.762,
     "flow_B_corrected": 0.794,
     "recommendation": "flow_B",
     "explanation": "Flow B is better in every dispute type. Flow A only appears better because it handled a much larger share of easy peer-to-peer complaints."
@@ -38,6 +38,6 @@
   "tolerance": 0.005,
   "naive_answer": "Flow A should be used because it resolves a much larger fraction of disputes overall.",
   "naive_trap": "The aggregate numbers ignore that Flow A handled a far easier dispute mix. Correcting for dispute-type mix reveals Flow B is better in every stratum.",
-  "reasoning_trace": "Step 1: Peer-to-peer: B=94% > A=92%. Merchant: B=78% > A=74%. Recurring: B=45% > A=40%. Step 2: Apply the long-run mix. A=0.5*0.92 + 0.3*0.74 + 0.2*0.40 = 0.764. B=0.5*0.94 + 0.3*0.78 + 0.2*0.45 = 0.794. Step 3: Recommend Flow B.",
-  "python_verification": "pA = 0.5*0.92 + 0.3*0.74 + 0.2*0.40\npB = 0.5*0.94 + 0.3*0.78 + 0.2*0.45\nassert abs(pA-0.764) < 0.001 and abs(pB-0.794) < 0.001 and pB > pA"
+  "reasoning_trace": "Step 1: Peer-to-peer: B=94% > A=92%. Merchant: B=78% > A=74%. Recurring: B=45% > A=40%. Step 2: Apply the long-run mix. A=0.5*0.92 + 0.3*0.74 + 0.2*0.40 = 0.762. B=0.5*0.94 + 0.3*0.78 + 0.2*0.45 = 0.794. Step 3: Recommend Flow B.",
+  "python_verification": "pA = 0.5*0.92 + 0.3*0.74 + 0.2*0.40\npB = 0.5*0.94 + 0.3*0.78 + 0.2*0.45\nassert abs(pA-0.762) < 0.001 and abs(pB-0.794) < 0.001 and pB > pA"
 }
