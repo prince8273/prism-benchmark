@@ -1,0 +1,29 @@
+﻿{
+    "task_id":  "prism_berk_004",
+    "category":  "berkson",
+    "difficulty":  "hard",
+    "scenario":  "A meta-researcher analyses published academic papers to study whether novel papers tend to be methodologically less rigorous. A paper is published if it scores in the top 25% on novelty OR the top 25% on methodological rigor (either quality is sufficient for acceptance).",
+    "data":  {
+                 "description":  "In the population of submitted papers, novelty and rigor are independent. Publication criterion: novelty in top 25% OR rigor in top 25%.",
+                 "values":  {
+                                "P_high_novelty_population":  0.25,
+                                "P_high_rigor_population":  0.25,
+                                "independence_in_population":  true,
+                                "publication_criterion":  "published if high_novelty OR high_rigor"
+                            }
+             },
+    "question":  "Among published papers, a researcher finds P(high novelty | high rigor) = 25% but P(high novelty | NOT high rigor) = 100%. She concludes novelty and rigor are strongly negatively correlated in academia. (a) Verify these conditional probabilities from the publication selection model. (b) Is the negative correlation real or artifactual? (c) What fraction of submitted papers are published?",
+    "answer_type":  "numerical",
+    "ground_truth":  {
+                         "P_novelty_given_rigor_published":  0.250,
+                         "P_novelty_given_not_rigor_published":  1.000,
+                         "correlation_real":  false,
+                         "fraction_published":  0.4375,
+                         "explanation":  "Berkson\u0027s paradox via OR-gate publication selection. Papers without high rigor must have high novelty to be published, so P(novelty|not rigor, published)=1. Papers with high rigor are published regardless of novelty, so novelty prevalence among them equals population base rate."
+                     },
+    "tolerance":  0.005,
+    "naive_answer":  "Novelty and rigor are strongly negatively correlated in academia based on the conditional probabilities.",
+    "naive_trap":  "The apparent negative correlation is entirely caused by the OR-gate selection mechanism. Among published papers without high rigor, every single one must have high novelty â€” that is the only route to publication. This creates the illusion of a negative association.",
+    "reasoning_trace":  "Step 1: p_N=0.25, p_R=0.25, independent. P(pub)=0.25+0.25-0.0625=0.4375. Step 2: P(N|R,pub): R guarantees publication, so P(N|R,pub)=P(Nâˆ©R)/P(R)=p_N=0.25. Step 3: P(N|notR,pub): only route is N. P(notRâˆ©pub)=0.4375-0.25=0.1875. P(Nâˆ©notR)=0.25Ã—0.75=0.1875. Ratio=1.0. Step 4: Fraction published=0.4375.",
+    "python_verification":  "p_N=0.25; p_R=0.25; p_pub=p_N+p_R-p_N*p_R\ng_R=p_N*p_R/p_R; g_NR=p_N*(1-p_R)/(p_pub-p_R)\nassert abs(g_R-0.25)\u003c0.001 and abs(g_NR-1.00)\u003c0.001 and abs(p_pub-0.4375)\u003c0.001"
+}

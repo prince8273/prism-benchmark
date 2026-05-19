@@ -1,0 +1,27 @@
+﻿{
+    "task_id":  "prism_surv_004",
+    "category":  "survival",
+    "difficulty":  "hard",
+    "scenario":  "A structural engineer surveys buildings still standing after a major earthquake. Only buildings newer than 80 years old survived (older buildings were demolished or collapsed due to outdated construction standards). She records the mean age of surviving buildings to estimate the typical age of the city\u0027s building stock.",
+    "data":  {
+                 "description":  "Only buildings with age \u003c 80 years are standing and observable. True age distribution of all pre-earthquake buildings assumed Normal with known standard deviation Ïƒ = 20 years.",
+                 "values":  {
+                                "observed_mean_age_years":  54,
+                                "sigma_known_years":  20,
+                                "survival_threshold_years":  80,
+                                "distribution":  "normal(mu, 20^2)",
+                                "note":  "buildings OLDER than 80 years did not survive â€” truncation is from ABOVE"
+                            }
+             },
+    "question":  "The surviving buildings have a mean age of 54 years. Using a truncated-from-above normal model (only buildings with age \u003c 80 are observable), estimate (a) the true mean age Î¼ of the full pre-earthquake building stock, and (b) the fraction of buildings that survived.",
+    "answer_type":  "numerical",
+    "ground_truth":  {
+                         "true_mean_age_years":  59.61,
+                         "fraction_surviving":  0.8460
+                     },
+    "tolerance":  1.0,
+    "naive_answer":  "The true mean building age is approximately 54 years since that is the observed average of surviving buildings.",
+    "naive_trap":  "The oldest buildings (above 80 years) were destroyed and are unobservable. For a truncated-from-above distribution, the observed mean is LOWER than the true mean. The city\u0027s building stock is actually older on average than the surviving sample suggests.",
+    "reasoning_trace":  "Step 1: For X~N(Î¼,ÏƒÂ²) truncated to X\u003cc, E[X|X\u003cc] = Î¼ - ÏƒÂ·Ï†(Î²)/Î¦(Î²), where Î²=(c-Î¼)/Ïƒ. Step 2: Set 54 = Î¼ - 20Â·Ï†((80-Î¼)/20)/Î¦((80-Î¼)/20). Step 3: Solve numerically. At Î¼=59.6: Î²=(80-59.6)/20=1.02, Ï†(1.02)/Î¦(1.02)=0.2347/0.8461=0.277. 59.6-20Ã—0.277=59.6-5.54=54.06 âœ“. Step 4: Fraction surviving = Î¦((80-59.6)/20)=Î¦(1.02)â‰ˆ0.846.",
+    "python_verification":  "from scipy.optimize import brentq\nfrom scipy.stats import norm\ndef eq(mu): b=(80-mu)/20; c=norm.cdf(b); return mu-20*norm.pdf(b)/c-54 if c\u003e1e-10 else 1e10\nmu=brentq(eq,54.01,1000)\nassert abs(mu-59.61)\u003c1.0\nassert abs(norm.cdf((80-mu)/20)-0.8460)\u003c0.01"
+}

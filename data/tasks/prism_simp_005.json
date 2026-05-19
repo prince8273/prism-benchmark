@@ -1,0 +1,62 @@
+﻿{
+    "task_id":  "prism_simp_005",
+    "category":  "simpson",
+    "difficulty":  "easy",
+    "scenario":  "A vaccine trial enrolls young adults and elderly patients across two trial sites. The coordinating committee presents aggregate efficacy data to a government health board.",
+    "data":  {
+                 "description":  "Recovery rates by age group and treatment arm.",
+                 "values":  {
+                                "young_adults":  {
+                                                     "vaccine":  {
+                                                                     "recovered":  95,
+                                                                     "total":  100,
+                                                                     "rate":  0.950
+                                                                 },
+                                                     "placebo":  {
+                                                                     "recovered":  85,
+                                                                     "total":  100,
+                                                                     "rate":  0.850
+                                                                 }
+                                                 },
+                                "elderly":  {
+                                                "vaccine":  {
+                                                                "recovered":  60,
+                                                                "total":  100,
+                                                                "rate":  0.600
+                                                            },
+                                                "placebo":  {
+                                                                "recovered":  50,
+                                                                "total":  100,
+                                                                "rate":  0.500
+                                                            }
+                                            },
+                                "overall":  {
+                                                "vaccine":  {
+                                                                "recovered":  155,
+                                                                "total":  200,
+                                                                "rate":  0.775
+                                                            },
+                                                "placebo":  {
+                                                                "recovered":  135,
+                                                                "total":  200,
+                                                                "rate":  0.675
+                                                            }
+                                            }
+                            }
+             },
+    "question":  "Is the vaccine beneficial? (a) Does it help young adults? (b) Does it help the elderly? (c) Assuming a 50/50 age split in the target population, what are the corrected recovery rates for each arm? Is the aggregate comparison of 77.5% vs 67.5% a valid summary of vaccine effectiveness?",
+    "answer_type":  "comparative",
+    "ground_truth":  {
+                         "helps_young":  true,
+                         "helps_elderly":  true,
+                         "vaccine_corrected":  0.775,
+                         "placebo_corrected":  0.675,
+                         "aggregate_valid":  true,
+                         "explanation":  "The vaccine improves recovery by 10pp in both age groups. Here the aggregate comparison happens to be valid because the trial enrolled equal numbers of young and elderly in each arm. This is a calibration task: the answer is the same, but for the right reason."
+                     },
+    "tolerance":  0.005,
+    "naive_answer":  "Yes, vaccine is effective: 77.5% vs 67.5%.",
+    "naive_trap":  "The naive reasoning is correct here but incomplete â€” a rigorous analyst must verify the aggregate is not confounded before accepting it. This task tests whether the model checks for confounding even when it does not change the conclusion.",
+    "reasoning_trace":  "Step 1: Young â€” vaccine 95% \u003e placebo 85%. +10pp. Step 2: Elderly â€” vaccine 60% \u003e placebo 50%. +10pp. Step 3: Trial enrolled 100 young + 100 elderly in each arm (equal allocation), so aggregate is unconfounded. Corrected: vaccine 0.5Ã—0.95+0.5Ã—0.60=0.775, placebo 0.5Ã—0.85+0.5Ã—0.50=0.675. The 10pp aggregate effect is valid.",
+    "python_verification":  "pV=0.5*0.95+0.5*0.60; pP=0.5*0.85+0.5*0.50\nassert abs(pV-0.775)\u003c0.001 and abs(pP-0.675)\u003c0.001 and pV\u003epP"
+}

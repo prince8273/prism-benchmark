@@ -1,0 +1,62 @@
+﻿{
+    "task_id":  "prism_simp_003",
+    "category":  "simpson",
+    "difficulty":  "medium",
+    "scenario":  "A tech company reports its overall hiring rates by gender across two departments: Engineering (high-selectivity) and HR (lower-selectivity). A journalist claims the data shows the company discriminates against women because the overall female hiring rate is lower.",
+    "data":  {
+                 "description":  "Hiring rates by gender and department.",
+                 "values":  {
+                                "engineering":  {
+                                                    "male":  {
+                                                                 "hired":  450,
+                                                                 "applied":  900,
+                                                                 "rate":  0.500
+                                                             },
+                                                    "female":  {
+                                                                   "hired":  55,
+                                                                   "applied":  100,
+                                                                   "rate":  0.550
+                                                               }
+                                                },
+                                "hr":  {
+                                           "male":  {
+                                                        "hired":  20,
+                                                        "applied":  100,
+                                                        "rate":  0.200
+                                                    },
+                                           "female":  {
+                                                          "hired":  200,
+                                                          "applied":  900,
+                                                          "rate":  0.222
+                                                      }
+                                       },
+                                "overall":  {
+                                                "male":  {
+                                                             "hired":  470,
+                                                             "applied":  1000,
+                                                             "rate":  0.470
+                                                         },
+                                                "female":  {
+                                                               "hired":  255,
+                                                               "applied":  1000,
+                                                               "rate":  0.255
+                                                           }
+                                            }
+                            }
+             },
+    "question":  "The overall hiring rate is 47% for men and 25.5% for women. Does this indicate gender discrimination? (a) Which gender has a higher hiring rate in Engineering? (b) Which gender has a higher hiring rate in HR? (c) Assuming applicants are equally likely to apply to either department (50/50), compute the corrected hiring rate for each gender and state which gender is hired at a higher rate.",
+    "answer_type":  "comparative",
+    "ground_truth":  {
+                         "engineering_winner":  "female",
+                         "hr_winner":  "female",
+                         "male_corrected":  0.350,
+                         "female_corrected":  0.386,
+                         "overall_winner":  "female",
+                         "explanation":  "Women are hired at a higher rate in both departments. The aggregate gap is entirely caused by women applying more to HR (lower-yield) and men applying more to Engineering (higher-yield). This is Simpson\u0027s paradox driven by application self-selection."
+                     },
+    "tolerance":  0.005,
+    "naive_answer":  "Men are hired at a higher rate overall (47% vs 25.5%), suggesting discrimination against women.",
+    "naive_trap":  "The aggregate comparison is confounded by department application rates. Women disproportionately apply to HR (900/1000 = 90%) while men disproportionately apply to Engineering (900/1000 = 90%). Within each department, women are hired at equal or higher rates.",
+    "reasoning_trace":  "Step 1: Engineering â€” female rate 55% \u003e male 50%. Step 2: HR â€” female 22.2% \u003e male 20%. Women win in both strata. Step 3: Apply 50/50 population mix. Male corrected = 0.5Ã—0.50 + 0.5Ã—0.20 = 0.350. Female corrected = 0.5Ã—0.55 + 0.5Ã—0.222 = 0.386. Women are hired at a higher corrected rate.",
+    "python_verification":  "mc=0.5*0.50+0.5*0.20; fc=0.5*0.55+0.5*0.222\nassert abs(mc-0.350)\u003c0.001 and abs(fc-0.386)\u003c0.003 and fc\u003emc"
+}

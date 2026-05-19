@@ -1,0 +1,26 @@
+﻿{
+    "task_id":  "prism_surv_005",
+    "category":  "survival",
+    "difficulty":  "hard",
+    "scenario":  "A systematic review of pharmaceutical trials includes only studies showing a drug effect of at least +15 percentage points improvement over placebo, due to a publication bias toward positive results. A health economist uses the published literature\u0027s average effect to estimate true drug efficacy.",
+    "data":  {
+                 "description":  "Only trials with measured improvement \u003e= 15pp over placebo are published. Underlying distribution of true drug effects across all conducted trials assumed Normal with known standard deviation Ïƒ = 10 percentage points.",
+                 "values":  {
+                                "observed_mean_effect_pp":  20,
+                                "sigma_known_pp":  10,
+                                "publication_threshold_pp":  15,
+                                "distribution":  "normal(mu, 10^2)"
+                            }
+             },
+    "question":  "The published literature averages a +20pp drug improvement. Using the truncated normal model, estimate (a) the true mean drug effect Î¼ across ALL conducted trials (published and unpublished), and (b) the fraction of conducted trials that appear in the published literature.",
+    "answer_type":  "numerical",
+    "ground_truth":  {
+                         "true_mean_effect_pp":  3.69,
+                         "fraction_published":  0.1290
+                     },
+    "tolerance":  0.5,
+    "naive_answer":  "The true mean drug effect is approximately +20pp since that is the average in published studies.",
+    "naive_trap":  "Publication bias creates severe truncation. The published +20pp average is the mean of only the top 13% of trials. The true mean effect across all trials is only about +3.7pp â€” the drug is far less effective than the literature suggests.",
+    "reasoning_trace":  "Step 1: E[X|X\u003e15] = Î¼ + 10Â·Î»((15-Î¼)/10) = 20. Step 2: Solve numerically. At Î¼â‰ˆ3.69: Î±=(15-3.69)/10=1.131, Î»(1.131)=Ï†(1.131)/Î¦Ì„(1.131)â‰ˆ0.2137/0.1290â‰ˆ1.657. 3.69+10Ã—1.657â‰ˆ20.26â‰ˆ20 âœ“. Step 3: Fraction published = Î¦Ì„(1.131) â‰ˆ 0.129.",
+    "python_verification":  "from scipy.optimize import brentq\nfrom scipy.stats import norm\ndef eq(mu): a=(15-mu)/10; sf=norm.sf(a); return mu+10*norm.pdf(a)/sf-20 if sf\u003e1e-10 else 1e10\nmu=brentq(eq,0,14.99)\nassert abs(mu-3.69)\u003c0.5\nassert abs(norm.sf((15-mu)/10)-0.1290)\u003c0.01"
+}

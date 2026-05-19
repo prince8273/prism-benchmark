@@ -1,0 +1,26 @@
+﻿{
+    "task_id":  "prism_surv_003",
+    "category":  "survival",
+    "difficulty":  "medium",
+    "scenario":  "A financial magazine publishes a \u0027top hedge funds\u0027 feature that profiles only funds which returned more than 50% in the past year. A retail investor uses the article\u0027s average return figure to estimate the typical hedge fund performance.",
+    "data":  {
+                 "description":  "Magazine features only funds with annual return \u003e 50%. Underlying distribution of all hedge fund returns assumed Normal with known standard deviation Ïƒ = 80 percentage points.",
+                 "values":  {
+                                "observed_mean_return_pct":  120,
+                                "sigma_known_pct":  80,
+                                "inclusion_threshold_pct":  50,
+                                "distribution":  "normal(mu, 80^2)"
+                            }
+             },
+    "question":  "The magazine\u0027s featured funds averaged a 120% return. Using the truncated normal model, estimate (a) the true mean annual return Î¼ across ALL hedge funds (including those excluded from the article), and (b) the fraction of hedge funds that are featured in the article.",
+    "answer_type":  "numerical",
+    "ground_truth":  {
+                         "true_mean_return_pct":  65.99,
+                         "fraction_featured":  0.5792
+                     },
+    "tolerance":  2.0,
+    "naive_answer":  "The true mean hedge fund return is approximately 120%, since that is the observed average in the article.",
+    "naive_trap":  "The article only features funds above 50%. The observed 120% mean is the mean of a truncated distribution. The true mean across all funds is about 66% â€” still positive, but 54 percentage points lower than the published figure.",
+    "reasoning_trace":  "Step 1: E[X|X\u003e50] = Î¼ + 80Â·Î»((50-Î¼)/80) = 120. Step 2: Solve numerically. Solution at Î¼â‰ˆ66. Step 3: Fraction featured = P(X\u003e50|Î¼=66,Ïƒ=80) = Î¦Ì„((50-66)/80) = Î¦Ì„(-0.2) â‰ˆ 0.579.",
+    "python_verification":  "from scipy.optimize import brentq\nfrom scipy.stats import norm\ndef eq(mu): a=(50-mu)/80; sf=norm.sf(a); return mu+80*norm.pdf(a)/sf-120 if sf\u003e1e-10 else 1e10\nmu=brentq(eq,50,119)\nassert abs(mu-65.99)\u003c2.0\nassert abs(norm.sf((50-mu)/80)-0.5792)\u003c0.01"
+}

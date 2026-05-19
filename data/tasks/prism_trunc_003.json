@@ -1,0 +1,26 @@
+﻿{
+    "task_id":  "prism_trunc_003",
+    "category":  "truncated",
+    "difficulty":  "medium",
+    "scenario":  "A school district\u0027s remediation program database contains only students who scored above 60 on the standardised mathematics assessment (students below 60 were referred to a separate support programme and are not tracked in this database). An analyst uses the database to estimate the district\u0027s average mathematics ability.",
+    "data":  {
+                 "description":  "Only students with score \u003e 60 appear in the remediation database. Scores assumed Normal with known standard deviation Ïƒ = 15.",
+                 "values":  {
+                                "observed_mean_score":  68,
+                                "sigma_known":  15,
+                                "inclusion_threshold":  60,
+                                "distribution":  "normal(mu, 15^2)"
+                            }
+             },
+    "question":  "The database shows a mean score of 68. Using the truncated normal model, estimate (a) the true population mean score Î¼ for all students in the district, and (b) the fraction of students whose scores appear in this database.",
+    "answer_type":  "numerical",
+    "ground_truth":  {
+                         "true_mean_score":  45.61,
+                         "fraction_in_database":  0.1687
+                     },
+    "tolerance":  1.0,
+    "naive_answer":  "The true mean score is approximately 68, since that is the observed average.",
+    "naive_trap":  "The database only contains the top 17% of students. The observed mean of 68 is far above the true population mean of ~46. A policy maker using the database mean would dramatically overestimate district-wide mathematics ability.",
+    "reasoning_trace":  "Step 1: E[X|X\u003e60] = Î¼ + 15Â·Î»((60-Î¼)/15) = 68. Step 2: Solve numerically for Î¼. The solution is Î¼ â‰ˆ 45.6. Step 3: Fraction in database = P(X\u003e60 | Î¼=45.6, Ïƒ=15) = Î¦Ì„((60-45.6)/15) = Î¦Ì„(0.96) â‰ˆ 0.169.",
+    "python_verification":  "from scipy.optimize import brentq\nfrom scipy.stats import norm\ndef eq(mu): a=(60-mu)/15; sf=norm.sf(a); return mu+15*norm.pdf(a)/sf-68 if sf\u003e1e-10 else 1e10\nmu=brentq(eq,1,59.99)\nassert abs(mu-45.61)\u003c1.0\nassert abs(norm.sf((60-mu)/15)-0.1687)\u003c0.01"
+}

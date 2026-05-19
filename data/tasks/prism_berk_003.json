@@ -1,0 +1,30 @@
+﻿{
+    "task_id":  "prism_berk_003",
+    "category":  "berkson",
+    "difficulty":  "medium",
+    "scenario":  "A sociologist studies whether physically attractive people tend to have worse personalities, based on data from a dating app. The app only shows profiles to users who are either above-average in attractiveness OR above-average in personality score (based on written profile reviews).",
+    "data":  {
+                 "description":  "In the general population, physical attractiveness and personality quality are independent. The dating app\u0027s visibility algorithm selects profiles where attractiveness OR personality is above average.",
+                 "values":  {
+                                "population_P_attractive":  0.30,
+                                "population_P_good_personality":  0.30,
+                                "population_independence":  true,
+                                "app_criterion":  "visible if attractive OR good_personality (or both)",
+                                "app_observed_correlation":  "negative (attractive users less likely to have good personality)"
+                            }
+             },
+    "question":  "Among app users, the sociologist finds P(attractive | good personality) = 0.30 but P(attractive | NOT good personality) = 1.00. She concludes attractiveness and good personality are strongly negatively correlated. (a) Verify these conditional probabilities from the selection model. (b) What is the true population correlation between attractiveness and good personality? (c) Identify the statistical mechanism causing the apparent negative correlation.",
+    "answer_type":  "directional",
+    "ground_truth":  {
+                         "P_attractive_given_good_personality_app":  0.300,
+                         "P_attractive_given_not_good_personality_app":  1.000,
+                         "population_correlation":  "independent",
+                         "mechanism":  "Berkson\u0027s paradox: the app\u0027s OR-selection criterion makes attractiveness and personality a collider. Among non-attractive users visible on the app, all must have good personalities (otherwise they would not be visible). This induces a spurious negative correlation.",
+                         "naive_correlation_direction":  "negative"
+                     },
+    "tolerance":  0.005,
+    "naive_answer":  "Attractiveness and good personality are negatively correlated because P(attractive|good personality) = 30% while P(attractive|not good personality) = 100% on the app.",
+    "naive_trap":  "The observed negative correlation is entirely an artifact of the OR-selection. Among non-attractive app users, all must be high-personality (that is the only reason they are visible). Among high-personality users, only 30% are also attractive â€” which exactly equals the population prevalence. The true correlation is zero.",
+    "reasoning_trace":  "Step 1: P_A=0.30, P_P=0.30, independent. P(on_app)=0.30+0.30-0.09=0.51. Step 2: P(A|P,app): P guarantees visibility, so P(A|P,app)=P(Aâˆ©P)/P(P)=0.09/0.30=0.30=P(A). Step 3: P(A|notP,app): to be visible without P you must be A. P(notPâˆ©app)=0.51-0.30=0.21. P(Aâˆ©notP)=0.30Ã—0.70=0.21. P(A|notP,app)=0.21/0.21=1.0. Step 4: The difference (30% vs 100%) is purely an artifact of the collider selection.",
+    "python_verification":  "p_A=0.30; p_P=0.30; p_app=p_A+p_P-p_A*p_P\ng_P=p_A*p_P/p_P; g_NP=p_A*(1-p_P)/(p_app-p_P)\nassert abs(g_P-0.30)\u003c0.001 and abs(g_NP-1.00)\u003c0.001"
+}

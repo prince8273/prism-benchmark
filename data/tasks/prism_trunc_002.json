@@ -1,0 +1,27 @@
+﻿{
+    "task_id":  "prism_trunc_002",
+    "category":  "truncated",
+    "difficulty":  "medium",
+    "scenario":  "A property analytics firm studies the rental market. Their database only includes apartments with monthly rent above $1,200, because listings below that threshold are handled by a different agency. A journalist uses the database to report the \u0027average market rent\u0027.",
+    "data":  {
+                 "description":  "Database of listed apartments. Only apartments with rent \u003e $1,200/month appear. The underlying rent distribution is assumed Normal with known standard deviation Ïƒ = $400.",
+                 "values":  {
+                                "observed_mean_rent":  1800,
+                                "sigma_known":  400,
+                                "listing_threshold":  1200,
+                                "distribution":  "normal(mu, 400^2)",
+                                "currency":  "USD/month"
+                            }
+             },
+    "question":  "The database shows a mean rent of $1,800/month. Using the truncated normal model, estimate (a) the true mean rent Î¼ across ALL apartments in the market (including those below $1,200), and (b) the fraction of all apartments that appear in this database.",
+    "answer_type":  "numerical",
+    "ground_truth":  {
+                         "true_mean_rent":  1726,
+                         "fraction_listed":  0.9056
+                     },
+    "tolerance":  10,
+    "naive_answer":  "The true mean rent is approximately $1,800 since that is the observed average in the database.",
+    "naive_trap":  "The database excludes all apartments below $1,200. The observed mean is the mean of the truncated distribution, not the full market mean. However, because the threshold is fairly low relative to the observed mean, the bias is modest â€” about $74 â€” making this a case where naive reasoning is closer to correct than in harder tasks.",
+    "reasoning_trace":  "Step 1: E[X|X\u003e1200] = Î¼ + 400Â·Î»(Î±) = 1800, where Î±=(1200-Î¼)/400, Î»=Ï†(Î±)/Î¦Ì„(Î±). Step 2: Solve numerically. At Î¼=1726: Î±=(1200-1726)/400=-1.315, Î»(-1.315)=Ï†(-1.315)/Î¦Ì„(-1.315)â‰ˆ0.1733/0.9056â‰ˆ0.1913. Î¼+400Ã—0.1913=1726+76.5â‰ˆ1802.5 âœ“. Step 3: Fraction listed = Î¦Ì„(-1.315) â‰ˆ 0.9056.",
+    "python_verification":  "from scipy.optimize import brentq\nfrom scipy.stats import norm\ndef eq(mu): a=(1200-mu)/400; sf=norm.sf(a); return mu+400*norm.pdf(a)/sf-1800 if sf\u003e1e-10 else 1e10\nmu=brentq(eq,100,1799)\nassert abs(mu-1726)\u003c15\nassert abs(norm.sf((1200-mu)/400)-0.9056)\u003c0.005"
+}

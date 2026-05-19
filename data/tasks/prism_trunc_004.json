@@ -1,0 +1,27 @@
+﻿{
+    "task_id":  "prism_trunc_004",
+    "category":  "truncated",
+    "difficulty":  "hard",
+    "scenario":  "A regional bank\u0027s internal loan database only records loans above $50,000 â€” smaller personal loans are handled by a third-party servicer and are not in the main system. A risk analyst uses the internal database to estimate the bank\u0027s average loan size for capital planning.",
+    "data":  {
+                 "description":  "Internal database includes only loans \u003e $50,000. Loan sizes assumed Normal with known standard deviation Ïƒ = $30,000.",
+                 "values":  {
+                                "observed_mean_loan":  85000,
+                                "sigma_known":  30000,
+                                "recording_threshold":  50000,
+                                "distribution":  "normal(mu, 30000^2)",
+                                "currency":  "USD"
+                            }
+             },
+    "question":  "The internal database reports a mean loan size of $85,000. Using the truncated normal model, estimate (a) the true mean loan size Î¼ across all loans the bank originates (including those below $50,000), and (b) the fraction of all loans that are recorded in the internal database.",
+    "answer_type":  "numerical",
+    "ground_truth":  {
+                         "true_mean_loan":  73953,
+                         "fraction_recorded":  0.7877
+                     },
+    "tolerance":  500,
+    "naive_answer":  "The true mean loan size is approximately $85,000 since that is the database average.",
+    "naive_trap":  "The database excludes all loans under $50,000. The true mean is about $11,000 lower. The fraction of loans below the threshold (about 21%) represents a meaningful portion of origination volume that the analyst is ignoring.",
+    "reasoning_trace":  "Step 1: E[X|X\u003e50000] = Î¼ + 30000Â·Î»((50000-Î¼)/30000) = 85000. Step 2: Solve numerically. At Î¼â‰ˆ73953: Î±=(50000-73953)/30000=-0.798, Î»â‰ˆ0.369. Î¼+30000Ã—0.369â‰ˆ73953+11070=85023 âœ“. Step 3: Fraction recorded = Î¦Ì„(-0.798) â‰ˆ 0.788.",
+    "python_verification":  "from scipy.optimize import brentq\nfrom scipy.stats import norm\ndef eq(mu): a=(50000-mu)/30000; sf=norm.sf(a); return mu+30000*norm.pdf(a)/sf-85000 if sf\u003e1e-10 else 1e10\nmu=brentq(eq,1000,84999)\nassert abs(mu-73953)\u003c500\nassert abs(norm.sf((50000-mu)/30000)-0.7877)\u003c0.005"
+}

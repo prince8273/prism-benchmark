@@ -1,0 +1,62 @@
+﻿{
+    "task_id":  "prism_simp_008",
+    "category":  "simpson",
+    "difficulty":  "hard",
+    "scenario":  "An online learning platform compares two mentorship programmes for course completion. Programme A is the current system (mostly self-paced); Programme B is intensive (high-touch). The platform\u0027s report recommends Programme A based on its higher overall completion rate.",
+    "data":  {
+                 "description":  "Course completion rates by course type and mentorship programme.",
+                 "values":  {
+                                "self_paced_courses":  {
+                                                           "programme_A":  {
+                                                                               "completed":  144,
+                                                                               "enrolled":  180,
+                                                                               "rate":  0.800
+                                                                           },
+                                                           "programme_B":  {
+                                                                               "completed":  18,
+                                                                               "enrolled":  20,
+                                                                               "rate":  0.900
+                                                                           }
+                                                       },
+                                "intensive_courses":  {
+                                                          "programme_A":  {
+                                                                              "completed":  8,
+                                                                              "enrolled":  20,
+                                                                              "rate":  0.400
+                                                                          },
+                                                          "programme_B":  {
+                                                                              "completed":  72,
+                                                                              "enrolled":  180,
+                                                                              "rate":  0.400
+                                                                          }
+                                                      },
+                                "overall":  {
+                                                "programme_A":  {
+                                                                    "completed":  152,
+                                                                    "enrolled":  200,
+                                                                    "rate":  0.760
+                                                                },
+                                                "programme_B":  {
+                                                                    "completed":  90,
+                                                                    "enrolled":  200,
+                                                                    "rate":  0.450
+                                                                }
+                                            }
+                            }
+             },
+    "question":  "The platform recommends Programme A (76% completion vs B\u0027s 45%). (a) Which programme has higher completion for self-paced courses? (b) Which programme has higher completion for intensive courses? (c) If enrolment were split equally between self-paced and intensive courses (50/50), which programme maximises expected completion rate? Compute both corrected rates.",
+    "answer_type":  "comparative",
+    "ground_truth":  {
+                         "self_paced_winner":  "programme_B",
+                         "intensive_winner":  "tie",
+                         "programme_A_corrected":  0.600,
+                         "programme_B_corrected":  0.650,
+                         "recommendation":  "programme_B",
+                         "explanation":  "Programme B wins on self-paced (90% vs 80%) and ties on intensive (40% vs 40%). Corrected for equal enrolment: B=0.650 \u003e A=0.600. The aggregate reversal arises because Programme A was mostly assigned to self-paced courses (180/200=90%) which have inherently higher completion."
+                     },
+    "tolerance":  0.005,
+    "naive_answer":  "Programme A, because 76% \u003e 45% in the overall completion comparison.",
+    "naive_trap":  "Programme A was assigned to 90% self-paced courses (easy, high completion). Programme B was assigned to 90% intensive courses (hard, low completion). The aggregate comparison is entirely driven by course-type allocation, not programme quality.",
+    "reasoning_trace":  "Step 1: Self-paced â€” B=90% \u003e A=80%. Step 2: Intensive â€” tie at 40% each. Step 3: 50/50 mix. A=0.5Ã—0.80+0.5Ã—0.40=0.600. B=0.5Ã—0.90+0.5Ã—0.40=0.650. Recommend B.",
+    "python_verification":  "pA=0.5*0.80+0.5*0.40; pB=0.5*0.90+0.5*0.40\nassert abs(pA-0.600)\u003c0.001 and abs(pB-0.650)\u003c0.001 and pB\u003epA"
+}

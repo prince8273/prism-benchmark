@@ -1,0 +1,62 @@
+﻿{
+    "task_id":  "prism_simp_004",
+    "category":  "simpson",
+    "difficulty":  "medium",
+    "scenario":  "A consumer advocacy group compares loan approval rates at two banks across applicants from high-income and low-income backgrounds. Bank B advertises a higher overall approval rate.",
+    "data":  {
+                 "description":  "Loan approval rates by income level and bank.",
+                 "values":  {
+                                "high_income":  {
+                                                    "bank_A":  {
+                                                                   "approved":  80,
+                                                                   "applied":  100,
+                                                                   "rate":  0.800
+                                                               },
+                                                    "bank_B":  {
+                                                                   "approved":  180,
+                                                                   "applied":  200,
+                                                                   "rate":  0.900
+                                                               }
+                                                },
+                                "low_income":  {
+                                                   "bank_A":  {
+                                                                  "approved":  70,
+                                                                  "applied":  200,
+                                                                  "rate":  0.350
+                                                              },
+                                                   "bank_B":  {
+                                                                  "approved":  10,
+                                                                  "applied":  100,
+                                                                  "rate":  0.100
+                                                              }
+                                               },
+                                "overall":  {
+                                                "bank_A":  {
+                                                               "approved":  150,
+                                                               "applied":  300,
+                                                               "rate":  0.500
+                                                           },
+                                                "bank_B":  {
+                                                               "approved":  190,
+                                                               "applied":  300,
+                                                               "rate":  0.633
+                                                           }
+                                            }
+                            }
+             },
+    "question":  "Bank B\u0027s overall approval rate (63.3%) exceeds Bank A\u0027s (50%). A regulator wants to know which bank is more accessible if the applicant pool were equally split between high-income and low-income customers. (a) Which bank approves more high-income applicants? (b) Which bank approves more low-income applicants? (c) Compute corrected approval rates at 50/50 income mix and recommend which bank a low-income applicant should prefer.",
+    "answer_type":  "comparative",
+    "ground_truth":  {
+                         "high_income_winner":  "bank_B",
+                         "low_income_winner":  "bank_A",
+                         "bank_A_corrected":  0.575,
+                         "bank_B_corrected":  0.500,
+                         "recommendation":  "bank_A",
+                         "explanation":  "Bank A approves far more low-income applicants (35% vs 10%) and wins at 50/50 mix. Bank B\u0027s higher aggregate rate is an artifact of serving mostly high-income clients (200/300 = 67%)."
+                     },
+    "tolerance":  0.005,
+    "naive_answer":  "Bank B, because 63.3% \u003e 50% overall.",
+    "naive_trap":  "Bank B processed mostly high-income applicants (200/300). Once you correct for income mix, Bank A is more accessible. A low-income applicant choosing Bank B based on aggregate rates would be making the wrong decision.",
+    "reasoning_trace":  "Step 1: High-income â€” B=90% \u003e A=80%. Step 2: Low-income â€” A=35% \u003e B=10%. A wins in the category that matters for equity. Step 3: 50/50 mix. A = 0.5Ã—0.80 + 0.5Ã—0.35 = 0.575. B = 0.5Ã—0.90 + 0.5Ã—0.10 = 0.500. Bank A is superior at the equal mix.",
+    "python_verification":  "pA=0.5*0.80+0.5*0.35; pB=0.5*0.90+0.5*0.10\nassert abs(pA-0.575)\u003c0.001 and abs(pB-0.500)\u003c0.001 and pA\u003epB"
+}

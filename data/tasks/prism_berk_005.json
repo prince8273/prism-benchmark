@@ -1,0 +1,30 @@
+﻿{
+    "task_id":  "prism_berk_005",
+    "category":  "berkson",
+    "difficulty":  "medium",
+    "scenario":  "A hospital-based researcher investigates whether depression is associated with chronic back pain, using patient records. The hospital admits patients who present with EITHER condition. In the general population, the two conditions are believed to be independent.",
+    "data":  {
+                 "description":  "Hospital study of co-occurrence of depression and back pain. Hospital admission criterion: patient has depression OR back pain (or both).",
+                 "values":  {
+                                "population_P_depression":  0.15,
+                                "population_P_back_pain":  0.20,
+                                "population_independence":  true,
+                                "admission_criterion":  "depression OR back_pain",
+                                "hospital_observed":  "depression appears negatively associated with back pain"
+                            }
+             },
+    "question":  "In the hospital data, the researcher finds P(depression | back pain, hospitalised) = 0.15 but P(depression | no back pain, hospitalised) = 1.00, suggesting a strong negative association. (a) Verify these numbers from the selection model. (b) Is the negative association real? (c) What is the name of the statistical phenomenon and why does it arise here?",
+    "answer_type":  "directional",
+    "ground_truth":  {
+                         "P_dep_given_BP_hosp":  0.150,
+                         "P_dep_given_no_BP_hosp":  1.000,
+                         "association_real":  false,
+                         "phenomenon":  "Berkson\u0027s paradox",
+                         "explanation":  "Hospitalisation is a collider caused by either depression or back pain. Conditioning on hospitalisation (being in the study) creates a spurious negative association. Among hospitalised patients without back pain, every single one must have depression â€” that is the only way they got admitted."
+                     },
+    "tolerance":  0.005,
+    "naive_answer":  "Depression and back pain are strongly negatively associated: having back pain makes depression much less likely in this population.",
+    "naive_trap":  "The hospital sample is not representative of the population. Being admitted is a collider â€” it requires at least one of the two conditions. Among hospital patients without back pain, all have depression by necessity. This is not a population-level association.",
+    "reasoning_trace":  "Step 1: p_D=0.15, p_B=0.20, independent. P(hosp)=0.15+0.20-0.03=0.32. Step 2: P(D|B,hosp): B guarantees admission. P(D|B,hosp)=P(Dâˆ©B)/P(B)=0.03/0.20=0.15=P(D). Step 3: P(D|notB,hosp): Must have D to be in hospital. P(notBâˆ©hosp)=0.32-0.20=0.12. P(Dâˆ©notB)=0.15Ã—0.80=0.12. P(D|notB,hosp)=1.0. Step 4: Berkson\u0027s paradox.",
+    "python_verification":  "p_D=0.15; p_B=0.20; p_h=p_D+p_B-p_D*p_B\ng_B=p_D*p_B/p_B; g_NB=p_D*(1-p_B)/(p_h-p_B)\nassert abs(g_B-0.15)\u003c0.001 and abs(g_NB-1.00)\u003c0.001"
+}

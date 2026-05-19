@@ -1,0 +1,50 @@
+﻿{
+    "task_id":  "prism_simp_006",
+    "category":  "simpson",
+    "difficulty":  "hard",
+    "scenario":  "An agricultural research station compares two fertilizers (A and B) for wheat yield. Fertilizer A was mostly applied to sandy soil (easy to grow), while B was mostly applied to clay soil (harder to grow). The station\u0027s report recommends Fertilizer A based on overall average yield.",
+    "data":  {
+                 "description":  "Wheat yield (tonnes/hectare) by soil type and fertilizer.",
+                 "values":  {
+                                "sandy_soil":  {
+                                                   "fertilizer_A":  {
+                                                                        "yield_t_per_ha":  5.0,
+                                                                        "hectares":  160
+                                                                    },
+                                                   "fertilizer_B":  {
+                                                                        "yield_t_per_ha":  5.5,
+                                                                        "hectares":  40
+                                                                    }
+                                               },
+                                "clay_soil":  {
+                                                  "fertilizer_A":  {
+                                                                       "yield_t_per_ha":  2.0,
+                                                                       "hectares":  40
+                                                                   },
+                                                  "fertilizer_B":  {
+                                                                       "yield_t_per_ha":  2.5,
+                                                                       "hectares":  160
+                                                                   }
+                                              },
+                                "overall_weighted_average":  {
+                                                                 "fertilizer_A":  4.40,
+                                                                 "fertilizer_B":  3.10
+                                                             }
+                            }
+             },
+    "question":  "The report recommends Fertilizer A (4.40 t/ha overall vs B\u0027s 3.10 t/ha). (a) Which fertilizer yields more on sandy soil? (b) Which fertilizer yields more on clay soil? (c) If a new farm has equal areas of sandy and clay soil (50/50), which fertilizer maximises expected yield? Compute both corrected yields.",
+    "answer_type":  "comparative",
+    "ground_truth":  {
+                         "sandy_winner":  "fertilizer_B",
+                         "clay_winner":  "fertilizer_B",
+                         "fertilizer_A_corrected":  3.50,
+                         "fertilizer_B_corrected":  4.00,
+                         "recommendation":  "fertilizer_B",
+                         "explanation":  "B outperforms A on both soil types (+0.5 t/ha each). The aggregate reversal occurs because A was deployed on 80% sandy soil (high yield) while B was deployed on 80% clay soil (low yield). Corrected for equal mix: B=4.00 \u003e A=3.50."
+                     },
+    "tolerance":  0.05,
+    "naive_answer":  "Fertilizer A, because 4.40 t/ha \u003e 3.10 t/ha overall.",
+    "naive_trap":  "A classic Simpson\u0027s reversal. A was almost entirely used on the easier sandy soil. B was almost entirely used on the harder clay soil. Comparing aggregate yields ignores this soil-type confounding entirely.",
+    "reasoning_trace":  "Step 1: Sandy â€” B=5.5 \u003e A=5.0. Step 2: Clay â€” B=2.5 \u003e A=2.0. B dominates in both strata. Step 3: 50/50 mix. A=0.5Ã—5.0+0.5Ã—2.0=3.50. B=0.5Ã—5.5+0.5Ã—2.5=4.00. Recommend B.",
+    "python_verification":  "A_ov=(5.0*160+2.0*40)/200; B_ov=(5.5*40+2.5*160)/200\nA_50=0.5*5.0+0.5*2.0; B_50=0.5*5.5+0.5*2.5\nassert abs(A_ov-4.40)\u003c0.01 and abs(B_ov-3.10)\u003c0.01\nassert abs(A_50-3.50)\u003c0.01 and abs(B_50-4.00)\u003c0.01 and B_50\u003eA_50"
+}
