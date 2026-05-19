@@ -1,0 +1,32 @@
+{
+  "task_id": "prism_berk_086",
+  "category": "berkson",
+  "difficulty": "hard",
+  "scenario": "A televised Indian talent competition selects finalists if they have either elite singing skill or elite dance skill. A small wildcard panel also advances 5% of contestants who have neither trait. Analysts notice a negative association between singing and dancing among finalists and wonder whether it is real.",
+  "data": {
+    "description": "Population traits are independent, but the finalist pool is selected on a collider-like criterion.",
+    "values": {
+      "population_size": 100000,
+      "population_P_singing": 0.15,
+      "population_P_dancing": 0.10,
+      "wildcard_selection_rate_for_neither": 0.05,
+      "finalists_total": 27325,
+      "finalists_singing": 15000,
+      "finalists_dancing": 10000,
+      "finalists_both": 1500
+    }
+  },
+  "question": "Among finalists, compute (a) P(singing | dancing, finalist), and (b) P(singing | not dancing, finalist). Compare these with the population relationship, and state whether the negative association among finalists is real or a selection artifact.",
+  "answer_type": "numerical",
+  "ground_truth": {
+    "P_singing_given_dancing_finalist": 0.1500,
+    "P_singing_given_not_dancing_finalist": 0.7792,
+    "association_type": "selection artifact",
+    "explanation": "Singing and dancing are independent in the population, but conditioning on being a finalist creates a strong negative association because finalists without dance skill are mostly selected via singing skill."
+  },
+  "tolerance": 0.01,
+  "naive_answer": "The finalists show a true negative relationship between singing and dancing skill.",
+  "naive_trap": "The finalist pool is selected on a common effect: either singing or dancing can get someone selected. Conditioning on that collider induces a spurious negative association even when the traits are independent in the population.",
+  "reasoning_trace": "Step 1: P(singing | dancing, finalist) = finalists_both / finalists_dancing = 1500/10000 = 0.15. Step 2: Among not-dancing finalists, the singers are 13500 and wildcard finalists with neither trait are 3825, so P(singing | not dancing, finalist) = 13500/(13500+3825) = 0.7792. Step 3: The selected sample shows a large negative association, but the population traits were independent by construction.",
+  "python_verification": "p1 = 1500/10000\np2 = 13500/(13500+3825)\nassert abs(p1-0.15) < 0.001 and abs(p2-0.7792) < 0.001 and p2 > p1"
+}

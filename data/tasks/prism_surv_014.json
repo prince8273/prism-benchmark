@@ -1,0 +1,26 @@
+﻿{
+    "task_id":  "prism_surv_014",
+    "category":  "survival",
+    "difficulty":  "medium",
+    "scenario":  "A clinical trial registry only lists trials that completed at least 6 months of follow-up â€” shorter trials are excluded as underpowered. A systematic reviewer uses the registry\u0027s average follow-up duration to characterise research quality in the field.",
+    "data":  {
+                 "description":  "Registry includes only trials with follow-up \u003e 6 months. Follow-up durations assumed Normal with known standard deviation Ïƒ = 5 months.",
+                 "values":  {
+                                "observed_mean_followup_months":  14,
+                                "sigma_known_months":  5,
+                                "registration_threshold_months":  6,
+                                "distribution":  "normal(mu, 5^2)"
+                            }
+             },
+    "question":  "Listed trials average 14 months follow-up. Using the truncated normal model, estimate (a) the true mean follow-up duration Î¼ across ALL clinical trials conducted (including those too short for registry listing), and (b) the fraction of all trials that are listed.",
+    "answer_type":  "numerical",
+    "ground_truth":  {
+                         "true_mean_followup_months":  13.247,
+                         "fraction_listed":  0.9264
+                     },
+    "tolerance":  0.1,
+    "naive_answer":  "The typical clinical trial has about 14 months follow-up since that is the registry average.",
+    "naive_trap":  "About 7% of conducted trials are too short to be listed. The true mean is 13.2 months â€” 0.75 months shorter. While the gap is modest, systematic reviews citing the registry figure as \u0027typical\u0027 would slightly overstate standard research practice.",
+    "reasoning_trace":  "Step 1: E[X|X\u003e6]=Î¼+5Â·Î»((6-Î¼)/5)=14. Step 2: Solve numerically for Î¼â‰ˆ13.247. Step 3: Fraction listed=Î¦Ì„((6-13.247)/5)=Î¦Ì„(-1.449)â‰ˆ0.926.",
+    "python_verification":  "from scipy.optimize import brentq\nfrom scipy.stats import norm\ndef eq(mu): a=(6-mu)/5; sf=norm.sf(a); return mu+5*norm.pdf(a)/sf-14 if sf\u003e1e-10 else 1e10\nmu=brentq(eq,10,13.9)\nassert abs(mu-13.247)\u003c0.15\nassert abs(norm.sf((6-mu)/5)-0.9264)\u003c0.01"
+}

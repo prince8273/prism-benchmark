@@ -1,0 +1,27 @@
+{
+  "task_id": "prism_trunc_091",
+  "category": "truncated",
+  "difficulty": "hard",
+  "scenario": "A city transport study records daily earnings only for auto-rickshaw drivers making more than Rs 1,200 because lower-earning drivers were surveyed through a separate paper system that was never digitised. The researcher wants the average daily earnings across all drivers.",
+  "data": {
+    "description": "Only daily earnings above Rs 1,200 are observed. Earnings are modeled as Normal with known standard deviation sigma = Rs 400.",
+    "values": {
+      "observed_mean_earnings": 1410.05,
+      "sigma_known": 400,
+      "recording_threshold": 1200,
+      "distribution": "normal(mu, 400^2)",
+      "currency": "INR"
+    }
+  },
+  "question": "Using the truncated normal model, estimate (a) the true mean daily earnings mu across all auto-rickshaw drivers, and (b) the fraction of drivers represented in the digital dataset.",
+  "answer_type": "numerical",
+  "ground_truth": {
+    "true_mean_earnings": 800,
+    "fraction_recorded": 0.1587
+  },
+  "tolerance": 15,
+  "naive_answer": "Average daily earnings are about Rs 1,410 because that is the observed mean in the digital data.",
+  "naive_trap": "The digital data excludes all drivers below Rs 1,200, so the observed mean is the mean of an upper tail, not of the full driver population.",
+  "reasoning_trace": "Step 1: Solve 1410.05 = mu + 400*lambda((1200-mu)/400). Step 2: The solution has alpha about 1.0, so mu = 1200 - 400 = 800. Step 3: The recorded fraction is sf(1.0) = 0.1587.",
+  "python_verification": "from scipy.optimize import brentq\nfrom scipy.stats import norm\ndef eq(mu):\n    a=(1200-mu)/400\n    return mu + 400*norm.pdf(a)/norm.sf(a) - 1410.05\nmu=brentq(eq,-1000,1199.99)\nfrac=norm.sf((1200-mu)/400)\nassert abs(mu-800) < 15 and abs(frac-0.1587) < 0.005"
+}

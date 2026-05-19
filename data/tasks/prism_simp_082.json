@@ -1,0 +1,43 @@
+{
+  "task_id": "prism_simp_082",
+  "category": "simpson",
+  "difficulty": "hard",
+  "scenario": "A fintech handling UPI disputes compares two resolution workflows, Flow A and Flow B, across three dispute types: peer-to-peer transfer complaints, merchant-payment complaints, and recurring-mandate complaints. The operations team wants to keep Flow A because its overall resolution rate looks better.",
+  "data": {
+    "description": "Resolution rates by dispute type and workflow.",
+    "values": {
+      "peer_to_peer": {
+        "flow_A": { "resolved": 460, "total": 500, "rate": 0.920 },
+        "flow_B": { "resolved": 94, "total": 100, "rate": 0.940 }
+      },
+      "merchant_payment": {
+        "flow_A": { "resolved": 74, "total": 100, "rate": 0.740 },
+        "flow_B": { "resolved": 234, "total": 300, "rate": 0.780 }
+      },
+      "recurring_mandate": {
+        "flow_A": { "resolved": 20, "total": 50, "rate": 0.400 },
+        "flow_B": { "resolved": 225, "total": 500, "rate": 0.450 }
+      },
+      "overall": {
+        "flow_A": { "resolved": 554, "total": 650, "rate": 0.8523 },
+        "flow_B": { "resolved": 553, "total": 900, "rate": 0.6144 }
+      }
+    }
+  },
+  "question": "The operations team recommends Flow A because its aggregate resolution rate is 85.2% versus 61.4% for Flow B. (a) Which flow performs better for each dispute type? (b) If the long-run dispute mix is 50% peer-to-peer, 30% merchant payment, and 20% recurring mandate, compute the corrected resolution rate for each flow. (c) Which flow should be deployed for the long-run mix?",
+  "answer_type": "comparative",
+  "ground_truth": {
+    "peer_to_peer_winner": "flow_B",
+    "merchant_payment_winner": "flow_B",
+    "recurring_mandate_winner": "flow_B",
+    "flow_A_corrected": 0.764,
+    "flow_B_corrected": 0.794,
+    "recommendation": "flow_B",
+    "explanation": "Flow B is better in every dispute type. Flow A only appears better because it handled a much larger share of easy peer-to-peer complaints."
+  },
+  "tolerance": 0.005,
+  "naive_answer": "Flow A should be used because it resolves a much larger fraction of disputes overall.",
+  "naive_trap": "The aggregate numbers ignore that Flow A handled a far easier dispute mix. Correcting for dispute-type mix reveals Flow B is better in every stratum.",
+  "reasoning_trace": "Step 1: Peer-to-peer: B=94% > A=92%. Merchant: B=78% > A=74%. Recurring: B=45% > A=40%. Step 2: Apply the long-run mix. A=0.5*0.92 + 0.3*0.74 + 0.2*0.40 = 0.764. B=0.5*0.94 + 0.3*0.78 + 0.2*0.45 = 0.794. Step 3: Recommend Flow B.",
+  "python_verification": "pA = 0.5*0.92 + 0.3*0.74 + 0.2*0.40\npB = 0.5*0.94 + 0.3*0.78 + 0.2*0.45\nassert abs(pA-0.764) < 0.001 and abs(pB-0.794) < 0.001 and pB > pA"
+}

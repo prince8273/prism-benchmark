@@ -1,0 +1,26 @@
+﻿{
+    "task_id":  "prism_trunc_011",
+    "category":  "truncated",
+    "difficulty":  "medium",
+    "scenario":  "A hospital administration system only records patient stays longer than 3 days â€” shorter stays are classified as day procedures and logged in a separate outpatient system. A capacity planner uses the inpatient database to estimate average length of stay for ward staffing calculations.",
+    "data":  {
+                 "description":  "Inpatient database includes only stays \u003e 3 days. Stay durations assumed Normal with known standard deviation Ïƒ = 2 days.",
+                 "values":  {
+                                "observed_mean_stay_days":  5.5,
+                                "sigma_known_days":  2,
+                                "recording_threshold_days":  3,
+                                "distribution":  "normal(mu, 2^2)"
+                            }
+             },
+    "question":  "The inpatient database shows a mean stay of 5.5 days. Using the truncated normal model, estimate (a) the true mean length of stay Î¼ across ALL hospital episodes (including day procedures), and (b) the fraction of all hospital episodes that appear in the inpatient database.",
+    "answer_type":  "numerical",
+    "ground_truth":  {
+                         "true_mean_stay_days":  4.879,
+                         "fraction_inpatient":  0.8262
+                     },
+    "tolerance":  0.05,
+    "naive_answer":  "The average hospital stay is approximately 5.5 days since that is the database figure.",
+    "naive_trap":  "About 17% of episodes are below 3 days and recorded in the outpatient system. The true mean across all episodes is 4.9 days â€” 0.6 days less. Staffing based on 5.5 days would overestimate bed-day demand and misallocate ward resources.",
+    "reasoning_trace":  "Step 1: E[X|X\u003e3]=Î¼+2Â·Î»((3-Î¼)/2)=5.5. Step 2: Solve numerically for Î¼â‰ˆ4.879. Step 3: Fraction inpatient=Î¦Ì„((3-4.879)/2)=Î¦Ì„(-0.94)â‰ˆ0.826.",
+    "python_verification":  "from scipy.optimize import brentq\nfrom scipy.stats import norm\ndef eq(mu): a=(3-mu)/2; sf=norm.sf(a); return mu+2*norm.pdf(a)/sf-5.5 if sf\u003e1e-10 else 1e10\nmu=brentq(eq,4,5.4)\nassert abs(mu-4.879)\u003c0.06\nassert abs(norm.sf((3-mu)/2)-0.8262)\u003c0.01"
+}

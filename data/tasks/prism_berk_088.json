@@ -1,0 +1,32 @@
+{
+  "task_id": "prism_berk_088",
+  "category": "berkson",
+  "difficulty": "hard",
+  "scenario": "A national handloom fair selects exhibitors if they have either exceptional natural-dye expertise or strong export-readiness. To ensure regional representation, 10% of applicants with neither trait are also admitted as wildcards. The selected exhibitor pool seems to show a negative correlation between natural-dye expertise and export-readiness.",
+  "data": {
+    "description": "Selection is based on either of two strengths, with a small wildcard channel from the neither group.",
+    "values": {
+      "population_size": 100000,
+      "population_P_natural_dye": 0.08,
+      "population_P_export_ready": 0.14,
+      "wildcard_selection_rate_for_neither": 0.10,
+      "selected_total": 28792,
+      "selected_natural_dye": 8000,
+      "selected_export_ready": 14000,
+      "selected_both": 1120
+    }
+  },
+  "question": "Among selected exhibitors, compute (a) P(natural-dye | export-ready, selected), and (b) P(natural-dye | not export-ready, selected). Is the apparent negative association between natural-dye expertise and export-readiness real or induced by selection?",
+  "answer_type": "numerical",
+  "ground_truth": {
+    "P_natural_dye_given_export_selected": 0.0800,
+    "P_natural_dye_given_not_export_selected": 0.4652,
+    "association_type": "selection artifact",
+    "explanation": "The two capabilities are independent in the population, but selecting on either one creates a spurious negative association in the exhibitor pool."
+  },
+  "tolerance": 0.01,
+  "naive_answer": "Export-ready exhibitors seem less likely to have natural-dye expertise, so the two capabilities probably trade off in practice.",
+  "naive_trap": "The fair selects on either capability, so conditioning on selection induces a false negative relationship between them.",
+  "reasoning_trace": "Step 1: P(natural-dye | export-ready, selected) = 1120/14000 = 0.08. Step 2: Among not-export selected exhibitors, natural-dye only = 6880 and wildcard neither = 7912, so P(natural-dye | not export, selected) = 6880/(6880+7912) = 0.4652. Step 3: The observed negative association is a selection artifact.",
+  "python_verification": "p1 = 1120/14000\np2 = 6880/(6880+7912)\nassert abs(p1-0.08) < 0.001 and abs(p2-0.4652) < 0.001 and p2 > p1"
+}

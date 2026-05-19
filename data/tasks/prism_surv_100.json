@@ -1,0 +1,26 @@
+{
+  "task_id": "prism_surv_100",
+  "category": "survival",
+  "difficulty": "hard",
+  "scenario": "A sustainability report highlights only EV-charging networks that remain operational after expansion and maintain station uptime above 97%. A policy researcher uses the highlighted mean uptime to estimate the typical uptime across all networks.",
+  "data": {
+    "description": "Only surviving networks with uptime above 97% are included. Uptime is modeled as Normal with known standard deviation sigma = 4 percentage points.",
+    "values": {
+      "observed_mean_uptime_pct": 98.87,
+      "sigma_known_pct": 4,
+      "feature_threshold_pct": 97,
+      "distribution": "normal(mu, 4^2)"
+    }
+  },
+  "question": "Using the truncated normal model, estimate (a) the true mean uptime mu across all networks, and (b) the fraction of networks that appear in the sustainability report.",
+  "answer_type": "numerical",
+  "ground_truth": {
+    "true_mean_uptime_pct": 91.8,
+    "fraction_featured": 0.0968
+  },
+  "tolerance": 0.3,
+  "naive_answer": "Typical network uptime is about 98.9% because that is the highlighted average.",
+  "naive_trap": "The report shows only high-performing survivors, so the observed mean is substantially above the mean for all networks.",
+  "reasoning_trace": "Step 1: Solve 98.87 = mu + 4*lambda((97-mu)/4). Step 2: The solution has alpha about 1.3, so mu = 97 - 1.3*4 = 91.8. Step 3: The featured fraction is sf(1.3) = 0.0968.",
+  "python_verification": "from scipy.optimize import brentq\nfrom scipy.stats import norm\ndef eq(mu):\n    a=(97-mu)/4\n    return mu + 4*norm.pdf(a)/norm.sf(a) - 98.87\nmu=brentq(eq,0,96.99)\nfrac=norm.sf((97-mu)/4)\nassert abs(mu-91.8) < 0.3 and abs(frac-0.0968) < 0.005"
+}

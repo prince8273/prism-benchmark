@@ -1,0 +1,26 @@
+﻿{
+    "task_id":  "prism_surv_012",
+    "category":  "survival",
+    "difficulty":  "medium",
+    "scenario":  "A mobile app review platform only features apps that have exceeded 10,000 downloads, treating smaller apps as insufficiently validated. A product manager uses the platform\u0027s average download count to set launch targets for new apps.",
+    "data":  {
+                 "description":  "Platform features only apps with \u003e 10,000 downloads. Download counts assumed Normal with known standard deviation Ïƒ = 8,000.",
+                 "values":  {
+                                "observed_mean_downloads_k":  22,
+                                "sigma_known_k":  8,
+                                "feature_threshold_k":  10,
+                                "distribution":  "normal(mu, 8000^2)"
+                            }
+             },
+    "question":  "Featured apps average 22,000 downloads. Using the truncated normal model, estimate (a) the true mean download count Î¼ across ALL apps launched (including those never featured), and (b) the fraction of all apps that get featured.",
+    "answer_type":  "numerical",
+    "ground_truth":  {
+                         "true_mean_downloads_k":  20.514,
+                         "fraction_featured":  0.9056
+                     },
+    "tolerance":  0.2,
+    "naive_answer":  "The typical app gets about 22,000 downloads since that is the platform average.",
+    "naive_trap":  "About 9% of launched apps never reach 10,000 downloads and are excluded. The true mean is 20,500 â€” 1,500 lower. Setting launch targets based on 22,000 benchmarks the lower bound against featured apps, which is a survivorship-inflated figure.",
+    "reasoning_trace":  "Step 1: E[X|X\u003e10]=Î¼+8Â·Î»((10-Î¼)/8)=22. Step 2: Solve numerically for Î¼â‰ˆ20.51k. Step 3: Fraction featured=Î¦Ì„((10-20.51)/8)=Î¦Ì„(-1.314)â‰ˆ0.906.",
+    "python_verification":  "from scipy.optimize import brentq\nfrom scipy.stats import norm\ndef eq(mu): a=(10-mu)/8; sf=norm.sf(a); return mu+8*norm.pdf(a)/sf-22 if sf\u003e1e-10 else 1e10\nmu=brentq(eq,20,21)\nassert abs(mu-20.514)\u003c0.25\nassert abs(norm.sf((10-mu)/8)-0.9056)\u003c0.01"
+}

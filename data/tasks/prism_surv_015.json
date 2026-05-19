@@ -1,0 +1,26 @@
+﻿{
+    "task_id":  "prism_surv_015",
+    "category":  "survival",
+    "difficulty":  "hard",
+    "scenario":  "A venture capital industry report covers only portfolio companies that exceeded $2M in annual revenue â€” companies that failed or remained below this threshold are excluded. A fund manager uses the report\u0027s average revenue to benchmark portfolio health.",
+    "data":  {
+                 "description":  "Report covers only VC-backed companies with revenue \u003e $2M/year. Revenue assumed Normal with known standard deviation Ïƒ = $3M.",
+                 "values":  {
+                                "observed_mean_revenue_M":  6,
+                                "sigma_known_M":  3,
+                                "inclusion_threshold_M":  2,
+                                "distribution":  "normal(mu, 3^2)"
+                            }
+             },
+    "question":  "Covered companies average $6M revenue. Using the truncated normal model, estimate (a) the true mean revenue Î¼ across ALL VC-backed companies in the cohort (including failures and sub-threshold companies), and (b) the fraction of the cohort that appears in the report.",
+    "answer_type":  "numerical",
+    "ground_truth":  {
+                         "true_mean_revenue_M":  5.214,
+                         "fraction_in_report":  0.8580
+                     },
+    "tolerance":  0.05,
+    "naive_answer":  "The typical VC-backed company generates about $6M revenue since that is the report average.",
+    "naive_trap":  "About 14% of VC-backed companies are below $2M or failed entirely and are excluded. The true mean is $5.2M â€” $0.8M lower. A fund manager benchmarking portfolio companies against $6M is comparing against a pre-filtered survivor group.",
+    "reasoning_trace":  "Step 1: E[X|X\u003e2]=Î¼+3Â·Î»((2-Î¼)/3)=6. Step 2: Solve numerically for Î¼â‰ˆ5.214. Step 3: Fraction in report=Î¦Ì„((2-5.214)/3)=Î¦Ì„(-1.071)â‰ˆ0.858.",
+    "python_verification":  "from scipy.optimize import brentq\nfrom scipy.stats import norm\ndef eq(mu): a=(2-mu)/3; sf=norm.sf(a); return mu+3*norm.pdf(a)/sf-6 if sf\u003e1e-10 else 1e10\nmu=brentq(eq,3,5.9)\nassert abs(mu-5.214)\u003c0.08\nassert abs(norm.sf((2-mu)/3)-0.8580)\u003c0.01"
+}

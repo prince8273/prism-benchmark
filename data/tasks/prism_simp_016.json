@@ -1,0 +1,62 @@
+﻿{
+    "task_id":  "prism_simp_016",
+    "category":  "simpson",
+    "difficulty":  "hard",
+    "scenario":  "A gender equity audit at a large corporation examines promotion rates for women and men across technical and managerial career tracks. The audit\u0027s headline finding is that men are promoted at a much higher overall rate.",
+    "data":  {
+                 "description":  "Promotion rates by career track and gender.",
+                 "values":  {
+                                "technical_track":  {
+                                                        "women":  {
+                                                                      "promoted":  64,
+                                                                      "eligible":  160,
+                                                                      "rate":  0.400
+                                                                  },
+                                                        "men":  {
+                                                                    "promoted":  14,
+                                                                    "eligible":  40,
+                                                                    "rate":  0.350
+                                                                }
+                                                    },
+                                "managerial_track":  {
+                                                         "women":  {
+                                                                       "promoted":  34,
+                                                                       "eligible":  40,
+                                                                       "rate":  0.850
+                                                                   },
+                                                         "men":  {
+                                                                     "promoted":  128,
+                                                                     "eligible":  160,
+                                                                     "rate":  0.800
+                                                                 }
+                                                     },
+                                "overall":  {
+                                                "women":  {
+                                                              "promoted":  98,
+                                                              "eligible":  200,
+                                                              "rate":  0.490
+                                                          },
+                                                "men":  {
+                                                            "promoted":  142,
+                                                            "eligible":  200,
+                                                            "rate":  0.710
+                                                        }
+                                            }
+                            }
+             },
+    "question":  "The audit reports men are promoted at 71% vs women at 49% â€” a 22pp gap. (a) Which gender has a higher promotion rate in the technical track? (b) Which has a higher rate in the managerial track? (c) If the eligible pool were equally split across tracks (50/50), compute corrected promotion rates. Does the 22pp gap reflect genuine disadvantage for women?",
+    "answer_type":  "comparative",
+    "ground_truth":  {
+                         "technical_winner":  "women",
+                         "managerial_winner":  "women",
+                         "women_corrected":  0.625,
+                         "men_corrected":  0.575,
+                         "gap_real":  false,
+                         "explanation":  "Women outperform men in both tracks. The aggregate gap is caused by women being concentrated in the technical track (160/200=80%) where promotion rates are lower for everyone, while men are concentrated in the managerial track (160/200=80%) where rates are higher. Corrected for 50/50 track mix: women=62.5% \u003e men=57.5%."
+                     },
+    "tolerance":  0.005,
+    "naive_answer":  "Men are promoted at a significantly higher rate (71% vs 49%), indicating disadvantage for women.",
+    "naive_trap":  "Women are disproportionately in the lower-promotion technical track and men in the higher-promotion managerial track. The 22pp aggregate gap is entirely a track allocation effect. Within each track, women have higher promotion rates.",
+    "reasoning_trace":  "Step 1: Technical â€” women=40% \u003e men=35%. Step 2: Managerial â€” women=85% \u003e men=80%. Women win both. Step 3: 50/50. Women=0.5*0.40+0.5*0.85=0.625. Men=0.5*0.35+0.5*0.80=0.575. Women have higher corrected rate.",
+    "python_verification":  "pW=0.5*0.40+0.5*0.85; pM=0.5*0.35+0.5*0.80\nassert abs(pW-0.625)\u003c0.001 and abs(pM-0.575)\u003c0.001 and pW\u003epM"
+}

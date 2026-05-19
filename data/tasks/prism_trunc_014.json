@@ -1,0 +1,26 @@
+﻿{
+    "task_id":  "prism_trunc_014",
+    "category":  "truncated",
+    "difficulty":  "medium",
+    "scenario":  "An environmental agency\u0027s emissions database only logs facilities reporting more than 50 tonnes of COâ‚‚ per year, as smaller emitters are exempt from mandatory reporting. A climate analyst uses the database to estimate the average facility emissions for policy modelling.",
+    "data":  {
+                 "description":  "Database includes only facilities emitting \u003e 50 tonnes COâ‚‚/year. Emissions assumed Normal with known standard deviation Ïƒ = 40 tonnes.",
+                 "values":  {
+                                "observed_mean_emissions_tonnes":  110,
+                                "sigma_known_tonnes":  40,
+                                "reporting_threshold_tonnes":  50,
+                                "distribution":  "normal(mu, 40^2)"
+                            }
+             },
+    "question":  "Logged facilities average 110 tonnes COâ‚‚/year. Using the truncated normal model, estimate (a) the true mean emissions Î¼ per facility across all facilities (including exempt ones), and (b) the fraction of all facilities that are in the mandatory reporting database.",
+    "answer_type":  "numerical",
+    "ground_truth":  {
+                         "true_mean_emissions_tonnes":  102.57,
+                         "fraction_reporting":  0.9056
+                     },
+    "tolerance":  1.0,
+    "naive_answer":  "The average facility emits approximately 110 tonnes/year since that is the database figure.",
+    "naive_trap":  "About 9% of facilities emit below 50 tonnes and are exempt from reporting. The true mean is about 7.4 tonnes lower at 102.6 tonnes. For policy modelling of total sector emissions, the analyst needs to account for the exempt tail.",
+    "reasoning_trace":  "Step 1: E[X|X\u003e50]=Î¼+40Â·Î»((50-Î¼)/40)=110. Step 2: Solve numerically for Î¼â‰ˆ102.6. Step 3: Fraction reporting=Î¦Ì„((50-102.6)/40)=Î¦Ì„(-1.315)â‰ˆ0.906.",
+    "python_verification":  "from scipy.optimize import brentq\nfrom scipy.stats import norm\ndef eq(mu): a=(50-mu)/40; sf=norm.sf(a); return mu+40*norm.pdf(a)/sf-110 if sf\u003e1e-10 else 1e10\nmu=brentq(eq,-200,109)\nassert abs(mu-102.57)\u003c1.5\nassert abs(norm.sf((50-mu)/40)-0.9056)\u003c0.01"
+}

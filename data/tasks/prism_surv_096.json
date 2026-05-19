@@ -1,0 +1,26 @@
+{
+  "task_id": "prism_surv_096",
+  "category": "survival",
+  "difficulty": "hard",
+  "scenario": "A film-trade report highlights only Indian regional films that remain in theatres for at least eight weeks and cross Rs 100 crore at the box office. A producer uses the highlighted average gross to estimate the typical performance of all releases.",
+  "data": {
+    "description": "Only films grossing above Rs 100 crore and surviving long enough to be reported are included. Box-office gross is modeled as Normal with known standard deviation sigma = Rs 60 crore.",
+    "values": {
+      "observed_mean_gross_crore": 126.32,
+      "sigma_known_crore": 60,
+      "highlight_threshold_crore": 100,
+      "distribution": "normal(mu, 60^2)"
+    }
+  },
+  "question": "Using the truncated normal model, estimate (a) the true mean box-office gross mu across all releases, and (b) the fraction of releases that appear in the trade report.",
+  "answer_type": "numerical",
+  "ground_truth": {
+    "true_mean_gross_crore": 10,
+    "fraction_highlighted": 0.0668
+  },
+  "tolerance": 2,
+  "naive_answer": "The typical film probably grosses about Rs 126 crore because that is the report average.",
+  "naive_trap": "The report shows only long-running blockbuster films. It excludes the vast majority of releases, so it grossly overstates typical performance.",
+  "reasoning_trace": "Step 1: Solve 126.32 = mu + 60*lambda((100-mu)/60). Step 2: The solution has alpha about 1.5, so mu = 100 - 1.5*60 = 10. Step 3: The highlighted fraction is sf(1.5) = 0.0668.",
+  "python_verification": "from scipy.optimize import brentq\nfrom scipy.stats import norm\ndef eq(mu):\n    a=(100-mu)/60\n    return mu + 60*norm.pdf(a)/norm.sf(a) - 126.32\nmu=brentq(eq,-500,99.99)\nfrac=norm.sf((100-mu)/60)\nassert abs(mu-10) < 2 and abs(frac-0.0668) < 0.005"
+}

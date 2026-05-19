@@ -1,0 +1,43 @@
+{
+  "task_id": "prism_simp_083",
+  "category": "simpson",
+  "difficulty": "hard",
+  "scenario": "A state electricity board compares two reminder systems for bill collection, Reminder A and Reminder B, across urban, semi-urban, and remote service circles. The board wants to keep Reminder A because its overall on-time payment rate is much higher.",
+  "data": {
+    "description": "On-time bill-payment rates by service circle and reminder system.",
+    "values": {
+      "urban": {
+        "reminder_A": { "paid_on_time": 450, "total": 500, "rate": 0.900 },
+        "reminder_B": { "paid_on_time": 92, "total": 100, "rate": 0.920 }
+      },
+      "semi_urban": {
+        "reminder_A": { "paid_on_time": 68, "total": 100, "rate": 0.680 },
+        "reminder_B": { "paid_on_time": 216, "total": 300, "rate": 0.720 }
+      },
+      "remote": {
+        "reminder_A": { "paid_on_time": 18, "total": 50, "rate": 0.360 },
+        "reminder_B": { "paid_on_time": 200, "total": 500, "rate": 0.400 }
+      },
+      "overall": {
+        "reminder_A": { "paid_on_time": 536, "total": 650, "rate": 0.8246 },
+        "reminder_B": { "paid_on_time": 508, "total": 900, "rate": 0.5644 }
+      }
+    }
+  },
+  "question": "The board says Reminder A is better because its aggregate on-time payment rate is 82.5% versus 56.4% for Reminder B. (a) Which reminder system performs better in urban, semi-urban, and remote circles? (b) If the board's customer mix is 30% urban, 40% semi-urban, and 30% remote, compute the corrected on-time payment rate for each system. (c) Which system should be preferred?",
+  "answer_type": "comparative",
+  "ground_truth": {
+    "urban_winner": "reminder_B",
+    "semi_urban_winner": "reminder_B",
+    "remote_winner": "reminder_B",
+    "reminder_A_corrected": 0.650,
+    "reminder_B_corrected": 0.684,
+    "recommendation": "reminder_B",
+    "explanation": "Reminder B outperforms A in every service circle. Reminder A's aggregate advantage is an artifact of being used mostly in urban circles, where on-time payment is easier for everyone."
+  },
+  "tolerance": 0.005,
+  "naive_answer": "Reminder A should be retained because its aggregate on-time payment rate is higher.",
+  "naive_trap": "The aggregate comparison confuses regional customer mix with reminder effectiveness. Reminder A was concentrated in urban circles, while Reminder B handled much more remote volume.",
+  "reasoning_trace": "Step 1: Urban: B=92% > A=90%. Semi-urban: B=72% > A=68%. Remote: B=40% > A=36%. Step 2: Apply the customer mix. A=0.3*0.90 + 0.4*0.68 + 0.3*0.36 = 0.650. B=0.3*0.92 + 0.4*0.72 + 0.3*0.40 = 0.684. Step 3: Recommend Reminder B.",
+  "python_verification": "pA = 0.3*0.90 + 0.4*0.68 + 0.3*0.36\npB = 0.3*0.92 + 0.4*0.72 + 0.3*0.40\nassert abs(pA-0.650) < 0.001 and abs(pB-0.684) < 0.001 and pB > pA"
+}

@@ -1,0 +1,62 @@
+﻿{
+    "task_id":  "prism_simp_014",
+    "category":  "simpson",
+    "difficulty":  "hard",
+    "scenario":  "A university compares admission rates for two applicant preparation programmes (A and B) across STEM and Humanities departments. Programme A appears to perform better based on overall admission rates.",
+    "data":  {
+                 "description":  "Admission rates by department type and preparation programme.",
+                 "values":  {
+                                "stem_departments":  {
+                                                         "programme_A":  {
+                                                                             "admitted":  240,
+                                                                             "applied":  400,
+                                                                             "rate":  0.600
+                                                                         },
+                                                         "programme_B":  {
+                                                                             "admitted":  65,
+                                                                             "applied":  100,
+                                                                             "rate":  0.650
+                                                                         }
+                                                     },
+                                "humanities_departments":  {
+                                                               "programme_A":  {
+                                                                                   "admitted":  20,
+                                                                                   "applied":  100,
+                                                                                   "rate":  0.200
+                                                                               },
+                                                               "programme_B":  {
+                                                                                   "admitted":  100,
+                                                                                   "applied":  400,
+                                                                                   "rate":  0.250
+                                                                               }
+                                                           },
+                                "overall":  {
+                                                "programme_A":  {
+                                                                    "admitted":  260,
+                                                                    "applied":  500,
+                                                                    "rate":  0.520
+                                                                },
+                                                "programme_B":  {
+                                                                    "admitted":  165,
+                                                                    "applied":  500,
+                                                                    "rate":  0.330
+                                                                }
+                                            }
+                            }
+             },
+    "question":  "Programme A\u0027s overall admission rate (52%) far exceeds Programme B\u0027s (33%). (a) Which programme achieves better admission rates in STEM? (b) Which achieves better rates in Humanities? (c) If applicants were equally split between STEM and Humanities (50/50), compute corrected admission rates. Which programme is genuinely superior?",
+    "answer_type":  "comparative",
+    "ground_truth":  {
+                         "stem_winner":  "programme_B",
+                         "humanities_winner":  "programme_B",
+                         "programme_A_corrected":  0.400,
+                         "programme_B_corrected":  0.450,
+                         "recommendation":  "programme_B",
+                         "explanation":  "Programme B outperforms A in both STEM (65% vs 60%) and Humanities (25% vs 20%). The aggregate reversal is caused by Programme A sending 80% of applicants to STEM departments (higher admission rates overall) while Programme B sends 80% to Humanities."
+                     },
+    "tolerance":  0.005,
+    "naive_answer":  "Programme A, because 52% \u003e 33% overall.",
+    "naive_trap":  "Programme A funnels applicants into STEM where admission rates are high for everyone. Programme B funnels applicants into Humanities where rates are lower. The aggregate comparison is purely a department-routing effect.",
+    "reasoning_trace":  "Step 1: STEM â€” B=65% \u003e A=60%. Step 2: Humanities â€” B=25% \u003e A=20%. B wins both strata. Step 3: 50/50. A=0.5*0.60+0.5*0.20=0.400. B=0.5*0.65+0.5*0.25=0.450. Recommend B.",
+    "python_verification":  "pA=0.5*0.60+0.5*0.20; pB=0.5*0.65+0.5*0.25\nassert abs(pA-0.400)\u003c0.001 and abs(pB-0.450)\u003c0.001 and pB\u003epA"
+}

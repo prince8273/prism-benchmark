@@ -1,0 +1,32 @@
+{
+  "task_id": "prism_berk_090",
+  "category": "berkson",
+  "difficulty": "hard",
+  "scenario": "At a major Indian port, customs escalates a shipment to manual inspection if there is either a paperwork irregularity or a scanner anomaly. Additionally, 10% of shipments with neither issue are chosen for random audit. Inspectors conclude that paperwork issues and scanner anomalies are negatively related among inspected shipments.",
+  "data": {
+    "description": "Inspection is selected on either of two risk flags, plus random audits from the neither group.",
+    "values": {
+      "population_size": 100000,
+      "population_P_paperwork_irregularity": 0.07,
+      "population_P_scanner_anomaly": 0.09,
+      "random_audit_rate_for_neither": 0.10,
+      "inspected_total": 24463,
+      "inspected_paperwork_irregularity": 7000,
+      "inspected_scanner_anomaly": 9000,
+      "inspected_both": 630
+    }
+  },
+  "question": "Among inspected shipments, compute (a) P(paperwork-irregularity | scanner-anomaly, inspected), and (b) P(paperwork-irregularity | not scanner-anomaly, inspected). Is the negative association among inspected shipments real or produced by the inspection rule?",
+  "answer_type": "numerical",
+  "ground_truth": {
+    "P_paperwork_given_scanner_inspected": 0.0700,
+    "P_paperwork_given_not_scanner_inspected": 0.4294,
+    "association_type": "selection artifact",
+    "explanation": "The two risk flags are independent in the population. Conditioning on manual inspection induces a spurious negative association."
+  },
+  "tolerance": 0.01,
+  "naive_answer": "Among inspected shipments, paperwork problems and scanner anomalies look negatively related, so they likely substitute for one another.",
+  "naive_trap": "Manual inspection is triggered by either risk flag, so inspected shipments without scanner anomalies are enriched for paperwork irregularities.",
+  "reasoning_trace": "Step 1: P(paperwork | scanner, inspected) = 630/9000 = 0.07. Step 2: Among not-scanner inspected shipments, paperwork-only = 6370 and random-audit neither = 8463, so P(paperwork | not scanner, inspected) = 6370/(6370+8463) = 0.4294. Step 3: The negative relationship is induced by the inspection rule.",
+  "python_verification": "p1 = 630/9000\np2 = 6370/(6370+8463)\nassert abs(p1-0.07) < 0.001 and abs(p2-0.4294) < 0.001 and p2 > p1"
+}

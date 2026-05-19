@@ -1,0 +1,27 @@
+{
+  "task_id": "prism_trunc_093",
+  "category": "truncated",
+  "difficulty": "hard",
+  "scenario": "A premium retail dashboard for saree stores logs daily sales only when a store makes more than Rs 2 lakh, because smaller stores stay on an offline billing stack. The retail head wants the average daily sales across all stores.",
+  "data": {
+    "description": "Only daily sales above Rs 2 lakh are observed. Daily sales are modeled as Normal with known standard deviation sigma = Rs 80,000.",
+    "values": {
+      "observed_mean_sales": 238800,
+      "sigma_known": 80000,
+      "recording_threshold": 200000,
+      "distribution": "normal(mu, 80000^2)",
+      "currency": "INR"
+    }
+  },
+  "question": "Using the truncated normal model, estimate (a) the true mean daily sales mu across all stores, and (b) the fraction of stores that appear in the premium dashboard.",
+  "answer_type": "numerical",
+  "ground_truth": {
+    "true_mean_sales": 104000,
+    "fraction_recorded": 0.1151
+  },
+  "tolerance": 3000,
+  "naive_answer": "Average daily sales are about Rs 2.388 lakh because that is the premium-dashboard mean.",
+  "naive_trap": "The dashboard only includes upper-tail stores. The full-store mean is much lower than the selected-store mean.",
+  "reasoning_trace": "Step 1: Solve 238800 = mu + 80000*lambda((200000-mu)/80000). Step 2: The solution has alpha about 1.2, so mu = 200000 - 1.2*80000 = 104000. Step 3: The recorded fraction is sf(1.2) = 0.1151.",
+  "python_verification": "from scipy.optimize import brentq\nfrom scipy.stats import norm\ndef eq(mu):\n    a=(200000-mu)/80000\n    return mu + 80000*norm.pdf(a)/norm.sf(a) - 238800\nmu=brentq(eq,-500000,199999)\nfrac=norm.sf((200000-mu)/80000)\nassert abs(mu-104000) < 3000 and abs(frac-0.1151) < 0.005"
+}

@@ -1,0 +1,26 @@
+{
+  "task_id": "prism_trunc_092",
+  "category": "truncated",
+  "difficulty": "hard",
+  "scenario": "A smart-meter analytics platform retains monthly electricity-usage records only for homes consuming more than 600 kWh, because lower-consumption homes stay on a subsidised legacy system. An analyst wants the sector-wide average usage.",
+  "data": {
+    "description": "Only usage above 600 kWh is observed. Monthly consumption is modeled as Normal with known standard deviation sigma = 150 kWh.",
+    "values": {
+      "observed_mean_kwh": 675.95,
+      "sigma_known_kwh": 150,
+      "recording_threshold_kwh": 600,
+      "distribution": "normal(mu, 150^2)"
+    }
+  },
+  "question": "Using the truncated normal model, estimate (a) the true mean monthly electricity usage mu across all homes in the population, and (b) the fraction of homes that appear in the smart-meter dataset.",
+  "answer_type": "numerical",
+  "ground_truth": {
+    "true_mean_kwh": 435,
+    "fraction_recorded": 0.1357
+  },
+  "tolerance": 10,
+  "naive_answer": "Average monthly usage is about 676 kWh because that is the smart-meter mean.",
+  "naive_trap": "The smart-meter dataset excludes lower-usage homes, so it overstates the mean of the full population.",
+  "reasoning_trace": "Step 1: Solve 675.95 = mu + 150*lambda((600-mu)/150). Step 2: The solution has alpha about 1.1, so mu = 600 - 1.1*150 = 435. Step 3: The retained fraction is sf(1.1) = 0.1357.",
+  "python_verification": "from scipy.optimize import brentq\nfrom scipy.stats import norm\ndef eq(mu):\n    a=(600-mu)/150\n    return mu + 150*norm.pdf(a)/norm.sf(a) - 675.95\nmu=brentq(eq,-500,599.99)\nfrac=norm.sf((600-mu)/150)\nassert abs(mu-435) < 10 and abs(frac-0.1357) < 0.005"
+}

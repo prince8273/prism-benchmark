@@ -1,0 +1,26 @@
+﻿{
+    "task_id":  "prism_trunc_012",
+    "category":  "truncated",
+    "difficulty":  "medium",
+    "scenario":  "A startup ecosystem database only tracks companies with annual revenue above $1M, as smaller companies are classified as pre-revenue and excluded. An investor uses the database average revenue to benchmark portfolio performance.",
+    "data":  {
+                 "description":  "Database includes only startups with revenue \u003e $1M/year. Revenue assumed Normal with known standard deviation Ïƒ = $2M.",
+                 "values":  {
+                                "observed_mean_revenue_M":  3.5,
+                                "sigma_known_M":  2,
+                                "inclusion_threshold_M":  1,
+                                "distribution":  "normal(mu, 2^2)"
+                            }
+             },
+    "question":  "Tracked startups average $3.5M revenue. Using the truncated normal model, estimate (a) the true mean revenue Î¼ across the full cohort of funded startups (including pre-revenue companies), and (b) the fraction of all funded startups that appear in the database.",
+    "answer_type":  "numerical",
+    "ground_truth":  {
+                         "true_mean_revenue_M":  2.879,
+                         "fraction_tracked":  0.8262
+                     },
+    "tolerance":  0.05,
+    "naive_answer":  "The typical funded startup generates about $3.5M in revenue since that is the database average.",
+    "naive_trap":  "About 17% of funded startups are below $1M revenue and excluded. The true mean is $2.9M â€” $0.6M lower. An investor benchmarking portfolio companies against $3.5M would be comparing against a pre-selected successful subset.",
+    "reasoning_trace":  "Step 1: E[X|X\u003e1]=Î¼+2Â·Î»((1-Î¼)/2)=3.5. Step 2: Solve numerically for Î¼â‰ˆ2.879. Step 3: Fraction tracked=Î¦Ì„((1-2.879)/2)=Î¦Ì„(-0.94)â‰ˆ0.826.",
+    "python_verification":  "from scipy.optimize import brentq\nfrom scipy.stats import norm\ndef eq(mu): a=(1-mu)/2; sf=norm.sf(a); return mu+2*norm.pdf(a)/sf-3.5 if sf\u003e1e-10 else 1e10\nmu=brentq(eq,-10,3.4)\nassert abs(mu-2.879)\u003c0.06\nassert abs(norm.sf((1-mu)/2)-0.8262)\u003c0.01"
+}

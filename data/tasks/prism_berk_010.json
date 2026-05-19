@@ -1,0 +1,29 @@
+﻿{
+    "task_id":  "prism_berk_010",
+    "category":  "berkson",
+    "difficulty":  "hard",
+    "scenario":  "A patient receives three consecutive positive results from a diagnostic test for a rare infection. All three tests were run on the same biological sample processed in the same laboratory batch. Lab quality records show that 8% of batches experience a systematic processing error that causes all tests in that batch to return positive regardless of true disease status.",
+    "data":  {
+                 "description":  "Three tests on the same batch. Systematic batch error rate = 8%. Tests are NOT conditionally independent.",
+                 "values":  {
+                                "disease_prevalence":  0.01,
+                                "test_sensitivity":  0.90,
+                                "test_specificity":  0.95,
+                                "batch_error_rate":  0.08,
+                                "n_positive_tests":  3,
+                                "shared_failure_source":  "same laboratory batch"
+                            }
+             },
+    "question":  "A patient tests positive three times on the same batch. (a) Treating the three tests as conditionally independent (ignoring batch error), what is the naive posterior probability of disease? (b) Accounting for the 8% batch error rate, what is the correct posterior probability? (c) By how many percentage points does the naive model overestimate the posterior?",
+    "answer_type":  "numerical",
+    "ground_truth":  {
+                         "naive_posterior":  0.9833,
+                         "correct_posterior":  0.0865,
+                         "overestimation_pp":  89.68
+                     },
+    "tolerance":  0.005,
+    "naive_answer":  "After three independent positive tests, the posterior probability of disease is approximately 98.3%.",
+    "naive_trap":  "Treating three tests from the same batch as independent triples the update and gives a wildly overconfident posterior. The correct model accounts for the 8% probability that all positives are batch artefacts, collapsing the posterior to just 8.7%.",
+    "reasoning_trace":  "Step 1: P(+++|disease)=(1-0.08)*0.90Â³+0.08=0.92*0.729+0.08=0.751. Step 2: P(+++|no disease)=(1-0.08)*0.05Â³+0.08=0.92*0.000125+0.08=0.0801. Step 3: Posterior=0.751*0.01/(0.751*0.01+0.0801*0.99)=0.00751/0.08681=0.0865. Naive (independent): three sequential updates give ~98.3%.",
+    "python_verification":  "prev=0.01; sens=0.90; spec=0.95; pe=0.08\np_d=(1-pe)*sens**3+pe; p_nd=(1-pe)*(1-spec)**3+pe\npost=p_d*prev/(p_d*prev+p_nd*(1-prev))\nassert abs(post-0.0865)\u003c0.005\na=prev\nfor _ in range(3): a=(sens*a)/(sens*a+(1-spec)*(1-a))\nassert a\u003e0.97"
+}

@@ -1,0 +1,62 @@
+﻿{
+    "task_id":  "prism_simp_013",
+    "category":  "simpson",
+    "difficulty":  "hard",
+    "scenario":  "A national health authority compares 1-year survival rates for kidney dialysis patients between two provider networks: Network A (mostly general hospitals) and Network B (mostly specialist centres). The authority\u0027s report recommends Network B based on overall survival rates.",
+    "data":  {
+                 "description":  "1-year survival rates by centre type and provider network.",
+                 "values":  {
+                                "specialist_centres":  {
+                                                           "network_A":  {
+                                                                             "survived":  44,
+                                                                             "total":  50,
+                                                                             "rate":  0.880
+                                                                         },
+                                                           "network_B":  {
+                                                                             "survived":  180,
+                                                                             "total":  200,
+                                                                             "rate":  0.900
+                                                                         }
+                                                       },
+                                "general_hospitals":  {
+                                                          "network_A":  {
+                                                                            "survived":  60,
+                                                                            "total":  200,
+                                                                            "rate":  0.300
+                                                                        },
+                                                          "network_B":  {
+                                                                            "survived":  12,
+                                                                            "total":  50,
+                                                                            "rate":  0.250
+                                                                        }
+                                                      },
+                                "overall":  {
+                                                "network_A":  {
+                                                                  "survived":  104,
+                                                                  "total":  250,
+                                                                  "rate":  0.416
+                                                              },
+                                                "network_B":  {
+                                                                  "survived":  192,
+                                                                  "total":  250,
+                                                                  "rate":  0.770
+                                                              }
+                                            }
+                            }
+             },
+    "question":  "Network B reports 77% overall survival vs Network A\u0027s 41.6%. The authority plans to redirect all patients to Network B. (a) Which network has better survival in specialist centres? (b) Which network has better survival in general hospitals? (c) If patients were equally distributed across both centre types (50/50), compute corrected survival rates and state which network should be preferred.",
+    "answer_type":  "comparative",
+    "ground_truth":  {
+                         "specialist_winner":  "network_B",
+                         "general_winner":  "network_A",
+                         "network_A_corrected":  0.590,
+                         "network_B_corrected":  0.575,
+                         "recommendation":  "network_A",
+                         "explanation":  "Network A wins in general hospitals (30% vs 25%) and narrowly loses in specialist centres (88% vs 90%). Corrected for 50/50 centre mix: A=59.0% vs B=57.5%. Network B\u0027s much higher aggregate rate is caused by treating 80% of its patients in specialist centres where survival is high for everyone."
+                     },
+    "tolerance":  0.005,
+    "naive_answer":  "Network B, because 77% \u003e 41.6% overall survival.",
+    "naive_trap":  "Network B routes 80% of patients to specialist centres (high baseline survival). Network A routes 80% to general hospitals (lower baseline). The aggregate comparison is entirely confounded by centre-type allocation.",
+    "reasoning_trace":  "Step 1: Specialist â€” B=90% \u003e A=88%. Step 2: General â€” A=30% \u003e B=25%. Step 3: 50/50 mix. A=0.5*0.88+0.5*0.30=0.590. B=0.5*0.90+0.5*0.25=0.575. Network A is preferred.",
+    "python_verification":  "pA=0.5*0.88+0.5*0.30; pB=0.5*0.90+0.5*0.25\nassert abs(pA-0.590)\u003c0.001 and abs(pB-0.575)\u003c0.001 and pA\u003epB"
+}

@@ -1,0 +1,26 @@
+﻿{
+    "task_id":  "prism_surv_013",
+    "category":  "survival",
+    "difficulty":  "medium",
+    "scenario":  "A music industry report covers only artists who have sustained more than 5,000 monthly listeners on streaming platforms, as lower figures are deemed commercially insignificant. A talent scout uses the report\u0027s average to set discovery thresholds.",
+    "data":  {
+                 "description":  "Report covers only artists with \u003e 5,000 monthly listeners. Listener counts assumed Normal with known standard deviation Ïƒ = 4,000.",
+                 "values":  {
+                                "observed_mean_listeners_k":  11,
+                                "sigma_known_k":  4,
+                                "report_threshold_k":  5,
+                                "distribution":  "normal(mu, 4000^2)"
+                            }
+             },
+    "question":  "Covered artists average 11,000 monthly listeners. Using the truncated normal model, estimate (a) the true mean monthly listener count Î¼ across ALL artists releasing music (including those below the threshold), and (b) the fraction of all artists covered in the report.",
+    "answer_type":  "numerical",
+    "ground_truth":  {
+                         "true_mean_listeners_k":  10.257,
+                         "fraction_covered":  0.9056
+                     },
+    "tolerance":  0.1,
+    "naive_answer":  "The typical artist has about 11,000 monthly listeners since that is the report average.",
+    "naive_trap":  "About 9% of active artists are below 5,000 listeners and excluded. The true mean is 10,257 â€” 743 lower. A scout using 11,000 as a baseline benchmark is already filtering out the bottom tail before setting thresholds.",
+    "reasoning_trace":  "Step 1: E[X|X\u003e5]=Î¼+4Â·Î»((5-Î¼)/4)=11. Step 2: Solve numerically for Î¼â‰ˆ10.257k. Step 3: Fraction covered=Î¦Ì„((5-10.257)/4)=Î¦Ì„(-1.314)â‰ˆ0.906.",
+    "python_verification":  "from scipy.optimize import brentq\nfrom scipy.stats import norm\ndef eq(mu): a=(5-mu)/4; sf=norm.sf(a); return mu+4*norm.pdf(a)/sf-11 if sf\u003e1e-10 else 1e10\nmu=brentq(eq,10,10.9)\nassert abs(mu-10.257)\u003c0.15\nassert abs(norm.sf((5-mu)/4)-0.9056)\u003c0.01"
+}

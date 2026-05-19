@@ -1,0 +1,63 @@
+﻿{
+    "task_id":  "prism_simp_015",
+    "category":  "simpson",
+    "difficulty":  "medium",
+    "scenario":  "A consumer watchdog compares claim approval rates between two insurance companies (X and Y) across low-risk and high-risk policyholders. Insurer Y advertises a much higher overall approval rate.",
+    "data":  {
+                 "description":  "Claim approval rates by risk tier and insurer.",
+                 "values":  {
+                                "low_risk":  {
+                                                 "insurer_X":  {
+                                                                   "approved":  95,
+                                                                   "total":  100,
+                                                                   "rate":  0.950
+                                                               },
+                                                 "insurer_Y":  {
+                                                                   "approved":  276,
+                                                                   "total":  300,
+                                                                   "rate":  0.920
+                                                               }
+                                             },
+                                "high_risk":  {
+                                                  "insurer_X":  {
+                                                                    "approved":  180,
+                                                                    "total":  300,
+                                                                    "rate":  0.600
+                                                                },
+                                                  "insurer_Y":  {
+                                                                    "approved":  55,
+                                                                    "total":  100,
+                                                                    "rate":  0.550
+                                                                }
+                                              },
+                                "overall":  {
+                                                "insurer_X":  {
+                                                                  "approved":  275,
+                                                                  "total":  400,
+                                                                  "rate":  0.688
+                                                              },
+                                                "insurer_Y":  {
+                                                                  "approved":  331,
+                                                                  "total":  400,
+                                                                  "rate":  0.828
+                                                              }
+                                            }
+                            }
+             },
+    "question":  "Insurer Y\u0027s overall approval rate (82.8%) exceeds Insurer X\u0027s (68.8%). (a) Which insurer approves more low-risk claims? (b) Which approves more high-risk claims? (c) For a policyholder of unknown risk (50/50 mix), compute corrected approval rates and recommend an insurer.",
+    "answer_type":  "comparative",
+    "ground_truth":  {
+                         "low_risk_winner":  "insurer_X",
+                         "high_risk_winner":  "insurer_X",
+                         "insurer_X_corrected":  0.775,
+                         "insurer_Y_corrected":  0.735,
+                         "recommendation":  "insurer_X",
+                         "recommendation_corrected":  "insurer_X",
+                         "explanation":  "Insurer X wins in both risk tiers. Y\u0027s higher aggregate rate is because it serves mostly low-risk policyholders (300/400=75%) where approval rates are high for everyone. At 50/50 mix: X=77.5% \u003e Y=73.5%."
+                     },
+    "tolerance":  0.005,
+    "naive_answer":  "Insurer Y, because 82.8% \u003e 68.8% overall.",
+    "naive_trap":  "Insurer Y\u0027s book is 75% low-risk policyholders. Insurer X\u0027s book is 75% high-risk. The aggregate comparison directly reflects this case-mix difference, not insurer quality.",
+    "reasoning_trace":  "Step 1: Low-risk â€” X=95% \u003e Y=92%. Step 2: High-risk â€” X=60% \u003e Y=55%. X wins both. Step 3: 50/50. X=0.5*0.95+0.5*0.60=0.775. Y=0.5*0.92+0.5*0.55=0.735. Recommend X.",
+    "python_verification":  "pX=0.5*0.95+0.5*0.60; pY=0.5*0.92+0.5*0.55\nassert abs(pX-0.775)\u003c0.001 and abs(pY-0.735)\u003c0.001 and pX\u003epY"
+}

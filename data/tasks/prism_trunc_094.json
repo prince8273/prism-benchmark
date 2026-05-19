@@ -1,0 +1,26 @@
+{
+  "task_id": "prism_trunc_094",
+  "category": "truncated",
+  "difficulty": "hard",
+  "scenario": "A logistics analytics dashboard keeps records only for truck trips longer than 300 km because shorter trips are processed through a local-dispatch module. The transport planner wants the average trip distance across all trips.",
+  "data": {
+    "description": "Only trip distances above 300 km are observed. Distances are modeled as Normal with known standard deviation sigma = 120 km.",
+    "values": {
+      "observed_mean_distance_km": 356.04,
+      "sigma_known_km": 120,
+      "recording_threshold_km": 300,
+      "distribution": "normal(mu, 120^2)"
+    }
+  },
+  "question": "Using the truncated normal model, estimate (a) the true mean trip distance mu across all truck trips, and (b) the fraction of trips that appear in the analytics dashboard.",
+  "answer_type": "numerical",
+  "ground_truth": {
+    "true_mean_distance_km": 144,
+    "fraction_recorded": 0.0968
+  },
+  "tolerance": 6,
+  "naive_answer": "The average truck trip is about 356 km because that is the dashboard mean.",
+  "naive_trap": "The dashboard excludes all short-haul trips, so the observed mean is an upper-tail mean rather than the fleet-wide mean.",
+  "reasoning_trace": "Step 1: Solve 356.04 = mu + 120*lambda((300-mu)/120). Step 2: The solution has alpha about 1.3, so mu = 300 - 1.3*120 = 144. Step 3: The recorded fraction is sf(1.3) = 0.0968.",
+  "python_verification": "from scipy.optimize import brentq\nfrom scipy.stats import norm\ndef eq(mu):\n    a=(300-mu)/120\n    return mu + 120*norm.pdf(a)/norm.sf(a) - 356.04\nmu=brentq(eq,-500,299.99)\nfrac=norm.sf((300-mu)/120)\nassert abs(mu-144) < 6 and abs(frac-0.0968) < 0.005"
+}

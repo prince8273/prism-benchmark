@@ -1,0 +1,43 @@
+{
+  "task_id": "prism_simp_085",
+  "category": "simpson",
+  "difficulty": "hard",
+  "scenario": "A rooftop-solar aggregator compares two installation contractors, Contractor A and Contractor B, across three customer segments: independent houses, apartment societies, and small commercial rooftops. Management prefers Contractor A because its aggregate on-time completion rate is much higher.",
+  "data": {
+    "description": "On-time installation rates by customer segment and contractor.",
+    "values": {
+      "independent_houses": {
+        "contractor_A": { "on_time": 440, "total": 500, "rate": 0.880 },
+        "contractor_B": { "on_time": 90, "total": 100, "rate": 0.900 }
+      },
+      "apartment_societies": {
+        "contractor_A": { "on_time": 63, "total": 100, "rate": 0.630 },
+        "contractor_B": { "on_time": 198, "total": 300, "rate": 0.660 }
+      },
+      "small_commercial": {
+        "contractor_A": { "on_time": 21, "total": 50, "rate": 0.420 },
+        "contractor_B": { "on_time": 230, "total": 500, "rate": 0.460 }
+      },
+      "overall": {
+        "contractor_A": { "on_time": 524, "total": 650, "rate": 0.8062 },
+        "contractor_B": { "on_time": 518, "total": 900, "rate": 0.5756 }
+      }
+    }
+  },
+  "question": "Management recommends Contractor A because its aggregate on-time completion rate is 80.6% versus 57.6% for Contractor B. (a) Which contractor performs better in each customer segment? (b) If the target project mix is 35% independent houses, 40% apartment societies, and 25% small commercial rooftops, compute the corrected on-time completion rate for each contractor. (c) Which contractor should be preferred for the target mix?",
+  "answer_type": "comparative",
+  "ground_truth": {
+    "independent_houses_winner": "contractor_B",
+    "apartment_societies_winner": "contractor_B",
+    "small_commercial_winner": "contractor_B",
+    "contractor_A_corrected": 0.665,
+    "contractor_B_corrected": 0.694,
+    "recommendation": "contractor_B",
+    "explanation": "Contractor B is stronger in all three segments. Contractor A's aggregate edge is caused by being allocated mostly to independent-house projects, which are easier to complete on time."
+  },
+  "tolerance": 0.005,
+  "naive_answer": "Contractor A should be preferred because its aggregate on-time rate is much higher.",
+  "naive_trap": "The overall rate confounds contractor quality with project-mix difficulty. Contractor A handled many more easy independent-house projects, while Contractor B handled more apartment and commercial work.",
+  "reasoning_trace": "Step 1: Independent houses: B=90% > A=88%. Apartment societies: B=66% > A=63%. Small commercial: B=46% > A=42%. Step 2: Apply the target mix. A=0.35*0.88 + 0.4*0.63 + 0.25*0.42 = 0.665. B=0.35*0.90 + 0.4*0.66 + 0.25*0.46 = 0.694. Step 3: Recommend Contractor B.",
+  "python_verification": "pA = 0.35*0.88 + 0.4*0.63 + 0.25*0.42\npB = 0.35*0.90 + 0.4*0.66 + 0.25*0.46\nassert abs(pA-0.665) < 0.001 and abs(pB-0.694) < 0.001 and pB > pA"
+}

@@ -1,0 +1,29 @@
+﻿{
+    "task_id":  "prism_berk_014",
+    "category":  "berkson",
+    "difficulty":  "hard",
+    "scenario":  "In a criminal trial, four eyewitnesses independently identify the defendant from a police lineup. However, all four witnesses viewed the same lineup administered by the same officer â€” and research shows that suggestive lineup procedures (probability 15%) cause all witnesses present to make a positive identification regardless of actual guilt.",
+    "data":  {
+                 "description":  "Four witnesses from the same lineup procedure. Shared suggestive procedure rate = 15%.",
+                 "values":  {
+                                "prior_guilt_probability":  0.15,
+                                "witness_sensitivity":  0.70,
+                                "witness_false_id_rate":  0.15,
+                                "shared_procedure_bias_rate":  0.15,
+                                "n_positive_ids":  4
+                            }
+             },
+    "question":  "All four witnesses make a positive identification. (a) Treating the four IDs as independent (ignoring shared procedure bias), what is the naive posterior probability of guilt? (b) Accounting for the 15% shared procedure bias, what is the correct posterior? (c) By how many times does the naive model overstate the probability of guilt?",
+    "answer_type":  "numerical",
+    "ground_truth":  {
+                         "naive_posterior":  0.9882,
+                         "correct_posterior":  0.2935,
+                         "ratio":  3.37,
+                         "explanation":  "Naive model gives 98.8% guilt probability â€” near certainty. Correct model gives 29.4%, less than a third as certain. A 15% chance that the procedure itself caused all four IDs dramatically reduces the evidential weight of the concurrence."
+                     },
+    "tolerance":  0.005,
+    "naive_answer":  "Four independent positive identifications give approximately 98.8% posterior probability of guilt.",
+    "naive_trap":  "Four witnesses from the same biased lineup procedure are not four independent pieces of evidence. They share a common failure mode. The naive model treats the fourth ID as if it came from an entirely separate event, which it did not.",
+    "reasoning_trace":  "Step 1: P(4 IDs|guilty)=(1-0.15)*0.70â´+0.15=0.85*0.2401+0.15=0.354. Step 2: P(4 IDs|not guilty)=(1-0.15)*0.15â´+0.15=0.85*0.000506+0.15=0.1504. Step 3: Post=0.354*0.15/(0.354*0.15+0.1504*0.85)=0.0531/0.1810=0.2934. Ratio=0.9882/0.2934â‰ˆ3.37.",
+    "python_verification":  "prev=0.15; s=0.70; fp=0.15; pe=0.15\np_g=(1-pe)*s**4+pe; p_ng=(1-pe)*fp**4+pe\npost=p_g*prev/(p_g*prev+p_ng*(1-prev))\nassert abs(post-0.2935)\u003c0.006\na=prev\nfor _ in range(4): a=(s*a)/(s*a+fp*(1-a))\nassert a\u003e0.98"
+}

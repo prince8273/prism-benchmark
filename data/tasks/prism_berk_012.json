@@ -1,0 +1,28 @@
+﻿{
+    "task_id":  "prism_berk_012",
+    "category":  "berkson",
+    "difficulty":  "hard",
+    "scenario":  "Two radiologists independently review the same chest scan and both report a suspicious nodule consistent with malignancy. Unknown to the clinical team, the scan images were acquired with a suboptimal contrast protocol â€” a viewing condition error that affects 10% of scans and causes both readers to over-report nodules regardless of true pathology.",
+    "data":  {
+                 "description":  "Two radiologists review the same physical scan. Shared viewing condition error rate = 10%.",
+                 "values":  {
+                                "cancer_prevalence":  0.05,
+                                "reader_sensitivity":  0.88,
+                                "reader_specificity":  0.92,
+                                "shared_protocol_error_rate":  0.10,
+                                "both_positive":  true
+                            }
+             },
+    "question":  "Both radiologists report a suspicious nodule. (a) Assuming independent readers (ignoring shared scan error), what is the naive posterior probability of cancer? (b) Accounting for the 10% shared protocol error, what is the correct posterior? (c) How should this change the clinical pathway?",
+    "answer_type":  "numerical",
+    "ground_truth":  {
+                         "naive_posterior":  0.8643,
+                         "correct_posterior":  0.2840,
+                         "explanation":  "Naive double-read gives 86.4% cancer probability, likely triggering biopsy. Correct model gives 28.4% â€” still elevated but consistent with additional imaging rather than immediate invasive procedure. The shared scan error is the dominant source of false concurrence."
+                     },
+    "tolerance":  0.005,
+    "naive_answer":  "Two independent positive reads give approximately 86.4% posterior probability of cancer.",
+    "naive_trap":  "Both reads come from the same defective scan. A shared viewing error (10%) would cause both readers to over-report simultaneously. The second read provides far less incremental evidence than a truly independent read would.",
+    "reasoning_trace":  "Step 1: P(both+|cancer)=(1-0.10)*0.88Â²+0.10=0.90*0.7744+0.10=0.797. Step 2: P(both+|no cancer)=(1-0.10)*0.08Â²+0.10=0.90*0.0064+0.10=0.1058. Step 3: Post=0.797*0.05/(0.797*0.05+0.1058*0.95)=0.03985/0.14036=0.2840.",
+    "python_verification":  "prev=0.05; s=0.88; sp=0.92; pe=0.10\np_d=(1-pe)*s**2+pe; p_nd=(1-pe)*(1-sp)**2+pe\npost=p_d*prev/(p_d*prev+p_nd*(1-prev))\nassert abs(post-0.2840)\u003c0.006\na=prev; a=(s*a)/(s*a+(1-sp)*(1-a)); naive=(s*a)/(s*a+(1-sp)*(1-a))\nassert naive\u003e0.85"
+}

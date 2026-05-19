@@ -1,0 +1,32 @@
+{
+  "task_id": "prism_berk_087",
+  "category": "berkson",
+  "difficulty": "hard",
+  "scenario": "A central-government policy fellowship shortlists applicants if they have either exceptional data-analysis skill or exceptional Hindi-policy-writing skill. Additionally, 5% of applicants with neither trait are admitted through a regional-diversity wildcard. Observers notice that shortlisted candidates strong in data analysis seem weak in Hindi writing.",
+  "data": {
+    "description": "The shortlist is selected on either of two strengths plus a small wildcard from the neither group.",
+    "values": {
+      "population_size": 100000,
+      "population_P_data_analysis": 0.12,
+      "population_P_hindi_writing": 0.18,
+      "wildcard_selection_rate_for_neither": 0.05,
+      "shortlisted_total": 31448,
+      "shortlisted_data_analysis": 12000,
+      "shortlisted_hindi_writing": 18000,
+      "shortlisted_both": 2160
+    }
+  },
+  "question": "Among shortlisted applicants, compute (a) P(data-analysis | Hindi-writing, shortlisted), and (b) P(data-analysis | not Hindi-writing, shortlisted). Compare the shortlist association with the population relationship and identify the mechanism.",
+  "answer_type": "numerical",
+  "ground_truth": {
+    "P_data_given_hindi_shortlisted": 0.1200,
+    "P_data_given_not_hindi_shortlisted": 0.7317,
+    "association_type": "selection artifact",
+    "explanation": "The two skills are independent in the population, but shortlisting on either skill induces a spurious negative association in the shortlisted set."
+  },
+  "tolerance": 0.01,
+  "naive_answer": "Shortlisted candidates who are strong in Hindi writing seem less likely to be strong in data analysis, so the two skills must conflict.",
+  "naive_trap": "This is collider bias from selection on either skill. Among shortlisted applicants lacking Hindi-writing skill, most were selected because they had strong data-analysis skill.",
+  "reasoning_trace": "Step 1: P(data | Hindi, shortlisted) = 2160/18000 = 0.12. Step 2: Among not-Hindi shortlisted applicants, data-only = 9840 and wildcard neither = 3608, so P(data | not Hindi, shortlisted) = 9840/(9840+3608) = 0.7317. Step 3: The negative association is induced by the shortlist rule, not by the population.",
+  "python_verification": "p1 = 2160/18000\np2 = 9840/(9840+3608)\nassert abs(p1-0.12) < 0.001 and abs(p2-0.7317) < 0.001 and p2 > p1"
+}

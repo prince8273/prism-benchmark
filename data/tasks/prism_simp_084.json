@@ -1,0 +1,43 @@
+{
+  "task_id": "prism_simp_084",
+  "category": "simpson",
+  "difficulty": "hard",
+  "scenario": "A public-distribution-system digitisation drive compares two outreach teams, Team A and Team B, across three block types: digitally advanced, moderate-connectivity, and low-connectivity blocks. Officials praise Team A because its aggregate Aadhaar-seeding completion rate is much higher.",
+  "data": {
+    "description": "Completion rates by block type and outreach team.",
+    "values": {
+      "digitally_advanced": {
+        "team_A": { "completed": 475, "total": 500, "rate": 0.950 },
+        "team_B": { "completed": 96, "total": 100, "rate": 0.960 }
+      },
+      "moderate_connectivity": {
+        "team_A": { "completed": 70, "total": 100, "rate": 0.700 },
+        "team_B": { "completed": 222, "total": 300, "rate": 0.740 }
+      },
+      "low_connectivity": {
+        "team_A": { "completed": 15, "total": 50, "rate": 0.300 },
+        "team_B": { "completed": 170, "total": 500, "rate": 0.340 }
+      },
+      "overall": {
+        "team_A": { "completed": 560, "total": 650, "rate": 0.8615 },
+        "team_B": { "completed": 488, "total": 900, "rate": 0.5422 }
+      }
+    }
+  },
+  "question": "Officials say Team A is stronger because its aggregate completion rate is 86.2% versus 54.2% for Team B. (a) Which team performs better in each block type? (b) If the state portfolio is 45% digitally advanced, 35% moderate-connectivity, and 20% low-connectivity, compute the corrected completion rate for each team. (c) Which team should be preferred for the full-state rollout?",
+  "answer_type": "comparative",
+  "ground_truth": {
+    "digitally_advanced_winner": "team_B",
+    "moderate_connectivity_winner": "team_B",
+    "low_connectivity_winner": "team_B",
+    "team_A_corrected": 0.7325,
+    "team_B_corrected": 0.7590,
+    "recommendation": "team_B",
+    "explanation": "Team B performs better in all three block types. Team A's aggregate lead is due to being assigned mostly to easier, digitally advanced blocks."
+  },
+  "tolerance": 0.005,
+  "naive_answer": "Team A should lead the rollout because its overall completion rate is much higher.",
+  "naive_trap": "The aggregate numbers ignore the assignment imbalance across block types. Team A's apparent superiority comes from an easier block mix, not better outreach.",
+  "reasoning_trace": "Step 1: Advanced: B=96% > A=95%. Moderate: B=74% > A=70%. Low-connectivity: B=34% > A=30%. Step 2: Apply the state portfolio mix. A=0.45*0.95 + 0.35*0.70 + 0.2*0.30 = 0.7325. B=0.45*0.96 + 0.35*0.74 + 0.2*0.34 = 0.7590. Step 3: Team B is better for the rollout.",
+  "python_verification": "pA = 0.45*0.95 + 0.35*0.70 + 0.2*0.30\npB = 0.45*0.96 + 0.35*0.74 + 0.2*0.34\nassert abs(pA-0.7325) < 0.001 and abs(pB-0.7590) < 0.001 and pB > pA"
+}

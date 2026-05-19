@@ -1,0 +1,27 @@
+﻿{
+    "task_id":  "prism_trunc_015",
+    "category":  "truncated",
+    "difficulty":  "medium",
+    "scenario":  "A real estate analytics firm tracks only properties sold above $200,000 â€” sales below that threshold are excluded as \u0027distressed\u0027 and handled by a separate team. An economist uses the firm\u0027s average to report on housing market health.",
+    "data":  {
+                 "description":  "Database includes only property sales \u003e $200k. Sale prices assumed Normal with known standard deviation Ïƒ = $150k.",
+                 "values":  {
+                                "observed_mean_price_k":  380,
+                                "sigma_known_k":  150,
+                                "inclusion_threshold_k":  200,
+                                "distribution":  "normal(mu, 150^2)",
+                                "currency":  "USD thousands"
+                            }
+             },
+    "question":  "Tracked sales average $380k. Using the truncated normal model, estimate (a) the true mean property sale price Î¼ across all sales (including distressed), and (b) the fraction of all sales that appear in the database.",
+    "answer_type":  "numerical",
+    "ground_truth":  {
+                         "true_mean_price_k":  328,
+                         "fraction_tracked":  0.8040
+                     },
+    "tolerance":  3,
+    "naive_answer":  "The average property sells for approximately $380k since that is the database figure.",
+    "naive_trap":  "About 20% of all sales are below $200k and excluded as distressed. The true market mean is $52k lower at $328k. Reporting $380k as the housing market average misrepresents affordability for buyers in the lower price bands.",
+    "reasoning_trace":  "Step 1: E[X|X\u003e200]=Î¼+150Â·Î»((200-Î¼)/150)=380. Step 2: Solve numerically for Î¼â‰ˆ328k. Step 3: Fraction tracked=Î¦Ì„((200-328)/150)=Î¦Ì„(-0.853)â‰ˆ0.804.",
+    "python_verification":  "from scipy.optimize import brentq\nfrom scipy.stats import norm\ndef eq(mu): a=(200-mu)/150; sf=norm.sf(a); return mu+150*norm.pdf(a)/sf-380 if sf\u003e1e-10 else 1e10\nmu=brentq(eq,100,379)\nassert abs(mu-328)\u003c5\nassert abs(norm.sf((200-mu)/150)-0.8040)\u003c0.01"
+}

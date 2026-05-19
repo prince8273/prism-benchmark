@@ -1,0 +1,27 @@
+{
+  "task_id": "prism_trunc_095",
+  "category": "truncated",
+  "difficulty": "hard",
+  "scenario": "A temple-trust finance report lists only hundi-donation days with collections above Rs 50,000, because smaller daily collections are aggregated elsewhere. A trustee wants the average daily donation amount across all days.",
+  "data": {
+    "description": "Only donation totals above Rs 50,000 are observed. Daily donations are modeled as Normal with known standard deviation sigma = Rs 20,000.",
+    "values": {
+      "observed_mean_donations": 59060,
+      "sigma_known": 20000,
+      "recording_threshold": 50000,
+      "distribution": "normal(mu, 20000^2)",
+      "currency": "INR"
+    }
+  },
+  "question": "Using the truncated normal model, estimate (a) the true mean daily donation mu across all days, and (b) the fraction of days that appear in the finance report.",
+  "answer_type": "numerical",
+  "ground_truth": {
+    "true_mean_donations": 22000,
+    "fraction_recorded": 0.0808
+  },
+  "tolerance": 1500,
+  "naive_answer": "The average daily donation is about Rs 59,060 because that is the report mean.",
+  "naive_trap": "The report includes only high-collection days, which strongly overstates the average over all days.",
+  "reasoning_trace": "Step 1: Solve 59060 = mu + 20000*lambda((50000-mu)/20000). Step 2: The solution has alpha about 1.4, so mu = 50000 - 1.4*20000 = 22000. Step 3: The recorded fraction is sf(1.4) = 0.0808.",
+  "python_verification": "from scipy.optimize import brentq\nfrom scipy.stats import norm\ndef eq(mu):\n    a=(50000-mu)/20000\n    return mu + 20000*norm.pdf(a)/norm.sf(a) - 59060\nmu=brentq(eq,-100000,49999)\nfrac=norm.sf((50000-mu)/20000)\nassert abs(mu-22000) < 1500 and abs(frac-0.0808) < 0.005"
+}

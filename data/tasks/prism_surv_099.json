@@ -1,0 +1,26 @@
+{
+  "task_id": "prism_surv_099",
+  "category": "survival",
+  "difficulty": "hard",
+  "scenario": "A handicraft marketplace features only sellers that remain active for two years and exceed monthly GMV of Rs 10 lakh. An investor uses the featured average GMV to reason about the typical seller on the platform.",
+  "data": {
+    "description": "Only surviving sellers with GMV above Rs 10 lakh are featured. Monthly GMV is modeled as Normal with known standard deviation sigma = Rs 5 lakh.",
+    "values": {
+      "observed_mean_gmv_lakh": 12.19,
+      "sigma_known_lakh": 5,
+      "feature_threshold_lakh": 10,
+      "distribution": "normal(mu, 5^2)"
+    }
+  },
+  "question": "Using the truncated normal model, estimate (a) the true mean monthly GMV mu across all sellers, and (b) the fraction of sellers that appear in the featured set.",
+  "answer_type": "numerical",
+  "ground_truth": {
+    "true_mean_gmv_lakh": 2.5,
+    "fraction_featured": 0.0668
+  },
+  "tolerance": 0.2,
+  "naive_answer": "The typical seller likely does about Rs 12.19 lakh GMV per month because that is the featured average.",
+  "naive_trap": "The featured set contains only upper-tail surviving sellers. It excludes most marketplace sellers and thus badly overstates typical GMV.",
+  "reasoning_trace": "Step 1: Solve 12.19 = mu + 5*lambda((10-mu)/5). Step 2: The solution has alpha about 1.5, so mu = 10 - 1.5*5 = 2.5. Step 3: The featured fraction is sf(1.5) = 0.0668.",
+  "python_verification": "from scipy.optimize import brentq\nfrom scipy.stats import norm\ndef eq(mu):\n    a=(10-mu)/5\n    return mu + 5*norm.pdf(a)/norm.sf(a) - 12.19\nmu=brentq(eq,-20,9.99)\nfrac=norm.sf((10-mu)/5)\nassert abs(mu-2.5) < 0.2 and abs(frac-0.0668) < 0.005"
+}

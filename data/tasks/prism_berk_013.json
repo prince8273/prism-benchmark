@@ -1,0 +1,28 @@
+﻿{
+    "task_id":  "prism_berk_013",
+    "category":  "berkson",
+    "difficulty":  "hard",
+    "scenario":  "Two credit scoring models both flag a loan applicant as high default risk. Both models are built using the same bureau data feed â€” when the bureau data contains a systematic reporting error (probability 12%), both models incorrectly flag the applicant as risky regardless of true creditworthiness.",
+    "data":  {
+                 "description":  "Two credit models share the same bureau data source. Shared data error rate = 12%.",
+                 "values":  {
+                                "default_prevalence":  0.03,
+                                "model_sensitivity":  0.80,
+                                "model_specificity":  0.90,
+                                "shared_data_error_rate":  0.12,
+                                "both_flagged":  true
+                            }
+             },
+    "question":  "Both credit models flag the applicant. (a) Assuming independent models, what is the naive posterior probability of default? (b) Accounting for the 12% shared data error, what is the correct posterior? (c) What does this imply about using correlated model outputs as independent evidence?",
+    "answer_type":  "numerical",
+    "ground_truth":  {
+                         "naive_posterior":  0.6644,
+                         "correct_posterior":  0.1409,
+                         "explanation":  "Naive independent-model assumption gives 66.4% default probability, likely causing rejection. Correct model gives 14.1% â€” the risk is real but much lower. Building two models on the same data and treating their outputs as independent evidence is a common and costly mistake in credit risk."
+                     },
+    "tolerance":  0.005,
+    "naive_answer":  "Two independent models both flagging default gives approximately 66.4% posterior probability.",
+    "naive_trap":  "Both models trained on the same bureau data are correlated, not independent. A shared data error (12%) causes simultaneous false flags. The correct posterior is less than a quarter of the naive estimate.",
+    "reasoning_trace":  "Step 1: P(both flag|default)=(1-0.12)*0.80Â²+0.12=0.88*0.64+0.12=0.683. Step 2: P(both flag|no default)=(1-0.12)*0.10Â²+0.12=0.88*0.01+0.12=0.1288. Step 3: Post=0.683*0.03/(0.683*0.03+0.1288*0.97)=0.02049/0.14543=0.1409.",
+    "python_verification":  "prev=0.03; s=0.80; sp=0.90; pe=0.12\np_d=(1-pe)*s**2+pe; p_nd=(1-pe)*(1-sp)**2+pe\npost=p_d*prev/(p_d*prev+p_nd*(1-prev))\nassert abs(post-0.1409)\u003c0.006\na=prev; a=(s*a)/(s*a+(1-sp)*(1-a)); naive=(s*a)/(s*a+(1-sp)*(1-a))\nassert naive\u003e0.60"
+}

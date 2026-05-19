@@ -1,0 +1,26 @@
+{
+  "task_id": "prism_surv_098",
+  "category": "survival",
+  "difficulty": "hard",
+  "scenario": "A property portal's premium report lists only housing projects that remain active after three years and achieve occupancy above 90%. A developer uses the report's average occupancy to estimate the typical occupancy rate across all launched projects.",
+  "data": {
+    "description": "Only surviving projects with occupancy above 90% are listed. Occupancy is modeled as Normal with known standard deviation sigma = 15 percentage points.",
+    "values": {
+      "observed_mean_occupancy_pct": 96.80,
+      "sigma_known_pct": 15,
+      "listing_threshold_pct": 90,
+      "distribution": "normal(mu, 15^2)"
+    }
+  },
+  "question": "Using the truncated normal model, estimate (a) the true mean occupancy rate mu across all launched projects, and (b) the fraction of projects that appear in the premium report.",
+  "answer_type": "numerical",
+  "ground_truth": {
+    "true_mean_occupancy_pct": 69,
+    "fraction_listed": 0.0808
+  },
+  "tolerance": 1,
+  "naive_answer": "Typical occupancy is about 96.8% because that is the premium-report average.",
+  "naive_trap": "The portal lists only unusually successful surviving projects. That selection dramatically inflates the observed average occupancy.",
+  "reasoning_trace": "Step 1: Solve 96.80 = mu + 15*lambda((90-mu)/15). Step 2: The solution has alpha about 1.4, so mu = 90 - 1.4*15 = 69. Step 3: The listed fraction is sf(1.4) = 0.0808.",
+  "python_verification": "from scipy.optimize import brentq\nfrom scipy.stats import norm\ndef eq(mu):\n    a=(90-mu)/15\n    return mu + 15*norm.pdf(a)/norm.sf(a) - 96.80\nmu=brentq(eq,-100,89.99)\nfrac=norm.sf((90-mu)/15)\nassert abs(mu-69) < 1 and abs(frac-0.0808) < 0.005"
+}

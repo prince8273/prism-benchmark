@@ -1,0 +1,43 @@
+{
+  "task_id": "prism_simp_081",
+  "category": "simpson",
+  "difficulty": "hard",
+  "scenario": "An Indian e-commerce platform compares two parcel-routing systems, Route A and Route B, across three delivery zones: metro cities, tier-2 cities, and rural districts. Management prefers Route A because the aggregate successful-delivery rate looks much higher.",
+  "data": {
+    "description": "Successful-delivery rates by zone and routing system.",
+    "values": {
+      "metro": {
+        "route_A": { "delivered": 480, "total": 500, "rate": 0.960 },
+        "route_B": { "delivered": 98, "total": 100, "rate": 0.980 }
+      },
+      "tier_2": {
+        "route_A": { "delivered": 82, "total": 100, "rate": 0.820 },
+        "route_B": { "delivered": 252, "total": 300, "rate": 0.840 }
+      },
+      "rural": {
+        "route_A": { "delivered": 29, "total": 50, "rate": 0.580 },
+        "route_B": { "delivered": 300, "total": 500, "rate": 0.600 }
+      },
+      "overall": {
+        "route_A": { "delivered": 591, "total": 650, "rate": 0.9092 },
+        "route_B": { "delivered": 650, "total": 900, "rate": 0.7222 }
+      }
+    }
+  },
+  "question": "The aggregate dashboard recommends Route A because its overall successful-delivery rate is 90.9% versus 72.2% for Route B. (a) Which routing system performs better in metro, tier-2, and rural zones respectively? (b) If the platform's target shipment mix is 40% metro, 35% tier-2, and 25% rural, compute the corrected successful-delivery rate for each route. (c) Which route should be preferred for the target mix?",
+  "answer_type": "comparative",
+  "ground_truth": {
+    "metro_winner": "route_B",
+    "tier_2_winner": "route_B",
+    "rural_winner": "route_B",
+    "route_A_corrected": 0.816,
+    "route_B_corrected": 0.836,
+    "recommendation": "route_B",
+    "explanation": "Route B is better in all three zones. Route A only looks better overall because it handled a much more metro-heavy shipment mix, where delivery is easier for both systems."
+  },
+  "tolerance": 0.005,
+  "naive_answer": "Route A should be preferred because its aggregate delivery rate is much higher.",
+  "naive_trap": "Route A's aggregate lead is entirely due to case-mix: it handled disproportionately many metro deliveries, while Route B handled many more rural shipments. Comparing overall rates hides the within-zone performance.",
+  "reasoning_trace": "Step 1: Compare by zone. Metro: B=98% > A=96%. Tier-2: B=84% > A=82%. Rural: B=60% > A=58%. Step 2: Apply the target shipment mix. A=0.4*0.96 + 0.35*0.82 + 0.25*0.58 = 0.816. B=0.4*0.98 + 0.35*0.84 + 0.25*0.60 = 0.836. Step 3: Route B is the correct choice for the target mix.",
+  "python_verification": "pA = 0.4*0.96 + 0.35*0.82 + 0.25*0.58\npB = 0.4*0.98 + 0.35*0.84 + 0.25*0.60\nassert abs(pA-0.816) < 0.001 and abs(pB-0.836) < 0.001 and pB > pA"
+}

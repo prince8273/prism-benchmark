@@ -1,0 +1,27 @@
+﻿{
+    "task_id":  "prism_trunc_013",
+    "category":  "truncated",
+    "difficulty":  "hard",
+    "scenario":  "A wealth inequality study uses survey data that only captures households with net worth above $500,000, as the survey was distributed through high-net-worth banking channels. A policy researcher uses the survey\u0027s average wealth to model inequality.",
+    "data":  {
+                 "description":  "Survey captures households with net worth \u003e $500k only. Net worth assumed Normal with known standard deviation Ïƒ = $300k.",
+                 "values":  {
+                                "observed_mean_wealth_k":  900,
+                                "sigma_known_k":  300,
+                                "survey_threshold_k":  500,
+                                "distribution":  "normal(mu, 300^2)",
+                                "currency":  "USD thousands"
+                            }
+             },
+    "question":  "The survey reports a mean household net worth of $900k. Using the truncated normal model, estimate (a) the true mean household net worth Î¼ across the full population, and (b) the fraction of households captured by the survey.",
+    "answer_type":  "numerical",
+    "ground_truth":  {
+                         "true_mean_wealth_k":  821,
+                         "fraction_captured":  0.8580
+                     },
+    "tolerance":  5,
+    "naive_answer":  "The average household net worth is approximately $900k since that is the survey figure.",
+    "naive_trap":  "The survey misses the bottom 14% of the wealth distribution below $500k. The true population mean is about $79k lower at $821k. Using $900k to calibrate inequality models would understate the gap between the surveyed population and those below the threshold.",
+    "reasoning_trace":  "Step 1: E[X|X\u003e500]=Î¼+300Â·Î»((500-Î¼)/300)=900. Step 2: Solve numerically for Î¼â‰ˆ821k. Step 3: Fraction captured=Î¦Ì„((500-821)/300)=Î¦Ì„(-1.07)â‰ˆ0.858.",
+    "python_verification":  "from scipy.optimize import brentq\nfrom scipy.stats import norm\ndef eq(mu): a=(500-mu)/300; sf=norm.sf(a); return mu+300*norm.pdf(a)/sf-900 if sf\u003e1e-10 else 1e10\nmu=brentq(eq,100,899)\nassert abs(mu-821)\u003c8\nassert abs(norm.sf((500-mu)/300)-0.8580)\u003c0.01"
+}

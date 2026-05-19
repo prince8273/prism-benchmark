@@ -1,0 +1,32 @@
+{
+  "task_id": "prism_berk_089",
+  "category": "berkson",
+  "difficulty": "hard",
+  "scenario": "A Republic Day parade camp shortlists cadets if they have either elite marching precision or elite brass-band skill. A 5% cultural quota also admits cadets with neither trait. Organisers notice that top marchers in the camp seem less likely to be top band performers.",
+  "data": {
+    "description": "The camp shortlist is driven by either marching or band skill, with a small wildcard quota.",
+    "values": {
+      "population_size": 100000,
+      "population_P_marching": 0.10,
+      "population_P_band_skill": 0.12,
+      "wildcard_selection_rate_for_neither": 0.05,
+      "shortlisted_total": 24760,
+      "shortlisted_marching": 10000,
+      "shortlisted_band_skill": 12000,
+      "shortlisted_both": 1200
+    }
+  },
+  "question": "Among shortlisted cadets, compute (a) P(marching | band-skill, shortlisted), and (b) P(marching | not band-skill, shortlisted). Is the negative relationship in the camp a real population pattern or a consequence of the shortlist rule?",
+  "answer_type": "numerical",
+  "ground_truth": {
+    "P_marching_given_band_shortlisted": 0.1000,
+    "P_marching_given_not_band_shortlisted": 0.6897,
+    "association_type": "selection artifact",
+    "explanation": "Marching and band skill are independent in the population, but conditioning on shortlist status creates a spurious negative association."
+  },
+  "tolerance": 0.01,
+  "naive_answer": "Strong band cadets seem less likely to be strong marchers, so there must be a real tradeoff.",
+  "naive_trap": "This is another collider problem: cadets are admitted for either strength, so those without band skill are disproportionately present only if they have strong marching skill.",
+  "reasoning_trace": "Step 1: P(marching | band, shortlisted) = 1200/12000 = 0.10. Step 2: Among not-band shortlisted cadets, marching-only = 8800 and wildcard neither = 3960, so P(marching | not band, shortlisted) = 8800/(8800+3960) = 0.6897. Step 3: The negative association is induced by the selection rule.",
+  "python_verification": "p1 = 1200/12000\np2 = 8800/(8800+3960)\nassert abs(p1-0.10) < 0.001 and abs(p2-0.6897) < 0.001 and p2 > p1"
+}

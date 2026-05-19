@@ -1,0 +1,28 @@
+﻿{
+    "task_id":  "prism_berk_011",
+    "category":  "berkson",
+    "difficulty":  "hard",
+    "scenario":  "An industrial plant uses two independent sensors to detect equipment faults. Both sensors trigger an alarm simultaneously. However, the sensors share a common power supply â€” when the shared power supply drifts (probability 6%), both sensors produce spurious alarms regardless of whether there is a real fault.",
+    "data":  {
+                 "description":  "Two sensors share a power supply. Shared drift causes both to alarm simultaneously with probability 6%.",
+                 "values":  {
+                                "fault_prevalence":  0.02,
+                                "sensor_sensitivity":  0.95,
+                                "sensor_specificity":  0.98,
+                                "shared_drift_rate":  0.06,
+                                "both_alarming":  true
+                            }
+             },
+    "question":  "Both sensors are alarming simultaneously. (a) Assuming the sensors are independent (ignoring shared power drift), what is the posterior probability of a real fault? (b) Accounting for the 6% shared drift rate, what is the correct posterior? (c) What is the practical implication for maintenance decision-making?",
+    "answer_type":  "numerical",
+    "ground_truth":  {
+                         "naive_posterior":  0.9787,
+                         "correct_posterior":  0.2349,
+                         "explanation":  "Naive model treats simultaneous alarms as near-certain fault evidence (97.9%). Correct model recognises that a 6% shared-drift event would also cause both alarms â€” reducing posterior to 23.5%. The correct response is investigation, not emergency shutdown."
+                     },
+    "tolerance":  0.005,
+    "naive_answer":  "Both sensors alarming simultaneously gives approximately 97.9% probability of a real fault.",
+    "naive_trap":  "Shared power supply makes simultaneous alarms far more likely as an artefact than the naive model assumes. The second alarm provides almost no additional information when both sensors share a failure mode.",
+    "reasoning_trace":  "Step 1: P(both|fault)=(1-0.06)*0.95Â²+0.06=0.94*0.9025+0.06=0.908. Step 2: P(both|no fault)=(1-0.06)*0.02Â²+0.06=0.94*0.0004+0.06=0.0604. Step 3: Post=0.908*0.02/(0.908*0.02+0.0604*0.98)=0.01816/0.07755=0.2342â‰ˆ0.2349.",
+    "python_verification":  "prev=0.02; s=0.95; sp=0.98; pe=0.06\np_f=(1-pe)*s**2+pe; p_nf=(1-pe)*(1-sp)**2+pe\npost=p_f*prev/(p_f*prev+p_nf*(1-prev))\nassert abs(post-0.2349)\u003c0.006\na=prev; a=(s*a)/(s*a+(1-sp)*(1-a)); naive=(s*a)/(s*a+(1-sp)*(1-a))\nassert naive\u003e0.97"
+}

@@ -1,0 +1,62 @@
+﻿{
+    "task_id":  "prism_simp_017",
+    "category":  "simpson",
+    "difficulty":  "hard",
+    "scenario":  "A banking regulator compares loan default rates between two lenders (P and Q) across secured and unsecured loan products. Lender P appears to have a far lower default rate in the aggregate report.",
+    "data":  {
+                 "description":  "Default rates by loan type and lender. Lower default rate is better.",
+                 "values":  {
+                                "secured_loans":  {
+                                                      "lender_P":  {
+                                                                       "defaulted":  9,
+                                                                       "total":  180,
+                                                                       "rate":  0.050
+                                                                   },
+                                                      "lender_Q":  {
+                                                                       "defaulted":  1,
+                                                                       "total":  20,
+                                                                       "rate":  0.040
+                                                                   }
+                                                  },
+                                "unsecured_loans":  {
+                                                        "lender_P":  {
+                                                                         "defaulted":  4,
+                                                                         "total":  20,
+                                                                         "rate":  0.200
+                                                                     },
+                                                        "lender_Q":  {
+                                                                         "defaulted":  32,
+                                                                         "total":  180,
+                                                                         "rate":  0.180
+                                                                     }
+                                                    },
+                                "overall":  {
+                                                "lender_P":  {
+                                                                 "defaulted":  13,
+                                                                 "total":  200,
+                                                                 "rate":  0.065
+                                                             },
+                                                "lender_Q":  {
+                                                                 "defaulted":  33,
+                                                                 "total":  200,
+                                                                 "rate":  0.166
+                                                             }
+                                            }
+                            }
+             },
+    "question":  "Lender P\u0027s overall default rate (6.5%) is far lower than Lender Q\u0027s (16.6%). The regulator considers P the safer lender. (a) Which lender has the lower default rate on secured loans? (b) Which has the lower default rate on unsecured loans? (c) If both lenders had equal proportions of secured and unsecured loans (50/50), compute corrected default rates. Which lender is actually safer?",
+    "answer_type":  "comparative",
+    "ground_truth":  {
+                         "secured_winner":  "lender_Q",
+                         "unsecured_winner":  "lender_Q",
+                         "lender_P_corrected":  0.125,
+                         "lender_Q_corrected":  0.110,
+                         "safer_lender":  "lender_Q",
+                         "explanation":  "Lender Q has lower default rates on both secured (4% vs 5%) and unsecured loans (18% vs 20%). The regulator\u0027s conclusion is wrong. P\u0027s lower aggregate rate is because P\u0027s book is 90% secured loans (low default by nature) while Q\u0027s is 90% unsecured loans (high default by nature)."
+                     },
+    "tolerance":  0.005,
+    "naive_answer":  "Lender P is safer because its overall default rate of 6.5% is far below Lender Q\u0027s 16.6%.",
+    "naive_trap":  "Lender P originates 90% secured loans. Lender Q originates 90% unsecured loans. Comparing aggregate default rates conflates product-mix composition with lending quality. Q actually performs better within each product type.",
+    "reasoning_trace":  "Step 1: Secured â€” Q=4% \u003c P=5%. Q wins. Step 2: Unsecured â€” Q=18% \u003c P=20%. Q wins. Step 3: 50/50. P=0.5*0.05+0.5*0.20=0.125. Q=0.5*0.04+0.5*0.18=0.110. Q is safer.",
+    "python_verification":  "pP=0.5*0.05+0.5*0.20; pQ=0.5*0.04+0.5*0.18\nassert abs(pP-0.125)\u003c0.001 and abs(pQ-0.110)\u003c0.001 and pQ\u003cpP"
+}

@@ -1,0 +1,26 @@
+{
+  "task_id": "prism_surv_097",
+  "category": "survival",
+  "difficulty": "hard",
+  "scenario": "An export-promotion newsletter features only textile exporters that remain active for three years and post annual export-growth above 40%. A trade analyst uses the newsletter average to estimate typical growth across all exporters.",
+  "data": {
+    "description": "Only exporters with growth above 40 percentage points and enough survivorship are included. Growth is modeled as Normal with known standard deviation sigma = 25 percentage points.",
+    "values": {
+      "observed_mean_growth_pp": 52.13,
+      "sigma_known_pp": 25,
+      "feature_threshold_pp": 40,
+      "distribution": "normal(mu, 25^2)"
+    }
+  },
+  "question": "Using the truncated normal model, estimate (a) the true mean annual export-growth rate mu across all exporters, and (b) the fraction of exporters that appear in the newsletter.",
+  "answer_type": "numerical",
+  "ground_truth": {
+    "true_mean_growth_pp": 10,
+    "fraction_featured": 0.1151
+  },
+  "tolerance": 1,
+  "naive_answer": "Typical exporter growth is about 52 percentage points because that is the newsletter average.",
+  "naive_trap": "The newsletter features only upper-tail survivors, not the full exporter base.",
+  "reasoning_trace": "Step 1: Solve 52.13 = mu + 25*lambda((40-mu)/25). Step 2: The solution has alpha about 1.2, so mu = 40 - 1.2*25 = 10. Step 3: The featured fraction is sf(1.2) = 0.1151.",
+  "python_verification": "from scipy.optimize import brentq\nfrom scipy.stats import norm\ndef eq(mu):\n    a=(40-mu)/25\n    return mu + 25*norm.pdf(a)/norm.sf(a) - 52.13\nmu=brentq(eq,-100,39.99)\nfrac=norm.sf((40-mu)/25)\nassert abs(mu-10) < 1 and abs(frac-0.1151) < 0.005"
+}
