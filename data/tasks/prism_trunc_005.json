@@ -1,0 +1,27 @@
+﻿{
+    "task_id":  "prism_trunc_005",
+    "category":  "truncated",
+    "difficulty":  "medium",
+    "scenario":  "An insurance company\u0027s claims database only records claims above the $2,000 deductible â€” smaller claims are settled directly and not logged. An actuary uses the database to model the average claim size for reserve planning.",
+    "data":  {
+                 "description":  "Only claims exceeding the $2,000 deductible appear in the database. Claim sizes assumed Normal with known standard deviation Ïƒ = $1,500.",
+                 "values":  {
+                                "observed_mean_claim":  3200,
+                                "sigma_known":  1500,
+                                "deductible_threshold":  2000,
+                                "distribution":  "normal(mu, 1500^2)",
+                                "currency":  "USD"
+                            }
+             },
+    "question":  "The claims database shows a mean claim of $3,200. Using the truncated normal model, estimate (a) the true mean claim size Î¼ across ALL claims (including those below the deductible), and (b) the fraction of all claims that exceed the deductible and appear in the database.",
+    "answer_type":  "numerical",
+    "ground_truth":  {
+                         "true_mean_claim":  2009,
+                         "fraction_above_deductible":  0.5023
+                     },
+    "tolerance":  20,
+    "naive_answer":  "The true mean claim is approximately $3,200 since that is the database average.",
+    "naive_trap":  "All claims below $2,000 are excluded. The true mean is close to the deductible threshold â€” about half of all claims are below it and invisible to the actuary. Using $3,200 as the reserve basis would overstate expected costs for the full book by about $1,200 per claim.",
+    "reasoning_trace":  "Step 1: E[X|X\u003e2000] = Î¼ + 1500Â·Î»((2000-Î¼)/1500) = 3200. Step 2: Solve numerically. At Î¼â‰ˆ2009: Î±=(2000-2009)/1500=-0.006, Î»â‰ˆ0.799. 2009+1500Ã—0.799â‰ˆ3207â‰ˆ3200 âœ“. Step 3: Fraction above deductible = Î¦Ì„(-0.006) â‰ˆ 0.502.",
+    "python_verification":  "from scipy.optimize import brentq\nfrom scipy.stats import norm\ndef eq(mu): a=(2000-mu)/1500; sf=norm.sf(a); return mu+1500*norm.pdf(a)/sf-3200 if sf\u003e1e-10 else 1e10\nmu=brentq(eq,100,3199)\nassert abs(mu-2009)\u003c25\nassert abs(norm.sf((2000-mu)/1500)-0.5023)\u003c0.01"
+}

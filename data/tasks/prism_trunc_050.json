@@ -1,0 +1,26 @@
+{
+  "task_id": "prism_trunc_050",
+  "category": "truncated",
+  "difficulty": "hard",
+  "scenario": "A climate-reporting platform logs only manufacturing plants with annual emissions above 500 tons because lower-emission facilities are exempt from mandatory filing. A policy analyst wants the mean emissions across all plants in the sector.",
+  "data": {
+    "description": "Only plants above 500 tons are observed. Emissions are modeled as Normal with known standard deviation sigma = 180 tons.",
+    "values": {
+      "observed_mean_tons": 602.13,
+      "sigma_known_tons": 180,
+      "reporting_threshold_tons": 500,
+      "distribution": "normal(mu, 180^2)"
+    }
+  },
+  "question": "Using the truncated normal model, estimate (a) the true mean annual emissions mu across all plants and (b) the fraction of plants that appear in the reporting platform.",
+  "answer_type": "numerical",
+  "ground_truth": {
+    "true_mean_tons": 356,
+    "fraction_reported": 0.2119
+  },
+  "tolerance": 6,
+  "naive_answer": "Average sector emissions are about 602 tons because that is the mean among reported plants.",
+  "naive_trap": "The filing threshold excludes the lower-emission majority of plants. The observed mean is an upper-tail mean, not the sector-wide average.",
+  "reasoning_trace": "Step 1: Solve 602.13 = mu + 180*lambda((500-mu)/180). Step 2: The solution has alpha about 0.8, implying mu = 500 - 0.8*180 = 356. Step 3: The reporting fraction is sf(0.8) about 0.2119.",
+  "python_verification": "from scipy.optimize import brentq\nfrom scipy.stats import norm\ndef eq(mu):\n    a=(500-mu)/180\n    return mu + 180*norm.pdf(a)/norm.sf(a) - 602.13\nmu=brentq(eq,-1000,499.99)\nfrac=norm.sf((500-mu)/180)\nassert abs(mu-356)<6 and abs(frac-0.2119)<0.005"
+}

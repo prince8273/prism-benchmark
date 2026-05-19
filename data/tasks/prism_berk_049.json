@@ -1,0 +1,28 @@
+{
+  "task_id": "prism_berk_049",
+  "category": "berkson",
+  "difficulty": "hard",
+  "scenario": "An anti-doping lab runs three assays on the same urine sample. Investigators know that 2% of the time, a contamination event during sample preparation causes all three assays to return positive even for clean athletes.",
+  "data": {
+    "description": "Three positive assays from the same sample, with a shared contamination failure mode.",
+    "values": {
+      "doping_prevalence": 0.005,
+      "assay_sensitivity": 0.97,
+      "assay_specificity": 0.99,
+      "shared_contamination_rate": 0.02,
+      "n_positive_assays": 3,
+      "dependence_note": "If contamination occurs, all three assays read positive regardless of truth."
+    }
+  },
+  "question": "Given three positive assays, compute the posterior probability that the athlete truly doped under the shared-contamination model. Also compute the naive posterior that incorrectly assumes the three assays are conditionally independent.",
+  "answer_type": "numerical",
+  "ground_truth": {
+    "correct_posterior": 0.1868,
+    "naive_posterior_independent": 0.9998
+  },
+  "tolerance": 0.01,
+  "naive_answer": "Three positive assays make doping virtually certain.",
+  "naive_trap": "A shared contamination event can generate all three positives at once, so the tests are far from independent.",
+  "reasoning_trace": "Step 1: P(+++\u007c doped) = (1-0.02)*0.97^3 + 0.02 = 0.9144. Step 2: P(+++\u007c clean) = (1-0.02)*0.01^3 + 0.02 about 0.0200. Step 3: Bayes with prevalence 0.005 gives a posterior of about 0.1868. Step 4: The naive independent calculation is nearly 1.0 because it treats the false-positive rate as 0.01^3.",
+  "python_verification": "prev=0.005; sens=0.97; spec=0.99; pe=0.02\np_pos_d=(1-pe)*sens**3 + pe\np_pos_nd=(1-pe)*(1-spec)**3 + pe\nposterior=p_pos_d*prev/(p_pos_d*prev+p_pos_nd*(1-prev))\nnaive=(sens**3)*prev/((sens**3)*prev+((1-spec)**3)*(1-prev))\nassert abs(posterior-0.1868)<0.005 and abs(naive-0.9998)<0.01"
+}

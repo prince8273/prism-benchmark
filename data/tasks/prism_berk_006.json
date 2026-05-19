@@ -1,0 +1,30 @@
+﻿{
+    "task_id":  "prism_berk_006",
+    "category":  "berkson",
+    "difficulty":  "medium",
+    "scenario":  "A venture capital analyst studies whether startups with strong technical quality tend to target smaller markets, using data from a portfolio of funded companies. The fund invests in startups that have either high technical quality OR a large addressable market (or both).",
+    "data":  {
+                 "description":  "In the population of all startups, technical quality and market size are independent. The fund invests if high technical quality OR large market (or both).",
+                 "values":  {
+                                "population_P_high_tech_quality":  0.20,
+                                "population_P_large_market":  0.25,
+                                "independence_in_population":  true,
+                                "investment_criterion":  "invested if high_tech OR large_market",
+                                "analyst_observation":  "Among funded startups, high-tech companies rarely have large markets"
+                            }
+             },
+    "question":  "Among funded startups, the analyst finds P(high tech quality | large market) = 20% but P(high tech quality | NOT large market) = 100%, concluding that technical ambition and market size are negatively correlated in startups. (a) Verify both conditional probabilities from the selection model. (b) Is this correlation real in the startup population? (c) What fraction of all startups receive funding?",
+    "answer_type":  "numerical",
+    "ground_truth":  {
+                         "P_tech_given_large_market_funded":  0.200,
+                         "P_tech_given_not_large_market_funded":  1.000,
+                         "population_correlation":  "independent",
+                         "fraction_funded":  0.400,
+                         "explanation":  "Berkson\u0027s paradox. Funded startups without large markets are 100% high-tech â€” that is the only reason they got funding. Among large-market startups, the fraction with high tech quality equals the population base rate (20%). The funding OR-criterion creates the spurious negative correlation."
+                     },
+    "tolerance":  0.005,
+    "naive_answer":  "Technical quality and market size are negatively correlated among startups: the best engineers target niche markets.",
+    "naive_trap":  "The OR-selection mechanism creates the illusion. Startups without a large market must be high-tech to receive funding. Among large-market startups, technical quality appears at its population base rate. The observed negative correlation is purely an artifact of the funding criterion.",
+    "reasoning_trace":  "p_T=0.20, p_M=0.25, independent. P(funded)=0.20+0.25-0.05=0.40. P(T|M,funded)=P(Tâˆ©M)/P(M)=0.05/0.25=0.20=p_T. P(T|notM,funded)=P(Tâˆ©notM)/P(notMâˆ©funded)=(0.20*0.75)/(0.40-0.25)=0.15/0.15=1.0.",
+    "python_verification":  "p_T=0.20; p_M=0.25; p_f=p_T+p_M-p_T*p_M\ng_M=p_T*p_M/p_M; g_NM=p_T*(1-p_M)/(p_f-p_M)\nassert abs(g_M-0.20)\u003c0.001 and abs(g_NM-1.00)\u003c0.001 and abs(p_f-0.40)\u003c0.001"
+}

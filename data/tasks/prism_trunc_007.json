@@ -1,0 +1,26 @@
+﻿{
+    "task_id":  "prism_trunc_007",
+    "category":  "truncated",
+    "difficulty":  "medium",
+    "scenario":  "A UX analytics platform only logs user sessions lasting longer than 30 seconds (shorter sessions are classified as bounces and discarded from the engagement database). A product manager uses the average logged session duration to report \u0027user engagement\u0027.",
+    "data":  {
+                 "description":  "Only sessions with duration \u003e 30 seconds are logged. Underlying session durations assumed Normal with known standard deviation Ïƒ = 60 seconds.",
+                 "values":  {
+                                "observed_mean_duration_sec":  120,
+                                "sigma_known_sec":  60,
+                                "logging_threshold_sec":  30,
+                                "distribution":  "normal(mu, 60^2)"
+                            }
+             },
+    "question":  "The engagement database shows a mean session duration of 120 seconds. Using the truncated normal model, estimate (a) the true mean session duration Î¼ across ALL visits (including bounces), and (b) the fraction of all visits that are logged as engaged sessions.",
+    "answer_type":  "numerical",
+    "ground_truth":  {
+                         "true_mean_duration_sec":  108.86,
+                         "fraction_logged":  0.9056
+                     },
+    "tolerance":  2.0,
+    "naive_answer":  "The true mean session duration is approximately 120 seconds since that is the logged average.",
+    "naive_trap":  "Because the truncation threshold (30s) is low relative to the true mean (~109s), only about 9% of sessions are lost. The bias is modest in this case â€” making it a calibration task that tests whether models know to apply the correction even when the magnitude is small.",
+    "reasoning_trace":  "Step 1: E[X|X\u003e30] = Î¼ + 60Â·Î»((30-Î¼)/60) = 120. Step 2: Solve numerically. At Î¼â‰ˆ108.9: Î±=(30-108.9)/60=-1.315, Î»â‰ˆ0.191. 108.9+60Ã—0.191â‰ˆ108.9+11.5=120.4â‰ˆ120 âœ“. Step 3: Fraction logged = Î¦Ì„(-1.315) â‰ˆ 0.906.",
+    "python_verification":  "from scipy.optimize import brentq\nfrom scipy.stats import norm\ndef eq(mu): a=(30-mu)/60; sf=norm.sf(a); return mu+60*norm.pdf(a)/sf-120 if sf\u003e1e-10 else 1e10\nmu=brentq(eq,100,119)\nassert abs(mu-108.86)\u003c2.0\nassert abs(norm.sf((30-mu)/60)-0.9056)\u003c0.01"
+}

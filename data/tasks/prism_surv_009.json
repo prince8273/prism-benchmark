@@ -1,0 +1,26 @@
+﻿{
+    "task_id":  "prism_surv_009",
+    "category":  "survival",
+    "difficulty":  "hard",
+    "scenario":  "A financial newsletter publishes only investment strategies that returned more than 20% in back-testing, citing them as validated approaches. A retail investor uses the newsletter\u0027s average back-tested return to select a strategy.",
+    "data":  {
+                 "description":  "Newsletter features only strategies with back-tested return \u003e 20%. Underlying distribution of all back-tested strategies assumed Normal with known standard deviation Ïƒ = 30 percentage points.",
+                 "values":  {
+                                "observed_mean_return_pct":  40,
+                                "sigma_known_pct":  30,
+                                "publication_threshold_pct":  20,
+                                "distribution":  "normal(mu, 30^2)"
+                            }
+             },
+    "question":  "Featured strategies averaged 40% back-tested return. Using the truncated normal model, estimate (a) the true mean back-tested return Î¼ across ALL strategies that were tested (including unpublished ones), and (b) the fraction of tested strategies that get published.",
+    "answer_type":  "numerical",
+    "ground_truth":  {
+                         "true_mean_return_pct":  7.78,
+                         "fraction_published":  0.3419
+                     },
+    "tolerance":  0.5,
+    "naive_answer":  "The typical strategy returns approximately 40% since that is the newsletter average.",
+    "naive_trap":  "Only the top 34% of strategies are published. The true mean across all tested strategies is about 7.8% â€” 32 percentage points lower than the newsletter suggests. A retail investor choosing a \u0027random\u0027 strategy from the methodology would expect much lower returns.",
+    "reasoning_trace":  "Step 1: E[X|X\u003e20] = Î¼ + 30Â·Î»((20-Î¼)/30) = 40. Step 2: Solve numerically. At Î¼â‰ˆ7.78: Î±=(20-7.78)/30=0.407, Î»â‰ˆ1.054. 7.78+30Ã—1.054â‰ˆ7.78+31.6=39.4â‰ˆ40 âœ“. Step 3: Fraction published = Î¦Ì„(0.407) â‰ˆ 0.342.",
+    "python_verification":  "from scipy.optimize import brentq\nfrom scipy.stats import norm\ndef eq(mu): a=(20-mu)/30; sf=norm.sf(a); return mu+30*norm.pdf(a)/sf-40 if sf\u003e1e-10 else 1e10\nmu=brentq(eq,-10,10)\nassert abs(mu-7.78)\u003c0.5\nassert abs(norm.sf((20-mu)/30)-0.3419)\u003c0.01"
+}

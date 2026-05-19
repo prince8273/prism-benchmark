@@ -1,0 +1,28 @@
+{
+  "task_id": "prism_berk_053",
+  "category": "berkson",
+  "difficulty": "hard",
+  "scenario": "A wildfire monitoring center receives two positive alerts for the same region: one from thermal imaging and one from radar smoke detection. Severe weather occasionally causes a shared sensor disturbance that makes both systems fire positive together even without a wildfire.",
+  "data": {
+    "description": "Two positive alerts with a shared weather-disturbance failure mode.",
+    "values": {
+      "wildfire_prevalence": 0.03,
+      "alert_sensitivity": 0.90,
+      "alert_specificity": 0.96,
+      "shared_weather_disturbance_rate": 0.06,
+      "n_positive_alerts": 2,
+      "dependence_note": "If the shared disturbance occurs, both alerts are positive regardless of truth."
+    }
+  },
+  "question": "Given two positive alerts, compute the posterior probability of a real wildfire under the shared-disturbance model. Also compute the naive posterior under an incorrect conditional-independence assumption.",
+  "answer_type": "numerical",
+  "ground_truth": {
+    "correct_posterior": 0.2923,
+    "naive_posterior_independent": 0.9400
+  },
+  "tolerance": 0.01,
+  "naive_answer": "Two positive alerts from different sensors make a wildfire almost certain.",
+  "naive_trap": "The alerts share a common weather-failure mode, so they are not independent pieces of evidence.",
+  "reasoning_trace": "Step 1: P(++\u007c fire) = (1-0.06)*0.90^2 + 0.06 = 0.8214. Step 2: P(++\u007c no fire) = (1-0.06)*0.04^2 + 0.06 = 0.0615. Step 3: Bayes with prevalence 0.03 gives a posterior around 0.2923. Step 4: The naive independent model yields about 0.94.",
+  "python_verification": "prev=0.03; sens=0.90; spec=0.96; pe=0.06\np_pos_d=(1-pe)*sens**2 + pe\np_pos_nd=(1-pe)*(1-spec)**2 + pe\nposterior=p_pos_d*prev/(p_pos_d*prev+p_pos_nd*(1-prev))\nnaive=(sens**2)*prev/((sens**2)*prev+((1-spec)**2)*(1-prev))\nassert abs(posterior-0.2923)<0.005 and abs(naive-0.9400)<0.01"
+}

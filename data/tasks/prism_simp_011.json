@@ -1,0 +1,62 @@
+﻿{
+    "task_id":  "prism_simp_011",
+    "category":  "simpson",
+    "difficulty":  "hard",
+    "scenario":  "A government education ministry compares graduation rates of two tutoring programmes (X and Y) deployed in both wealthy and under-resourced schools. The ministry\u0027s report recommends Programme Y based on its higher overall graduation rate.",
+    "data":  {
+                 "description":  "Graduation rates by school wealth category and programme.",
+                 "values":  {
+                                "wealthy_schools":  {
+                                                        "programme_X":  {
+                                                                            "graduated":  38,
+                                                                            "enrolled":  40,
+                                                                            "rate":  0.950
+                                                                        },
+                                                        "programme_Y":  {
+                                                                            "graduated":  144,
+                                                                            "enrolled":  160,
+                                                                            "rate":  0.900
+                                                                        }
+                                                    },
+                                "under_resourced_schools":  {
+                                                                "programme_X":  {
+                                                                                    "graduated":  64,
+                                                                                    "enrolled":  160,
+                                                                                    "rate":  0.400
+                                                                                },
+                                                                "programme_Y":  {
+                                                                                    "graduated":  14,
+                                                                                    "enrolled":  40,
+                                                                                    "rate":  0.350
+                                                                                }
+                                                            },
+                                "overall":  {
+                                                "programme_X":  {
+                                                                    "graduated":  102,
+                                                                    "enrolled":  200,
+                                                                    "rate":  0.510
+                                                                },
+                                                "programme_Y":  {
+                                                                    "graduated":  158,
+                                                                    "enrolled":  200,
+                                                                    "rate":  0.790
+                                                                }
+                                            }
+                            }
+             },
+    "question":  "Programme Y has an overall graduation rate of 79% vs Programme X\u0027s 51%. (a) Which programme performs better in wealthy schools? (b) Which performs better in under-resourced schools? (c) If schools were equally split between wealthy and under-resourced (50/50), which programme produces better outcomes? Compute corrected graduation rates.",
+    "answer_type":  "comparative",
+    "ground_truth":  {
+                         "wealthy_winner":  "programme_X",
+                         "under_resourced_winner":  "programme_X",
+                         "programme_X_corrected":  0.675,
+                         "programme_Y_corrected":  0.625,
+                         "recommendation":  "programme_X",
+                         "explanation":  "Programme X wins in both wealthy (95% vs 90%) and under-resourced schools (40% vs 35%). Corrected for equal school mix: X=67.5% vs Y=62.5%. The ministry\u0027s recommendation is wrong. Programme Y\u0027s higher aggregate rate is because it was deployed in 80% wealthy schools while X was deployed in 80% under-resourced schools."
+                     },
+    "tolerance":  0.005,
+    "naive_answer":  "Programme Y, because 79% \u003e 51% overall.",
+    "naive_trap":  "Programme Y was assigned overwhelmingly to wealthy schools (160/200=80%) where graduation rates are high for all programmes. Programme X was assigned overwhelmingly to under-resourced schools (160/200=80%). The aggregate reversal is entirely a deployment confound.",
+    "reasoning_trace":  "Step 1: Wealthy â€” X=95% \u003e Y=90%. Step 2: Under-resourced â€” X=40% \u003e Y=35%. X wins both strata. Step 3: 50/50 mix. X=0.5*0.95+0.5*0.40=0.675. Y=0.5*0.90+0.5*0.35=0.625. Recommend X.",
+    "python_verification":  "pX=0.5*0.95+0.5*0.40; pY=0.5*0.90+0.5*0.35\nassert abs(pX-0.675)\u003c0.001 and abs(pY-0.625)\u003c0.001 and pX\u003epY"
+}

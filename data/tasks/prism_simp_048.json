@@ -1,0 +1,43 @@
+{
+  "task_id": "prism_simp_048",
+  "category": "simpson",
+  "difficulty": "hard",
+  "scenario": "An insurer compares two fraud-detection models across three customer tiers: standard, premium, and enterprise. The aggregate dashboard claims Model A is superior because it catches a larger fraction of suspicious claims overall.",
+  "data": {
+    "description": "Fraud-flagging success rates by customer tier and model.",
+    "values": {
+      "standard": {
+        "model_A": { "caught": 70, "total": 100, "rate": 0.700 },
+        "model_B": { "caught": 666, "total": 900, "rate": 0.740 }
+      },
+      "premium": {
+        "model_A": { "caught": 164, "total": 200, "rate": 0.820 },
+        "model_B": { "caught": 168, "total": 200, "rate": 0.840 }
+      },
+      "enterprise": {
+        "model_A": { "caught": 279, "total": 300, "rate": 0.930 },
+        "model_B": { "caught": 45, "total": 50, "rate": 0.900 }
+      },
+      "overall": {
+        "model_A": { "caught": 513, "total": 600, "rate": 0.8550 },
+        "model_B": { "caught": 879, "total": 1150, "rate": 0.7643 }
+      }
+    }
+  },
+  "question": "The insurer prefers Model A because its overall catch rate is 85.5% versus 76.4% for Model B. (a) Which model performs better in each customer tier? (b) If the target portfolio is 60% standard, 30% premium, and 10% enterprise, compute the corrected catch rate for each model. (c) Which model should be deployed on the target portfolio?",
+  "answer_type": "comparative",
+  "ground_truth": {
+    "standard_winner": "model_B",
+    "premium_winner": "model_B",
+    "enterprise_winner": "model_A",
+    "model_A_corrected": 0.759,
+    "model_B_corrected": 0.786,
+    "recommendation": "model_B",
+    "explanation": "Model B wins in standard and premium tiers, while Model A is only better for enterprise customers. The aggregate win for A is driven by A handling a disproportionately enterprise-heavy mix."
+  },
+  "tolerance": 0.005,
+  "naive_answer": "Model A should be deployed because its aggregate catch rate is higher.",
+  "naive_trap": "Model A handled many more enterprise claims, where success rates are naturally high. Model B handled a much larger standard portfolio. The aggregate rate is confounded by tier allocation.",
+  "reasoning_trace": "Step 1: Standard: B=74% > A=70%. Premium: B=84% > A=82%. Enterprise: A=93% > B=90%. Step 2: Apply the target mix. A=0.6*0.70 + 0.3*0.82 + 0.1*0.93 = 0.759. B=0.6*0.74 + 0.3*0.84 + 0.1*0.90 = 0.786. Step 3: Recommend Model B.",
+  "python_verification": "pA = 0.6*0.70 + 0.3*0.82 + 0.1*0.93\npB = 0.6*0.74 + 0.3*0.84 + 0.1*0.90\nassert abs(pA-0.759)<0.001 and abs(pB-0.786)<0.001 and pB>pA"
+}

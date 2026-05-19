@@ -1,0 +1,29 @@
+﻿{
+    "task_id":  "prism_berk_008",
+    "category":  "berkson",
+    "difficulty":  "medium",
+    "scenario":  "A sports medicine clinic sees athletes who attend due to a knee injury OR a shoulder injury. A physiotherapist notices that athletes with shoulder injuries rarely seem to also have knee injuries, and begins to investigate whether the two injury types are medically antagonistic.",
+    "data":  {
+                 "description":  "Among the general athletic population, knee and shoulder injuries are independent. Athletes attend the clinic if they have a knee injury OR a shoulder injury.",
+                 "values":  {
+                                "population_P_knee_injury":  0.35,
+                                "population_P_shoulder_injury":  0.30,
+                                "population_independence":  true,
+                                "clinic_criterion":  "attends if knee_injury OR shoulder_injury"
+                            }
+             },
+    "question":  "At the clinic, P(knee injury | shoulder injury) = 35% but P(knee injury | no shoulder injury) = 100%. The physiotherapist concludes knee and shoulder injuries are negatively associated. (a) Verify these probabilities from the attendance model. (b) Is this medically meaningful? (c) What fraction of athletes attend the clinic?",
+    "answer_type":  "numerical",
+    "ground_truth":  {
+                         "P_knee_given_shoulder_clinic":  0.350,
+                         "P_knee_given_no_shoulder_clinic":  1.000,
+                         "population_relationship":  "independent",
+                         "fraction_attending_clinic":  0.545,
+                         "explanation":  "Berkson\u0027s paradox. Athletes without a shoulder injury who attend the clinic must all have a knee injury. Athletes with a shoulder injury show knee injury prevalence at the population rate. No medical antagonism exists."
+                     },
+    "tolerance":  0.005,
+    "naive_answer":  "Knee and shoulder injuries are negatively associated: shoulder-injured athletes rarely have knee problems.",
+    "naive_trap":  "The clinic sample is a collider. Attending requires at least one injury. Athletes without shoulder injuries are 100% knee-injured â€” that is their only reason for attending. This creates a spurious negative association in clinic data.",
+    "reasoning_trace":  "p_K=0.35, p_S=0.30. P(clinic)=0.35+0.30-0.105=0.545. P(K|S,clinic)=P(K)*P(S)/P(S)=p_K=0.35. P(K|notS,clinic)=P(K)*P(notS)/(P(clinic)-P(S))=0.35*0.70/0.245=0.245/0.245=1.0.",
+    "python_verification":  "p_K=0.35; p_S=0.30; p_c=p_K+p_S-p_K*p_S\ng_S=p_K; g_NS=p_K*(1-p_S)/(p_c-p_S)\nassert abs(g_S-0.350)\u003c0.001 and abs(g_NS-1.00)\u003c0.001 and abs(p_c-0.545)\u003c0.001"
+}

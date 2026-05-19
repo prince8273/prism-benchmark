@@ -1,0 +1,26 @@
+{
+  "task_id": "prism_surv_055",
+  "category": "survival",
+  "difficulty": "hard",
+  "scenario": "A clinical outcomes registry includes only patients who survive one year and whose quality-of-life score exceeds 70. A health-system administrator uses the registry's mean score to estimate the typical one-year quality of care across all treated patients.",
+  "data": {
+    "description": "Only survivors with quality-of-life score > 70 enter the registry. Scores are modeled as Normal with known standard deviation sigma = 15.",
+    "values": {
+      "observed_mean_qol": 76.81,
+      "sigma_known": 15,
+      "registry_threshold": 70,
+      "distribution": "normal(mu, 15^2)"
+    }
+  },
+  "question": "Using the truncated normal model, estimate (a) the true mean one-year quality-of-life score mu across all treated patients and (b) the fraction of treated patients that appear in the registry.",
+  "answer_type": "numerical",
+  "ground_truth": {
+    "true_mean_qol": 49.0,
+    "fraction_in_registry": 0.0808
+  },
+  "tolerance": 0.8,
+  "naive_answer": "Typical one-year quality of care is about 76.8 because that is the registry mean.",
+  "naive_trap": "The registry excludes both non-survivors and low-scoring survivors, so it contains only a selected upper tail of outcomes.",
+  "reasoning_trace": "Step 1: Solve 76.81 = mu + 15*lambda((70-mu)/15). Step 2: The solution has alpha about 1.4, so mu = 70 - 1.4*15 = 49. Step 3: The registry fraction is sf(1.4) about 0.0808.",
+  "python_verification": "from scipy.optimize import brentq\nfrom scipy.stats import norm\ndef eq(mu):\n    a=(70-mu)/15\n    return mu + 15*norm.pdf(a)/norm.sf(a) - 76.81\nmu=brentq(eq,-100,69.99)\nfrac=norm.sf((70-mu)/15)\nassert abs(mu-49.0)<0.8 and abs(frac-0.0808)<0.005"
+}

@@ -1,0 +1,26 @@
+{
+  "task_id": "prism_surv_047",
+  "category": "survival",
+  "difficulty": "hard",
+  "scenario": "A mobile-app market report showcases only apps that surpass 1 million downloads. A founder uses the report's average listed downloads to estimate the typical scale of all launched apps in the category.",
+  "data": {
+    "description": "Only apps with downloads greater than 1 million are included. Total downloads are modeled as Normal with known standard deviation sigma = 0.8 million downloads.",
+    "values": {
+      "observed_mean_downloads": 1389615.2,
+      "sigma_known_downloads": 800000,
+      "listing_threshold_downloads": 1000000,
+      "distribution": "normal(mu, 800000^2)"
+    }
+  },
+  "question": "Using the truncated normal model, estimate (a) the true mean downloads mu across all launched apps and (b) the fraction of launched apps that appear in the market report.",
+  "answer_type": "numerical",
+  "ground_truth": {
+    "true_mean_downloads": 40000,
+    "fraction_listed": 0.1151
+  },
+  "tolerance": 15000,
+  "naive_answer": "A typical app in the category gets about 1.39 million downloads.",
+  "naive_trap": "The report lists only the top tail of apps that cleared a visibility threshold. Most launched apps are excluded.",
+  "reasoning_trace": "Step 1: Solve 1,389,615.2 = mu + 800,000*lambda((1,000,000-mu)/800,000). Step 2: The solution corresponds to alpha about 1.2, giving mu about 40,000 downloads. Step 3: The report includes sf(1.2) about 11.5% of launched apps.",
+  "python_verification": "from scipy.optimize import brentq\nfrom scipy.stats import norm\ndef eq(mu):\n    a=(1000000-mu)/800000\n    return mu + 800000*norm.pdf(a)/norm.sf(a) - 1389615.2\nmu=brentq(eq,-2000000,999999)\nfrac=norm.sf((1000000-mu)/800000)\nassert abs(mu-40000)<15000 and abs(frac-0.1151)<0.005"
+}

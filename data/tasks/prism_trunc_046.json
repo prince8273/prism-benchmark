@@ -1,0 +1,26 @@
+{
+  "task_id": "prism_trunc_046",
+  "category": "truncated",
+  "difficulty": "hard",
+  "scenario": "A hospital analytics team studies post-operative length of stay, but the warehouse records only stays longer than 7 days because short discharges remain in a separate transactional system. The team wants the mean stay across all patients.",
+  "data": {
+    "description": "Only stays greater than 7 days are present in the warehouse. Length of stay is modeled as Normal with known standard deviation sigma = 3 days.",
+    "values": {
+      "observed_mean_days": 8.5754,
+      "sigma_known_days": 3,
+      "recording_threshold_days": 7,
+      "distribution": "normal(mu, 3^2)"
+    }
+  },
+  "question": "Using the truncated normal model, estimate (a) the true mean length of stay mu across all surgical patients and (b) the fraction of all patients represented in the warehouse.",
+  "answer_type": "numerical",
+  "ground_truth": {
+    "true_mean_days": 4.0,
+    "fraction_recorded": 0.1587
+  },
+  "tolerance": 0.1,
+  "naive_answer": "The average stay is about 8.6 days because that is the warehouse average.",
+  "naive_trap": "The warehouse excludes short stays entirely, so the observed mean reflects only a truncated upper tail.",
+  "reasoning_trace": "Step 1: Solve 8.5754 = mu + 3*lambda((7-mu)/3). Step 2: The solution has alpha about 1.0, so mu = 7 - 3 = 4 days. Step 3: The represented fraction is sf(1.0) about 0.1587.",
+  "python_verification": "from scipy.optimize import brentq\nfrom scipy.stats import norm\ndef eq(mu):\n    a=(7-mu)/3\n    return mu + 3*norm.pdf(a)/norm.sf(a) - 8.5754\nmu=brentq(eq,-20,6.99)\nfrac=norm.sf((7-mu)/3)\nassert abs(mu-4.0)<0.1 and abs(frac-0.1587)<0.005"
+}

@@ -1,0 +1,27 @@
+﻿{
+    "task_id":  "prism_trunc_006",
+    "category":  "truncated",
+    "difficulty":  "medium",
+    "scenario":  "A salary benchmarking firm collects data from a professional networking platform where users only report salaries above $60,000 (the platform\u0027s minimum for \u0027professional\u0027 listing). An HR consultant uses the platform\u0027s average to advise clients on market rates.",
+    "data":  {
+                 "description":  "Platform only lists salaries \u003e $60,000. Underlying salary distribution assumed Normal with known standard deviation Ïƒ = $25,000.",
+                 "values":  {
+                                "observed_mean_salary":  85000,
+                                "sigma_known":  25000,
+                                "listing_threshold":  60000,
+                                "distribution":  "normal(mu, 25000^2)",
+                                "currency":  "USD/year"
+                            }
+             },
+    "question":  "The platform reports a mean salary of $85,000. Using the truncated normal model, estimate (a) the true mean salary Î¼ across the full labour market (including unlisted roles), and (b) the fraction of roles that appear on the platform.",
+    "answer_type":  "numerical",
+    "ground_truth":  {
+                         "true_mean_salary":  72026,
+                         "fraction_listed":  0.6848
+                     },
+    "tolerance":  500,
+    "naive_answer":  "The true mean salary is approximately $85,000 since that is the platform average.",
+    "naive_trap":  "About 32% of market salaries are below $60,000 and invisible to the platform. The true market mean is about $13,000 lower than the platform figure. An HR consultant quoting $85,000 as a market benchmark would systematically overprice talent or underpay relative to expectations.",
+    "reasoning_trace":  "Step 1: E[X|X\u003e60000] = Î¼ + 25000Â·Î»((60000-Î¼)/25000) = 85000. Step 2: Solve numerically. At Î¼â‰ˆ72026: Î±=(60000-72026)/25000=-0.481, Î»â‰ˆ0.520. 72026+25000Ã—0.520â‰ˆ72026+13000=85026 âœ“. Step 3: Fraction listed = Î¦Ì„(-0.481) â‰ˆ 0.685.",
+    "python_verification":  "from scipy.optimize import brentq\nfrom scipy.stats import norm\ndef eq(mu): a=(60000-mu)/25000; sf=norm.sf(a); return mu+25000*norm.pdf(a)/sf-85000 if sf\u003e1e-10 else 1e10\nmu=brentq(eq,1000,84999)\nassert abs(mu-72026)\u003c600\nassert abs(norm.sf((60000-mu)/25000)-0.6848)\u003c0.01"
+}

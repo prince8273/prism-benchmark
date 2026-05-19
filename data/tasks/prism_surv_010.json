@@ -1,0 +1,26 @@
+﻿{
+    "task_id":  "prism_surv_010",
+    "category":  "survival",
+    "difficulty":  "medium",
+    "scenario":  "A music streaming analytics report covers only songs that reached more than 1 million streams, as the platform considers these \u0027charted\u0027. A record label A\u0026R executive uses the average stream count among charted songs to set targets for new artists.",
+    "data":  {
+                 "description":  "Report only covers songs with \u003e 1M streams. Underlying stream count distribution across all released songs assumed Normal with known standard deviation Ïƒ = 0.8M streams.",
+                 "values":  {
+                                "observed_mean_streams_M":  1.5,
+                                "sigma_known_M":  0.8,
+                                "chart_threshold_M":  1.0,
+                                "distribution":  "normal(mu, 0.8^2)"
+                            }
+             },
+    "question":  "Charted songs average 1.5M streams. Using the truncated normal model, estimate (a) the true mean stream count Î¼ across ALL released songs (including those that never charted), and (b) the fraction of all songs that reach the charting threshold.",
+    "answer_type":  "numerical",
+    "ground_truth":  {
+                         "true_mean_streams_M":  0.5512,
+                         "fraction_charting":  0.2874
+                     },
+    "tolerance":  0.02,
+    "naive_answer":  "A typical song gets about 1.5M streams since that is the charted-song average.",
+    "naive_trap":  "About 71% of songs never reach 1M streams and are excluded from the report. The true mean across all releases is just 0.55M. Setting artist targets based on charted-song averages would create systematically unrealistic expectations for the vast majority of releases.",
+    "reasoning_trace":  "Step 1: E[X|X\u003e1.0] = Î¼ + 0.8Â·Î»((1.0-Î¼)/0.8) = 1.5. Step 2: Solve numerically. At Î¼â‰ˆ0.551: Î±=(1.0-0.551)/0.8=0.561, Î»â‰ˆ1.185. 0.551+0.8Ã—1.185â‰ˆ0.551+0.948=1.499â‰ˆ1.5 âœ“. Step 3: Fraction charting = Î¦Ì„(0.561) â‰ˆ 0.287.",
+    "python_verification":  "from scipy.optimize import brentq\nfrom scipy.stats import norm\ndef eq(mu): a=(1.0-mu)/0.8; sf=norm.sf(a); return mu+0.8*norm.pdf(a)/sf-1.5 if sf\u003e1e-10 else 1e10\nmu=brentq(eq,0.3,0.7)\nassert abs(mu-0.5512)\u003c0.025\nassert abs(norm.sf((1.0-mu)/0.8)-0.2874)\u003c0.01"
+}

@@ -1,0 +1,62 @@
+﻿{
+    "task_id":  "prism_simp_009",
+    "category":  "simpson",
+    "difficulty":  "hard",
+    "scenario":  "A civil rights researcher analyses police stop-and-search rates by race across two districts in a city: a high-crime district (District A, dense urban) and a low-crime district (District B, suburban). The police department defends its overall statistics.",
+    "data":  {
+                 "description":  "Stop rates by race and district.",
+                 "values":  {
+                                "district_A_high_crime":  {
+                                                              "Black_residents":  {
+                                                                                      "stopped":  600,
+                                                                                      "total":  1000,
+                                                                                      "rate":  0.600
+                                                                                  },
+                                                              "White_residents":  {
+                                                                                      "stopped":  50,
+                                                                                      "total":  100,
+                                                                                      "rate":  0.500
+                                                                                  }
+                                                          },
+                                "district_B_low_crime":  {
+                                                             "Black_residents":  {
+                                                                                     "stopped":  20,
+                                                                                     "total":  100,
+                                                                                     "rate":  0.200
+                                                                                 },
+                                                             "White_residents":  {
+                                                                                     "stopped":  100,
+                                                                                     "total":  500,
+                                                                                     "rate":  0.200
+                                                                                 }
+                                                         },
+                                "overall":  {
+                                                "Black_residents":  {
+                                                                        "stopped":  620,
+                                                                        "total":  1100,
+                                                                        "rate":  0.564
+                                                                    },
+                                                "White_residents":  {
+                                                                        "stopped":  150,
+                                                                        "total":  600,
+                                                                        "rate":  0.250
+                                                                    }
+                                            }
+                            }
+             },
+    "question":  "The overall stop rate is 56.4% for Black residents and 25.0% for White residents â€” a 31.4 percentage point gap. (a) What is the stop-rate gap between Black and White residents within District A? (b) Within District B? (c) If the residential population were equally split across both districts (50/50), what would the corrected stop rates be for each group and what is the corrected gap? Is the 31.4pp overall gap an accurate summary of within-district disparity?",
+    "answer_type":  "numerical",
+    "ground_truth":  {
+                         "district_A_gap_pp":  10.0,
+                         "district_B_gap_pp":  0.0,
+                         "Black_corrected":  0.400,
+                         "White_corrected":  0.350,
+                         "corrected_gap_pp":  5.0,
+                         "explanation":  "The 31.4pp aggregate gap overstates the within-district disparity. In District A, the gap is 10pp; in District B, 0pp. Corrected for equal district residency: Black=40%, White=35%, gap=5pp. The aggregate gap is inflated because Black residents are disproportionately concentrated in the high-crime district (1000/1100=91%) where stop rates are high for everyone."
+                     },
+    "tolerance":  0.5,
+    "naive_answer":  "There is a 31.4 percentage point disparity in stop rates between Black and White residents.",
+    "naive_trap":  "The aggregate comparison conflates district-level crime intensity with race. Black residents are concentrated in the high-crime district (91% vs 17% of White residents), which has higher stop rates for all races. Corrected for district mix, the gap shrinks from 31.4pp to 5pp.",
+    "reasoning_trace":  "Step 1: District A gap = 60%-50%=10pp. Step 2: District B gap=20%-20%=0pp. Step 3: 50/50 mix. Black=0.5*0.60+0.5*0.20=0.40. White=0.5*0.50+0.5*0.20=0.35. Corrected gap=5pp vs raw 31.4pp.",
+    "python_verification":  "B50=0.5*0.60+0.5*0.20; W50=0.5*0.50+0.5*0.20\nassert abs(B50-0.400)\u003c0.001 and abs(W50-0.350)\u003c0.001 and abs((B50-W50)*100-5.0)\u003c0.1"
+}

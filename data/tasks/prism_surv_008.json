@@ -1,0 +1,29 @@
+﻿{
+    "task_id":  "prism_surv_008",
+    "category":  "survival",
+    "difficulty":  "hard",
+    "scenario":  "A WWII aviation analyst examines bullet-hole distributions on bombers returning from missions. Aircraft are observed only if they return â€” those sustaining critical damage (damage score â‰¥ 70 out of 100) never make it back. The analyst records the mean damage score of returning aircraft to identify where armour should be added.",
+    "data":  {
+                 "description":  "Only aircraft with damage score \u003c 70 return and can be inspected. True underlying damage score distribution assumed Normal with known standard deviation Ïƒ = 25.",
+                 "values":  {
+                                "observed_mean_damage_score":  45,
+                                "sigma_known":  25,
+                                "survival_threshold_damage":  70,
+                                "distribution":  "normal(mu, 25^2)",
+                                "note":  "Aircraft with damage \u003e= 70 are lost; truncation is from ABOVE"
+                            }
+             },
+    "question":  "Returning bombers have a mean damage score of 45. Using the truncated-from-above normal model (only aircraft with damage \u003c 70 return), estimate (a) the true mean damage score Î¼ across ALL aircraft that flew missions (including those shot down), and (b) the fraction of aircraft that return from missions. Where should armour be added â€” on the areas with observed damage or on the areas with NO observed damage?",
+    "answer_type":  "numerical",
+    "ground_truth":  {
+                         "true_mean_damage_score":  57.97,
+                         "fraction_returning":  0.6848,
+                         "armour_recommendation":  "areas_with_no_observed_damage",
+                         "explanation":  "True mean damage (58) is higher than the observed mean (45) because heavily-damaged aircraft are lost. The planes that return show where damage can be SURVIVED. Armour should reinforce areas NOT showing damage on returners â€” those are the areas where damage causes loss."
+                     },
+    "tolerance":  0.5,
+    "naive_answer":  "Armour should be added where returning aircraft show the most bullet holes, since those areas take the most fire.",
+    "naive_trap":  "Classic survivorship bias (the Abraham Wald problem). Returning aircraft show damage that was survived. The missing planes took fatal damage in areas that show NO holes on survivors. The corrected mean damage is higher than observed because the most-damaged planes don\u0027t return.",
+    "reasoning_trace":  "Step 1: For X~N(Î¼,ÏƒÂ²) truncated to X\u003c70, E[X|X\u003c70]=Î¼-25Â·Ï†(Î²)/Î¦(Î²), Î²=(70-Î¼)/25. Step 2: Set 45=Î¼-25Â·Ï†((70-Î¼)/25)/Î¦((70-Î¼)/25). Solve numerically â†’ Î¼â‰ˆ57.97. Step 3: Fraction returning=Î¦((70-57.97)/25)=Î¦(0.481)â‰ˆ0.685. Step 4: Armour goes on undamaged areas (Wald\u0027s insight).",
+    "python_verification":  "from scipy.optimize import brentq\nfrom scipy.stats import norm\ndef eq(mu): b=(70-mu)/25; c=norm.cdf(b); return mu-25*norm.pdf(b)/c-45 if c\u003e1e-10 else 1e10\nmu=brentq(eq,45.01,500)\nassert abs(mu-57.97)\u003c0.5\nassert abs(norm.cdf((70-mu)/25)-0.6848)\u003c0.01"
+}

@@ -1,0 +1,27 @@
+{
+  "task_id": "prism_trunc_042",
+  "category": "truncated",
+  "difficulty": "hard",
+  "scenario": "A recruiting marketplace stores salary offers only when they exceed $80,000 because lower offers are handled by a separate payroll partner. An analyst uses the retained offers to estimate the average offer in the full market.",
+  "data": {
+    "description": "Only salary offers above $80,000 are recorded. Offer sizes are assumed Normally distributed with known standard deviation sigma = $25,000.",
+    "values": {
+      "observed_mean_offer": 92175.5,
+      "sigma_known": 25000,
+      "recording_threshold": 80000,
+      "distribution": "normal(mu, 25000^2)",
+      "currency": "USD"
+    }
+  },
+  "question": "Using the truncated normal model, estimate (a) the true mean salary offer mu across all offers, including those below $80,000, and (b) the fraction of all offers that appear in the retained database.",
+  "answer_type": "numerical",
+  "ground_truth": {
+    "true_mean_offer": 50000,
+    "fraction_recorded": 0.1151
+  },
+  "tolerance": 600,
+  "naive_answer": "The market's true average offer is about $92,176 because that is the observed retained mean.",
+  "naive_trap": "The retained dataset is severely truncated. It contains only the upper tail of the offer distribution, so the observed mean is not representative of the full market.",
+  "reasoning_trace": "Step 1: For a lower-truncated normal, E[X|X>a] = mu + sigma*lambda(alpha), where alpha=(a-mu)/sigma. Step 2: Here, 92175.5 = mu + 25000*lambda((80000-mu)/25000). Solving gives alpha about 1.2 and mu about $50,000. Step 3: The retained fraction is P(X>80000) = sf(1.2) about 0.115.",
+  "python_verification": "from scipy.optimize import brentq\nfrom scipy.stats import norm\ndef eq(mu):\n    a=(80000-mu)/25000\n    return mu + 25000*norm.pdf(a)/norm.sf(a) - 92175.5\nmu=brentq(eq,-100000,79999)\nfrac=norm.sf((80000-mu)/25000)\nassert abs(mu-50000)<600 and abs(frac-0.1151)<0.005"
+}

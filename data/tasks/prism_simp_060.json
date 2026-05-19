@@ -1,0 +1,43 @@
+{
+  "task_id": "prism_simp_060",
+  "category": "simpson",
+  "difficulty": "hard",
+  "scenario": "A manufacturing group compares two safety programmes across three plant-risk categories: low-risk, medium-risk, and high-risk facilities. The executive summary prefers Programme A because its overall accident-free rate is dramatically higher.",
+  "data": {
+    "description": "Accident-free rates by plant-risk category and safety programme.",
+    "values": {
+      "low_risk": {
+        "programme_A": { "accident_free": 495, "total": 500, "rate": 0.990 },
+        "programme_B": { "accident_free": 98, "total": 100, "rate": 0.980 }
+      },
+      "medium_risk": {
+        "programme_A": { "accident_free": 86, "total": 100, "rate": 0.860 },
+        "programme_B": { "accident_free": 264, "total": 300, "rate": 0.880 }
+      },
+      "high_risk": {
+        "programme_A": { "accident_free": 26, "total": 50, "rate": 0.520 },
+        "programme_B": { "accident_free": 290, "total": 500, "rate": 0.580 }
+      },
+      "overall": {
+        "programme_A": { "accident_free": 607, "total": 650, "rate": 0.9338 },
+        "programme_B": { "accident_free": 652, "total": 900, "rate": 0.7244 }
+      }
+    }
+  },
+  "question": "The executive summary recommends Programme A because its aggregate accident-free rate is 93.4% versus 72.4% for Programme B. (a) Which programme performs better in each plant-risk category? (b) If the company's long-run plant mix is 50% low-risk, 30% medium-risk, and 20% high-risk, compute the corrected accident-free rate for each programme. (c) Which programme should be recommended for the long-run mix?",
+  "answer_type": "comparative",
+  "ground_truth": {
+    "low_risk_winner": "programme_A",
+    "medium_risk_winner": "programme_B",
+    "high_risk_winner": "programme_B",
+    "programme_A_corrected": 0.857,
+    "programme_B_corrected": 0.870,
+    "recommendation": "programme_B",
+    "explanation": "Programme A is only better in low-risk plants. Programme B wins in medium- and high-risk environments and is the stronger choice under the company's actual long-run plant mix."
+  },
+  "tolerance": 0.005,
+  "naive_answer": "Programme A should be chosen because its overall accident-free rate is far higher.",
+  "naive_trap": "Programme A was used overwhelmingly in low-risk plants, while Programme B carried far more high-risk facilities. The aggregate summary mostly reflects plant mix rather than programme quality.",
+  "reasoning_trace": "Step 1: Low-risk: A=99% > B=98%. Medium-risk: B=88% > A=86%. High-risk: B=58% > A=52%. Step 2: Apply the long-run mix. A=0.5*0.99 + 0.3*0.86 + 0.2*0.52 = 0.857. B=0.5*0.98 + 0.3*0.88 + 0.2*0.58 = 0.870. Step 3: Recommend Programme B.",
+  "python_verification": "pA = 0.5*0.99 + 0.3*0.86 + 0.2*0.52\npB = 0.5*0.98 + 0.3*0.88 + 0.2*0.58\nassert abs(pA-0.857)<0.001 and abs(pB-0.870)<0.001 and pB>pA"
+}

@@ -1,0 +1,43 @@
+{
+  "task_id": "prism_simp_044",
+  "category": "simpson",
+  "difficulty": "hard",
+  "scenario": "A university compares two admissions review systems across three applicant pools: mathematics, design, and biology. Administrators claim Review System A is superior because its overall admit rate is far higher than System B's.",
+  "data": {
+    "description": "Admission rates by applicant pool and review system.",
+    "values": {
+      "mathematics": {
+        "system_A": { "admitted": 440, "total": 500, "rate": 0.880 },
+        "system_B": { "admitted": 90, "total": 100, "rate": 0.900 }
+      },
+      "design": {
+        "system_A": { "admitted": 54, "total": 90, "rate": 0.600 },
+        "system_B": { "admitted": 234, "total": 360, "rate": 0.650 }
+      },
+      "biology": {
+        "system_A": { "admitted": 14, "total": 40, "rate": 0.350 },
+        "system_B": { "admitted": 184, "total": 540, "rate": 0.3407 }
+      },
+      "overall": {
+        "system_A": { "admitted": 508, "total": 630, "rate": 0.8063 },
+        "system_B": { "admitted": 508, "total": 1000, "rate": 0.5080 }
+      }
+    }
+  },
+  "question": "Administrators recommend System A because its aggregate admit rate is 80.6% versus 50.8% for System B. (a) Which system performs better in mathematics, design, and biology respectively? (b) If the university's target applicant mix is 20% mathematics, 30% design, and 50% biology, compute the corrected admit rate for each system. (c) Which system should be preferred for the target mix?",
+  "answer_type": "comparative",
+  "ground_truth": {
+    "mathematics_winner": "system_B",
+    "design_winner": "system_B",
+    "biology_winner": "system_A",
+    "system_A_corrected": 0.531,
+    "system_B_corrected": 0.545,
+    "recommendation": "system_B",
+    "explanation": "System B wins in mathematics and design, while System A is only slightly better in biology. Under the target applicant mix, System B is the better overall review system despite its much worse aggregate rate."
+  },
+  "tolerance": 0.005,
+  "naive_answer": "System A should be preferred because its overall admit rate is much higher.",
+  "naive_trap": "System A handled many more applicants from the easiest pool, while System B handled far more biology applicants. The overall advantage is driven by allocation, not true review quality.",
+  "reasoning_trace": "Step 1: Mathematics: B=90% > A=88%. Design: B=65% > A=60%. Biology: A=35% > B=34.07%. Step 2: Apply the target mix. A=0.2*0.88 + 0.3*0.60 + 0.5*0.35 = 0.531. B=0.2*0.90 + 0.3*0.65 + 0.5*0.3407 about 0.545. Step 3: Recommend System B.",
+  "python_verification": "pA = 0.2*0.88 + 0.3*0.60 + 0.5*0.35\npB = 0.2*0.90 + 0.3*0.65 + 0.5*(184/540)\nassert abs(pA-0.531)<0.001 and abs(pB-0.545)<0.003 and pB>pA"
+}

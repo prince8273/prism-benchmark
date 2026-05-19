@@ -1,0 +1,26 @@
+{
+  "task_id": "prism_surv_059",
+  "category": "survival",
+  "difficulty": "hard",
+  "scenario": "A venture capital sequel-fund memo highlights only portfolio exits returning more than 300%. Partners use the highlighted average exit return to reason about the typical performance of the whole prior portfolio.",
+  "data": {
+    "description": "Only exits with return above 300% are shown. Portfolio returns are modeled as Normal with known standard deviation sigma = 150 percentage points.",
+    "values": {
+      "observed_mean_exit_return_pct": 365.80,
+      "sigma_known_pct": 150,
+      "highlight_threshold_pct": 300,
+      "distribution": "normal(mu, 150^2)"
+    }
+  },
+  "question": "Using the truncated normal model, estimate (a) the true mean return mu across the whole prior portfolio and (b) the fraction of investments that appear in the highlighted exit set.",
+  "answer_type": "numerical",
+  "ground_truth": {
+    "true_mean_return_pct": 75,
+    "fraction_highlighted": 0.0668
+  },
+  "tolerance": 3,
+  "naive_answer": "The typical portfolio investment likely returned around 366% because that is the highlighted average.",
+  "naive_trap": "The memo shows only blockbuster exits. It excludes the vast majority of outcomes and therefore radically overstates typical performance.",
+  "reasoning_trace": "Step 1: Solve 365.80 = mu + 150*lambda((300-mu)/150). Step 2: The solution has alpha about 1.5, giving mu = 300 - 1.5*150 = 75. Step 3: The highlighted fraction is sf(1.5) about 0.0668.",
+  "python_verification": "from scipy.optimize import brentq\nfrom scipy.stats import norm\ndef eq(mu):\n    a=(300-mu)/150\n    return mu + 150*norm.pdf(a)/norm.sf(a) - 365.80\nmu=brentq(eq,-1000,299.99)\nfrac=norm.sf((300-mu)/150)\nassert abs(mu-75)<3 and abs(frac-0.0668)<0.005"
+}

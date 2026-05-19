@@ -1,0 +1,27 @@
+﻿{
+    "task_id":  "prism_surv_007",
+    "category":  "survival",
+    "difficulty":  "medium",
+    "scenario":  "A startup ecosystem report covers only companies that achieved an exit (acquisition or IPO) valued above $10M. A policy maker uses the report\u0027s average exit value to set return expectations for a public innovation fund.",
+    "data":  {
+                 "description":  "Report only covers exits \u003e $10M. Underlying distribution of all exit values (including failed startups with $0 exit) assumed Normal with known standard deviation Ïƒ = $15M.",
+                 "values":  {
+                                "observed_mean_exit_value_M":  30,
+                                "sigma_known_M":  15,
+                                "inclusion_threshold_M":  10,
+                                "distribution":  "normal(mu, 15^2)",
+                                "note":  "Failed startups exit at approximately $0; $0 is below threshold"
+                            }
+             },
+    "question":  "Covered exits average $30M. Using the truncated normal model, estimate (a) the true mean exit value Î¼ across ALL startups funded (including failures), and (b) the fraction of funded startups that achieve a qualifying exit.",
+    "answer_type":  "numerical",
+    "ground_truth":  {
+                         "true_mean_exit_value_M":  26.07,
+                         "fraction_qualifying":  0.8580
+                     },
+    "tolerance":  0.5,
+    "naive_answer":  "The typical startup exit is worth approximately $30M since that is the report average.",
+    "naive_trap":  "The report excludes all exits under $10M and all total failures. The true mean across the full cohort is about $26M â€” $4M lower â€” and 14% of startups never achieve even a $10M exit. A policy maker expecting $30M average returns would overprice the fund\u0027s portfolio.",
+    "reasoning_trace":  "Step 1: E[X|X\u003e10] = Î¼ + 15Â·Î»((10-Î¼)/15) = 30. Step 2: Solve numerically. At Î¼â‰ˆ26.07: Î±=(10-26.07)/15=-1.071, Î»â‰ˆ0.229. 26.07+15Ã—0.229â‰ˆ26.07+3.44=29.51â‰ˆ30 âœ“. Step 3: Fraction qualifying = Î¦Ì„(-1.071) â‰ˆ 0.858.",
+    "python_verification":  "from scipy.optimize import brentq\nfrom scipy.stats import norm\ndef eq(mu): a=(10-mu)/15; sf=norm.sf(a); return mu+15*norm.pdf(a)/sf-30 if sf\u003e1e-10 else 1e10\nmu=brentq(eq,20,29)\nassert abs(mu-26.07)\u003c0.5\nassert abs(norm.sf((10-mu)/15)-0.8580)\u003c0.01"
+}

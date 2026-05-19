@@ -1,0 +1,26 @@
+﻿{
+    "task_id":  "prism_surv_011",
+    "category":  "survival",
+    "difficulty":  "hard",
+    "scenario":  "A medical journal only publishes clinical trials that ran for at least 12 months, as shorter trials are considered insufficiently powered for the journal\u0027s standards. A systematic reviewer uses the published literature\u0027s average trial duration to characterise the field\u0027s research culture.",
+    "data":  {
+                 "description":  "Journal only publishes trials with duration \u003e 12 months. Underlying trial duration distribution assumed Normal with known standard deviation Ïƒ = 8 months.",
+                 "values":  {
+                                "observed_mean_duration_months":  20,
+                                "sigma_known_months":  8,
+                                "publication_threshold_months":  12,
+                                "distribution":  "normal(mu, 8^2)"
+                            }
+             },
+    "question":  "Published trials average 20 months. Using the truncated normal model, estimate (a) the true mean trial duration Î¼ across ALL conducted trials (including those too short to be published), and (b) the fraction of all conducted trials that appear in this journal.",
+    "answer_type":  "numerical",
+    "ground_truth":  {
+                         "true_mean_duration_months":  15.85,
+                         "fraction_published":  0.6848
+                     },
+    "tolerance":  0.2,
+    "naive_answer":  "The typical clinical trial lasts about 20 months since that is the published average.",
+    "naive_trap":  "About 32% of trials are shorter than 12 months and never appear in this journal. The true mean across all conducted trials is about 15.9 months â€” 4 months shorter than the published literature suggests. A reviewer concluding that \u0027the field conducts 20-month trials as standard\u0027 would overestimate typical resource commitments.",
+    "reasoning_trace":  "Step 1: E[X|X\u003e12] = Î¼ + 8Â·Î»((12-Î¼)/8) = 20. Step 2: Solve numerically. At Î¼â‰ˆ15.85: Î±=(12-15.85)/8=-0.481, Î»â‰ˆ0.519. 15.85+8Ã—0.519â‰ˆ15.85+4.15=20 âœ“. Step 3: Fraction published = Î¦Ì„(-0.481) â‰ˆ 0.685.",
+    "python_verification":  "from scipy.optimize import brentq\nfrom scipy.stats import norm\ndef eq(mu): a=(12-mu)/8; sf=norm.sf(a); return mu+8*norm.pdf(a)/sf-20 if sf\u003e1e-10 else 1e10\nmu=brentq(eq,14,16)\nassert abs(mu-15.85)\u003c0.25\nassert abs(norm.sf((12-mu)/8)-0.6848)\u003c0.01"
+}

@@ -66,6 +66,18 @@ Interpretation guide: if flagship models land around 40-60% overall ACC with a c
 
 ---
 
+## Task Inventory
+
+| Category | Count | Difficulty split |
+|----------|-------|------------------|
+| Simpson's paradox | 18 | 2 easy / 5 medium / 11 hard |
+| Berkson's paradox | 13 | 0 easy / 7 medium / 6 hard |
+| Truncated sampling | 15 | 0 easy / 8 medium / 7 hard |
+| Survivorship bias | 15 | 0 easy / 4 medium / 11 hard |
+| **Total** | **61** | |
+
+---
+
 ## Repo Structure
 
 ```text
@@ -74,7 +86,7 @@ prism-benchmark/
 |-- requirements.txt
 |-- evaluate.py
 |-- data/
-|   `-- tasks/
+|   `-- tasks/                     # 61 total task files
 |       |-- prism_simp_001.json
 |       |-- prism_simp_002.json
 |       |-- prism_berk_002.json

@@ -1,0 +1,54 @@
+﻿{
+    "task_id":  "prism_simp_010",
+    "category":  "simpson",
+    "difficulty":  "hard",
+    "scenario":  "A software engineering manager compares bug introduction rates for two development teams (A and B) across junior and senior engineers. Team B reports a higher overall bug rate, so the manager prepares to retrain Team B. A senior engineer challenges the conclusion.",
+    "data":  {
+                 "description":  "Bug rates (bugs introduced per 100 commits) by seniority level and team. Lower is better.",
+                 "values":  {
+                                "junior_engineers":  {
+                                                         "team_A":  {
+                                                                        "bug_rate":  0.050,
+                                                                        "commits":  180
+                                                                    },
+                                                         "team_B":  {
+                                                                        "bug_rate":  0.040,
+                                                                        "commits":  20
+                                                                    }
+                                                     },
+                                "senior_engineers":  {
+                                                         "team_A":  {
+                                                                        "bug_rate":  0.200,
+                                                                        "commits":  20
+                                                                    },
+                                                         "team_B":  {
+                                                                        "bug_rate":  0.180,
+                                                                        "commits":  180
+                                                                    }
+                                                     },
+                                "overall_weighted":  {
+                                                         "team_A":  {
+                                                                        "bug_rate":  0.065
+                                                                    },
+                                                         "team_B":  {
+                                                                        "bug_rate":  0.166
+                                                                    }
+                                                     }
+                            }
+             },
+    "question":  "Team B\u0027s overall bug rate (16.6%) is far higher than Team A\u0027s (6.5%). The manager plans to retrain Team B. (a) Which team has a lower bug rate among junior engineers? (b) Which team has a lower bug rate among senior engineers? (c) If both teams had equal numbers of junior and senior engineers (50/50), which team would have the lower corrected bug rate? Compute both corrected rates.",
+    "answer_type":  "comparative",
+    "ground_truth":  {
+                         "junior_winner":  "team_B",
+                         "senior_winner":  "team_B",
+                         "team_A_corrected":  0.125,
+                         "team_B_corrected":  0.110,
+                         "recommendation":  "team_B",
+                         "explanation":  "Team B has a lower bug rate at both experience levels. The manager\u0027s conclusion is wrong. Team B\u0027s higher aggregate rate is caused by composition: Team B is 90% senior engineers (who introduce more bugs regardless of team) while Team A is 90% junior engineers. Team B is actually the better team."
+                     },
+    "tolerance":  0.005,
+    "naive_answer":  "Team A, because its overall bug rate of 6.5% is far lower than Team B\u0027s 16.6%.",
+    "naive_trap":  "Team A is staffed overwhelmingly with junior engineers who commit low-risk changes. Team B is staffed overwhelmingly with senior engineers who work on complex, higher-risk code. Comparing aggregate bug rates ignores experience-level composition entirely.",
+    "reasoning_trace":  "Step 1: Junior â€” B=4% \u003c A=5%. B wins. Step 2: Senior â€” B=18% \u003c A=20%. B wins. Step 3: 50/50 mix. A=0.5*0.05+0.5*0.20=0.125. B=0.5*0.04+0.5*0.18=0.110. Team B is better.",
+    "python_verification":  "pA=0.5*0.05+0.5*0.20; pB=0.5*0.04+0.5*0.18\nassert abs(pA-0.125)\u003c0.001 and abs(pB-0.110)\u003c0.001 and pB\u003cpA"
+}

@@ -1,0 +1,26 @@
+{
+  "task_id": "prism_surv_051",
+  "category": "survival",
+  "difficulty": "hard",
+  "scenario": "A music-industry report features only artists whose year-over-year streaming growth exceeds 50%. A label executive uses the report's average growth to estimate the typical growth rate across all newly signed artists.",
+  "data": {
+    "description": "Only artists with growth above 50 percentage points are included. Growth rates are modeled as Normal with known standard deviation sigma = 40 percentage points.",
+    "values": {
+      "observed_mean_growth_pp": 71.01,
+      "sigma_known_pp": 40,
+      "feature_threshold_pp": 50,
+      "distribution": "normal(mu, 40^2)"
+    }
+  },
+  "question": "Using the truncated normal model, estimate (a) the true mean streaming-growth rate mu across all newly signed artists and (b) the fraction of artists that appear in the featured report.",
+  "answer_type": "numerical",
+  "ground_truth": {
+    "true_mean_growth_pp": 10,
+    "fraction_featured": 0.1587
+  },
+  "tolerance": 0.6,
+  "naive_answer": "Typical artist growth is about 71 percentage points because that is the featured-report average.",
+  "naive_trap": "The featured report includes only artists that cleared a large success threshold, so it overstates typical performance.",
+  "reasoning_trace": "Step 1: Solve 71.01 = mu + 40*lambda((50-mu)/40). Step 2: The solution has alpha about 1.0, so mu = 50 - 40 = 10. Step 3: The featured fraction is sf(1.0) about 0.1587.",
+  "python_verification": "from scipy.optimize import brentq\nfrom scipy.stats import norm\ndef eq(mu):\n    a=(50-mu)/40\n    return mu + 40*norm.pdf(a)/norm.sf(a) - 71.01\nmu=brentq(eq,-200,49.99)\nfrac=norm.sf((50-mu)/40)\nassert abs(mu-10)<0.6 and abs(frac-0.1587)<0.005"
+}

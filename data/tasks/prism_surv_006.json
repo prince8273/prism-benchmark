@@ -1,0 +1,26 @@
+﻿{
+    "task_id":  "prism_surv_006",
+    "category":  "survival",
+    "difficulty":  "medium",
+    "scenario":  "A restaurant review aggregator only rates restaurants that have been open for more than 3 years â€” newer establishments are excluded to ensure \u0027proven quality\u0027. A business journalist uses the aggregator\u0027s average restaurant age to write about the typical lifespan of dining establishments.",
+    "data":  {
+                 "description":  "Only restaurants open \u003e 3 years appear on the platform. Underlying restaurant age-at-review assumed Normal with known standard deviation Ïƒ = 4 years.",
+                 "values":  {
+                                "observed_mean_age_years":  7.0,
+                                "sigma_known_years":  4,
+                                "inclusion_threshold_years":  3,
+                                "distribution":  "normal(mu, 4^2)"
+                            }
+             },
+    "question":  "Listed restaurants average 7 years old. Using the truncated normal model, estimate (a) the true mean age Î¼ of all restaurants (including those that closed or were excluded before 3 years), and (b) the fraction of all restaurants that make it onto the platform.",
+    "answer_type":  "numerical",
+    "ground_truth":  {
+                         "true_mean_age_years":  4.924,
+                         "fraction_on_platform":  0.6848
+                     },
+    "tolerance":  0.1,
+    "naive_answer":  "The typical restaurant age is about 7 years since that is the platform average.",
+    "naive_trap":  "About 32% of restaurants close before reaching 3 years and are never listed. The true mean age for the full restaurant population is about 4.9 years â€” notably shorter than the 7-year platform figure. Survivorship bias makes the industry look more stable than it is.",
+    "reasoning_trace":  "Step 1: E[X|X\u003e3] = Î¼ + 4Â·Î»((3-Î¼)/4) = 7. Step 2: Solve numerically. At Î¼â‰ˆ4.92: Î±=(3-4.92)/4=-0.48, Î»â‰ˆ0.522. 4.92+4Ã—0.522â‰ˆ4.92+2.09=7.01â‰ˆ7 âœ“. Step 3: Fraction on platform = Î¦Ì„(-0.48) â‰ˆ 0.685.",
+    "python_verification":  "from scipy.optimize import brentq\nfrom scipy.stats import norm\ndef eq(mu): a=(3-mu)/4; sf=norm.sf(a); return mu+4*norm.pdf(a)/sf-7 if sf\u003e1e-10 else 1e10\nmu=brentq(eq,3.01,6.99)\nassert abs(mu-4.924)\u003c0.15\nassert abs(norm.sf((3-mu)/4)-0.6848)\u003c0.01"
+}

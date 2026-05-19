@@ -1,0 +1,27 @@
+﻿{
+    "task_id":  "prism_trunc_009",
+    "category":  "truncated",
+    "difficulty":  "medium",
+    "scenario":  "A retail loyalty programme only enrolls customers who spend more than $100 in a single transaction. A marketing analyst uses the enrolled customers\u0027 average spend to project revenue from a planned promotion.",
+    "data":  {
+                 "description":  "Loyalty database includes only transactions \u003e $100. Transaction values assumed Normal with known standard deviation Ïƒ = $80.",
+                 "values":  {
+                                "observed_mean_spend":  180,
+                                "sigma_known":  80,
+                                "enrolment_threshold":  100,
+                                "distribution":  "normal(mu, 80^2)",
+                                "currency":  "USD per transaction"
+                            }
+             },
+    "question":  "Loyalty members average $180 per transaction. Using the truncated normal model, estimate (a) the true mean transaction value Î¼ across ALL customers (including non-members), and (b) the fraction of all transactions that qualify for loyalty membership.",
+    "answer_type":  "numerical",
+    "ground_truth":  {
+                         "true_mean_spend":  138.48,
+                         "fraction_qualifying":  0.6848
+                     },
+    "tolerance":  2.0,
+    "naive_answer":  "The true mean transaction value is approximately $180 since that is the loyalty member average.",
+    "naive_trap":  "Approximately 32% of transactions are below $100 and excluded from the loyalty database. Using the loyalty average ($180) to model all customers would overstate promotion ROI by projecting high-spend behaviour across a broader base that includes many lower-spend customers.",
+    "reasoning_trace":  "Step 1: E[X|X\u003e100] = Î¼ + 80Â·Î»((100-Î¼)/80) = 180. Step 2: Solve numerically. At Î¼â‰ˆ138.5: Î±=(100-138.5)/80=-0.481, Î»â‰ˆ0.519. 138.5+80Ã—0.519â‰ˆ138.5+41.5=180 âœ“. Step 3: Fraction qualifying = Î¦Ì„(-0.481) â‰ˆ 0.685.",
+    "python_verification":  "from scipy.optimize import brentq\nfrom scipy.stats import norm\ndef eq(mu): a=(100-mu)/80; sf=norm.sf(a); return mu+80*norm.pdf(a)/sf-180 if sf\u003e1e-10 else 1e10\nmu=brentq(eq,100.01,179)\nassert abs(mu-138.48)\u003c2.5\nassert abs(norm.sf((100-mu)/80)-0.6848)\u003c0.01"
+}

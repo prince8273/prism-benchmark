@@ -1,0 +1,29 @@
+﻿{
+    "task_id":  "prism_berk_009",
+    "category":  "berkson",
+    "difficulty":  "medium",
+    "scenario":  "A university financial aid office awards scholarships to students who demonstrate either high financial need OR high academic merit (or both). A researcher studies scholarship recipients and finds that high-need students are unlikely to also be high-merit students.",
+    "data":  {
+                 "description":  "In the general student population, financial need and academic merit are independent. Scholarships are awarded if high financial need OR high academic merit.",
+                 "values":  {
+                                "population_P_high_need":  0.40,
+                                "population_P_high_merit":  0.30,
+                                "population_independence":  true,
+                                "scholarship_criterion":  "awarded if high_need OR high_merit"
+                            }
+             },
+    "question":  "Among scholarship recipients, P(high need | high merit) = 40% but P(high need | NOT high merit) = 100%. The researcher concludes high financial need and academic merit are negatively correlated among students. (a) Verify both conditional probabilities. (b) Is this a real population-level relationship? (c) What fraction of students receive a scholarship?",
+    "answer_type":  "numerical",
+    "ground_truth":  {
+                         "P_need_given_merit_scholarship":  0.400,
+                         "P_need_given_no_merit_scholarship":  1.000,
+                         "population_relationship":  "independent",
+                         "fraction_receiving_scholarship":  0.580,
+                         "explanation":  "Berkson\u0027s paradox via OR-gate scholarship selection. Recipients without high merit all have high financial need â€” their only qualification. Recipients with high merit show need at the population base rate. Apparent negative correlation is entirely an artifact of the award mechanism."
+                     },
+    "tolerance":  0.005,
+    "naive_answer":  "Financial need and academic merit are negatively correlated: high-need students tend to have lower academic merit.",
+    "naive_trap":  "The scholarship criterion creates a collider. Among recipients without high merit, all are high-need by necessity. This creates a spurious negative correlation in the recipient sample.",
+    "reasoning_trace":  "p_N=0.40, p_M=0.30. P(scholarship)=0.40+0.30-0.12=0.58. P(N|M,schol)=P(Nâˆ©M)/P(M)=0.12/0.30=p_N=0.40. P(N|notM,schol)=P(Nâˆ©notM)/(P(schol)-P(M))=(0.40*0.70)/(0.58-0.30)=0.28/0.28=1.0.",
+    "python_verification":  "p_N=0.40; p_M=0.30; p_s=p_N+p_M-p_N*p_M\ng_M=p_N; g_NM=p_N*(1-p_M)/(p_s-p_M)\nassert abs(g_M-0.40)\u003c0.001 and abs(g_NM-1.00)\u003c0.001 and abs(p_s-0.58)\u003c0.001"
+}

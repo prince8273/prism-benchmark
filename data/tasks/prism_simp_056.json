@@ -1,0 +1,48 @@
+{
+  "task_id": "prism_simp_056",
+  "category": "simpson",
+  "difficulty": "hard",
+  "scenario": "A grant agency compares two review committees across four region types: urban, suburban, rural, and international applicants. The public summary says Committee A is better because it funds a much larger fraction of proposals overall.",
+  "data": {
+    "description": "Funding rates by region type and committee.",
+    "values": {
+      "urban": {
+        "committee_A": { "funded": 340, "total": 500, "rate": 0.680 },
+        "committee_B": { "funded": 66, "total": 100, "rate": 0.660 }
+      },
+      "suburban": {
+        "committee_A": { "funded": 122, "total": 200, "rate": 0.610 },
+        "committee_B": { "funded": 60, "total": 100, "rate": 0.600 }
+      },
+      "rural": {
+        "committee_A": { "funded": 49, "total": 100, "rate": 0.490 },
+        "committee_B": { "funded": 275, "total": 500, "rate": 0.550 }
+      },
+      "international": {
+        "committee_A": { "funded": 6, "total": 20, "rate": 0.300 },
+        "committee_B": { "funded": 63, "total": 180, "rate": 0.350 }
+      },
+      "overall": {
+        "committee_A": { "funded": 517, "total": 820, "rate": 0.6305 },
+        "committee_B": { "funded": 464, "total": 880, "rate": 0.5273 }
+      }
+    }
+  },
+  "question": "The agency summary prefers Committee A because its aggregate funding rate is 63.0% versus 52.7% for Committee B. (a) Which committee performs better in each region type? (b) If the target applicant mix is 40% urban, 30% suburban, 20% rural, and 10% international, compute the corrected funding rate for each committee. (c) Which committee should be preferred for the target mix?",
+  "answer_type": "comparative",
+  "ground_truth": {
+    "urban_winner": "committee_A",
+    "suburban_winner": "committee_A",
+    "rural_winner": "committee_B",
+    "international_winner": "committee_B",
+    "committee_A_corrected": 0.583,
+    "committee_B_corrected": 0.589,
+    "recommendation": "committee_B",
+    "explanation": "Committee A wins in urban and suburban regions, but Committee B is stronger in rural and international proposals. Under the target applicant mix, Committee B has the higher expected funding rate."
+  },
+  "tolerance": 0.005,
+  "naive_answer": "Committee A should be preferred because its overall funding rate is higher.",
+  "naive_trap": "Committee A reviewed mostly urban and suburban proposals, which had higher success rates to begin with. Committee B reviewed a much harder rural and international mix.",
+  "reasoning_trace": "Step 1: Urban: A=68% > B=66%. Suburban: A=61% > B=60%. Rural: B=55% > A=49%. International: B=35% > A=30%. Step 2: Apply the target mix. A=0.4*0.68 + 0.3*0.61 + 0.2*0.49 + 0.1*0.30 = 0.583. B=0.4*0.66 + 0.3*0.60 + 0.2*0.55 + 0.1*0.35 = 0.589. Step 3: Recommend Committee B.",
+  "python_verification": "pA = 0.4*0.68 + 0.3*0.61 + 0.2*0.49 + 0.1*0.30\npB = 0.4*0.66 + 0.3*0.60 + 0.2*0.55 + 0.1*0.35\nassert abs(pA-0.583)<0.001 and abs(pB-0.589)<0.001 and pB>pA"
+}

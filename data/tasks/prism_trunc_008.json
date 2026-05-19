@@ -1,0 +1,27 @@
+﻿{
+    "task_id":  "prism_trunc_008",
+    "category":  "truncated",
+    "difficulty":  "hard",
+    "scenario":  "A government science funding agency only tracks research grants above $50,000 in its public transparency database. A policy analyst uses the database to estimate the average grant size to argue for budget reallocation.",
+    "data":  {
+                 "description":  "Database only records grants \u003e $50,000. All grant sizes assumed Normal with known standard deviation Ïƒ = $40,000.",
+                 "values":  {
+                                "observed_mean_grant":  95000,
+                                "sigma_known":  40000,
+                                "tracking_threshold":  50000,
+                                "distribution":  "normal(mu, 40000^2)",
+                                "currency":  "USD"
+                            }
+             },
+    "question":  "The transparency database shows a mean grant of $95,000. Using the truncated normal model, estimate (a) the true mean grant size Î¼ across ALL grants awarded by the agency, and (b) the fraction of grants that are tracked in the database.",
+    "answer_type":  "numerical",
+    "ground_truth":  {
+                         "true_mean_grant":  78959,
+                         "fraction_tracked":  0.7655
+                     },
+    "tolerance":  500,
+    "naive_answer":  "The true mean grant size is approximately $95,000 since that is the database figure.",
+    "naive_trap":  "About 23% of grants fall below the $50,000 tracking threshold and are invisible in the database. The true agency mean is about $16,000 lower. A policy analyst using $95,000 would overestimate total funding obligations and mischaracterise the distribution of research support.",
+    "reasoning_trace":  "Step 1: E[X|X\u003e50000] = Î¼ + 40000Â·Î»((50000-Î¼)/40000) = 95000. Step 2: Solve numerically for Î¼ â‰ˆ 78959. Step 3: Fraction tracked = P(X\u003e50000|Î¼=78959,Ïƒ=40000) = Î¦Ì„((50000-78959)/40000) = Î¦Ì„(-0.724) â‰ˆ 0.765.",
+    "python_verification":  "from scipy.optimize import brentq\nfrom scipy.stats import norm\ndef eq(mu): a=(50000-mu)/40000; sf=norm.sf(a); return mu+40000*norm.pdf(a)/sf-95000 if sf\u003e1e-10 else 1e10\nmu=brentq(eq,10000,94999)\nassert abs(mu-78959)\u003c600\nassert abs(norm.sf((50000-mu)/40000)-0.7655)\u003c0.01"
+}

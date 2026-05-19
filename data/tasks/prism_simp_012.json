@@ -1,0 +1,62 @@
+﻿{
+    "task_id":  "prism_simp_012",
+    "category":  "simpson",
+    "difficulty":  "medium",
+    "scenario":  "A pain clinic evaluates two analgesic drugs (P and Q) across patients with mild and severe chronic pain. Both are being considered for a formulary decision covering all incoming patients.",
+    "data":  {
+                 "description":  "Pain relief success rates (patient reports meaningful relief) by pain severity.",
+                 "values":  {
+                                "mild_pain":  {
+                                                  "drug_P":  {
+                                                                 "success":  80,
+                                                                 "total":  100,
+                                                                 "rate":  0.800
+                                                             },
+                                                  "drug_Q":  {
+                                                                 "success":  72,
+                                                                 "total":  90,
+                                                                 "rate":  0.800
+                                                             }
+                                              },
+                                "severe_pain":  {
+                                                    "drug_P":  {
+                                                                   "success":  50,
+                                                                   "total":  100,
+                                                                   "rate":  0.500
+                                                               },
+                                                    "drug_Q":  {
+                                                                   "success":  40,
+                                                                   "total":  110,
+                                                                   "rate":  0.364
+                                                               }
+                                                },
+                                "overall":  {
+                                                "drug_P":  {
+                                                               "success":  130,
+                                                               "total":  200,
+                                                               "rate":  0.650
+                                                           },
+                                                "drug_Q":  {
+                                                               "success":  112,
+                                                               "total":  200,
+                                                               "rate":  0.560
+                                                           }
+                                            }
+                            }
+             },
+    "question":  "Drug P has an overall success rate of 65% vs Drug Q\u0027s 56%. (a) Which drug performs better for mild pain patients? (b) Which drug performs better for severe pain patients? (c) Assuming the clinic sees equal numbers of mild and severe pain patients (50/50), what are the corrected success rates? Which drug should be on the formulary?",
+    "answer_type":  "comparative",
+    "ground_truth":  {
+                         "mild_winner":  "tie",
+                         "severe_winner":  "drug_P",
+                         "drug_P_corrected":  0.650,
+                         "drug_Q_corrected":  0.582,
+                         "recommendation":  "drug_P",
+                         "explanation":  "Drug P ties in mild pain (80% each) and wins decisively in severe pain (50% vs 36.4%). Corrected for 50/50 mix: P=65.0% vs Q=58.2%. The aggregate result is valid here but overstates the margin because Q was given slightly more to severe patients."
+                     },
+    "tolerance":  0.005,
+    "naive_answer":  "Drug P, because 65% \u003e 56% overall.",
+    "naive_trap":  "The naive answer is correct but for incomplete reasons. A rigorous analyst must verify the aggregate is not confounded. Here the aggregate does not reverse, but the severity allocation (Q given to more severe patients) does somewhat inflate P\u0027s apparent aggregate advantage.",
+    "reasoning_trace":  "Step 1: Mild â€” P=80% = Q=80%. Tie. Step 2: Severe â€” P=50% \u003e Q=36.4%. P wins. Step 3: 50/50 mix. P=0.5*0.80+0.5*0.50=0.650. Q=0.5*0.80+0.5*0.364=0.582. Recommend P.",
+    "python_verification":  "pP=0.5*0.80+0.5*0.50; pQ=0.5*0.80+0.5*(40/110)\nassert abs(pP-0.650)\u003c0.001 and abs(pQ-0.582)\u003c0.003 and pP\u003epQ"
+}

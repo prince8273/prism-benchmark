@@ -1,0 +1,28 @@
+{
+  "task_id": "prism_berk_045",
+  "category": "berkson",
+  "difficulty": "hard",
+  "scenario": "A factory inspects a metal component twice using the same imaging rig. Engineers know that 8% of the time, a calibration drift causes both scans to appear defective regardless of the component's true condition.",
+  "data": {
+    "description": "Two positive defect scans from a shared rig with a shared calibration-failure mode.",
+    "values": {
+      "defect_prevalence": 0.04,
+      "scan_sensitivity": 0.88,
+      "scan_specificity": 0.93,
+      "shared_calibration_drift_rate": 0.08,
+      "n_positive_scans": 2,
+      "dependence_note": "If calibration drift occurs, both scans are positive regardless of truth."
+    }
+  },
+  "question": "Given two positive scans, compute the posterior probability that the component is truly defective. Also compute the naive posterior that incorrectly treats the two scans as conditionally independent.",
+  "answer_type": "numerical",
+  "ground_truth": {
+    "correct_posterior": 0.2810,
+    "naive_posterior_independent": 0.8682
+  },
+  "tolerance": 0.01,
+  "naive_answer": "Two positive scans imply the component is almost certainly defective.",
+  "naive_trap": "Because the same rig produced both scans, the second positive is much less informative than it would be under independence.",
+  "reasoning_trace": "Step 1: P(++\u007c defect) = (1-0.08)*0.88^2 + 0.08 = 0.7924. Step 2: P(++\u007c no defect) = (1-0.08)*0.07^2 + 0.08 = 0.0845. Step 3: Bayes with prevalence 0.04 gives a posterior around 0.281. Step 4: The naive independent calculation gives about 0.868.",
+  "python_verification": "prev=0.04; sens=0.88; spec=0.93; pe=0.08\np_pos_d=(1-pe)*sens**2 + pe\np_pos_nd=(1-pe)*(1-spec)**2 + pe\nposterior=p_pos_d*prev/(p_pos_d*prev+p_pos_nd*(1-prev))\nnaive=(sens**2)*prev/((sens**2)*prev+((1-spec)**2)*(1-prev))\nassert abs(posterior-0.2810)<0.005 and abs(naive-0.8682)<0.01"
+}

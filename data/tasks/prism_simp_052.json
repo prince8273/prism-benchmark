@@ -1,0 +1,43 @@
+{
+  "task_id": "prism_simp_052",
+  "category": "simpson",
+  "difficulty": "hard",
+  "scenario": "A school district compares two remedial tutoring programmes across three school bands: top-performing, average, and under-resourced campuses. The district report recommends Programme B because its aggregate pass rate is much higher.",
+  "data": {
+    "description": "Exam pass rates by school band and tutoring programme.",
+    "values": {
+      "top_performing": {
+        "programme_A": { "passed": 48, "total": 50, "rate": 0.960 },
+        "programme_B": { "passed": 423, "total": 450, "rate": 0.940 }
+      },
+      "average": {
+        "programme_A": { "passed": 72, "total": 100, "rate": 0.720 },
+        "programme_B": { "passed": 370, "total": 500, "rate": 0.740 }
+      },
+      "under_resourced": {
+        "programme_A": { "passed": 45, "total": 100, "rate": 0.450 },
+        "programme_B": { "passed": 21, "total": 50, "rate": 0.420 }
+      },
+      "overall": {
+        "programme_A": { "passed": 165, "total": 250, "rate": 0.660 },
+        "programme_B": { "passed": 814, "total": 1000, "rate": 0.814 }
+      }
+    }
+  },
+  "question": "The district recommends Programme B because its aggregate pass rate is 81.4% versus 66.0% for Programme A. (a) Which programme performs better in each school band? (b) If the district's long-run school mix is 25% top-performing, 50% average, and 25% under-resourced, compute the corrected pass rate for each programme. (c) Which programme should be recommended for the long-run mix?",
+  "answer_type": "comparative",
+  "ground_truth": {
+    "top_performing_winner": "programme_A",
+    "average_winner": "programme_B",
+    "under_resourced_winner": "programme_A",
+    "programme_A_corrected": 0.7125,
+    "programme_B_corrected": 0.7100,
+    "recommendation": "programme_A",
+    "explanation": "Programme B looks better overall because it was used disproportionately in top-performing and average schools. Under the long-run mix, Programme A wins by a small margin."
+  },
+  "tolerance": 0.005,
+  "naive_answer": "Programme B should be chosen because its overall pass rate is 81.4%.",
+  "naive_trap": "The aggregate rate reflects where each programme was deployed, not just how well it performed. Programme A is stronger in the top-performing and under-resourced strata and edges out B under the target mix.",
+  "reasoning_trace": "Step 1: Top-performing: A=96% > B=94%. Average: B=74% > A=72%. Under-resourced: A=45% > B=42%. Step 2: Apply the district mix. A=0.25*0.96 + 0.5*0.72 + 0.25*0.45 = 0.7125. B=0.25*0.94 + 0.5*0.74 + 0.25*0.42 = 0.7100. Step 3: Recommend Programme A by a narrow margin.",
+  "python_verification": "pA = 0.25*0.96 + 0.5*0.72 + 0.25*0.45\npB = 0.25*0.94 + 0.5*0.74 + 0.25*0.42\nassert abs(pA-0.7125)<0.001 and abs(pB-0.7100)<0.001 and pA>pB"
+}

@@ -1,0 +1,26 @@
+﻿{
+    "task_id":  "prism_trunc_010",
+    "category":  "truncated",
+    "difficulty":  "medium",
+    "scenario":  "An ecologist is studying a small mammal population in a nature reserve. Camera traps have a weight-activated trigger that only fires for animals heavier than 5 kg, so lighter animals are never recorded. The ecologist uses the camera-trap records to report the average body mass of the species.",
+    "data":  {
+                 "description":  "Camera traps only detect animals weighing \u003e 5 kg. True weight distribution assumed Normal with known standard deviation Ïƒ = 3 kg.",
+                 "values":  {
+                                "observed_mean_weight_kg":  8.0,
+                                "sigma_known_kg":  3,
+                                "detection_threshold_kg":  5,
+                                "distribution":  "normal(mu, 3^2)"
+                            }
+             },
+    "question":  "Camera trap records show a mean weight of 8.0 kg. Using the truncated normal model, estimate (a) the true mean body mass Î¼ of the full population (including animals below the detection threshold), and (b) the fraction of the population that is detected by the camera traps.",
+    "answer_type":  "numerical",
+    "ground_truth":  {
+                         "true_mean_weight_kg":  6.443,
+                         "fraction_detected":  0.6848
+                     },
+    "tolerance":  0.1,
+    "naive_answer":  "The true mean body mass is approximately 8.0 kg since that is the trap record average.",
+    "naive_trap":  "About 32% of the population is below 5 kg and invisible to the traps. The true mean is 6.4 kg â€” 1.6 kg lower than the trap average. An ecologist reporting 8 kg as typical body mass would systematically overstate the species\u0027 size, affecting habitat and resource models.",
+    "reasoning_trace":  "Step 1: E[X|X\u003e5] = Î¼ + 3Â·Î»((5-Î¼)/3) = 8. Step 2: Solve numerically. At Î¼â‰ˆ6.44: Î±=(5-6.44)/3=-0.48, Î»â‰ˆ0.522. 6.44+3Ã—0.522â‰ˆ6.44+1.57=8.01â‰ˆ8 âœ“. Step 3: Fraction detected = Î¦Ì„(-0.48) â‰ˆ 0.685.",
+    "python_verification":  "from scipy.optimize import brentq\nfrom scipy.stats import norm\ndef eq(mu): a=(5-mu)/3; sf=norm.sf(a); return mu+3*norm.pdf(a)/sf-8 if sf\u003e1e-10 else 1e10\nmu=brentq(eq,5.01,7.99)\nassert abs(mu-6.443)\u003c0.15\nassert abs(norm.sf((5-mu)/3)-0.6848)\u003c0.01"
+}

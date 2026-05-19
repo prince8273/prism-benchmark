@@ -1,0 +1,27 @@
+{
+  "task_id": "prism_trunc_058",
+  "category": "truncated",
+  "difficulty": "hard",
+  "scenario": "A graduate-outcomes portal records salaries only for alumni earning above $70,000 because lower incomes are suppressed under a reporting rule. A dean wants to estimate the average salary across the full graduating class.",
+  "data": {
+    "description": "Only salaries above $70,000 are observed. Salaries are modeled as Normal with known standard deviation sigma = $20,000.",
+    "values": {
+      "observed_mean_salary": 78773.54,
+      "sigma_known": 20000,
+      "reporting_threshold": 70000,
+      "distribution": "normal(mu, 20000^2)",
+      "currency": "USD"
+    }
+  },
+  "question": "Using the truncated normal model, estimate (a) the true mean salary mu across the full graduating class and (b) the fraction of graduates included in the portal's salary data.",
+  "answer_type": "numerical",
+  "ground_truth": {
+    "true_mean_salary": 40000,
+    "fraction_reported": 0.0668
+  },
+  "tolerance": 600,
+  "naive_answer": "The graduating class average salary is about $78,774 because that is the portal's observed mean.",
+  "naive_trap": "The portal suppresses all lower salaries, so it contains only a narrow upper tail of earners.",
+  "reasoning_trace": "Step 1: Solve 78,773.54 = mu + 20,000*lambda((70,000-mu)/20,000). Step 2: The solution has alpha about 1.5, giving mu = 70,000 - 1.5*20,000 = 40,000. Step 3: The reported fraction is sf(1.5) about 0.0668.",
+  "python_verification": "from scipy.optimize import brentq\nfrom scipy.stats import norm\ndef eq(mu):\n    a=(70000-mu)/20000\n    return mu + 20000*norm.pdf(a)/norm.sf(a) - 78773.54\nmu=brentq(eq,-50000,69999)\nfrac=norm.sf((70000-mu)/20000)\nassert abs(mu-40000)<600 and abs(frac-0.0668)<0.005"
+}

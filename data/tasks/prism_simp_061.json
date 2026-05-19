@@ -1,0 +1,43 @@
+{
+  "task_id": "prism_simp_061",
+  "category": "simpson",
+  "difficulty": "hard",
+  "scenario": "A hospital system compares two sepsis treatment protocols across three patient severity bands: low-risk, moderate-risk, and critical-care referrals. The quality dashboard recommends Protocol A because its overall survival rate is much higher than Protocol B's.",
+  "data": {
+    "description": "Survival rates by severity band and treatment protocol.",
+    "values": {
+      "low_risk": {
+        "protocol_A": { "survived": 460, "total": 500, "rate": 0.920 },
+        "protocol_B": { "survived": 95, "total": 100, "rate": 0.950 }
+      },
+      "moderate_risk": {
+        "protocol_A": { "survived": 39, "total": 50, "rate": 0.780 },
+        "protocol_B": { "survived": 320, "total": 400, "rate": 0.800 }
+      },
+      "critical_referrals": {
+        "protocol_A": { "survived": 11, "total": 20, "rate": 0.550 },
+        "protocol_B": { "survived": 240, "total": 480, "rate": 0.500 }
+      },
+      "overall": {
+        "protocol_A": { "survived": 510, "total": 570, "rate": 0.8947 },
+        "protocol_B": { "survived": 655, "total": 980, "rate": 0.6684 }
+      }
+    }
+  },
+  "question": "The dashboard recommends Protocol A because its overall survival rate is 89.5% versus 66.8% for Protocol B. (a) Which protocol performs better in each severity band? (b) If the target population mix is 50% low-risk, 30% moderate-risk, and 20% critical referrals, compute the corrected survival rate for each protocol. (c) Which protocol should be recommended for the target population?",
+  "answer_type": "comparative",
+  "ground_truth": {
+    "low_risk_winner": "protocol_B",
+    "moderate_risk_winner": "protocol_B",
+    "critical_referrals_winner": "protocol_A",
+    "protocol_A_corrected": 0.804,
+    "protocol_B_corrected": 0.815,
+    "recommendation": "protocol_B",
+    "explanation": "Protocol B wins in low-risk and moderate-risk patients, while Protocol A wins only in the critical-referral stratum. Under the target population mix, Protocol B has the higher expected survival rate despite looking much worse in the aggregate dashboard."
+  },
+  "tolerance": 0.005,
+  "naive_answer": "Protocol A, because 89.5% is much larger than 66.8% overall.",
+  "naive_trap": "Protocol A was used almost entirely on easier cases, while Protocol B handled most of the critical-referral workload. The aggregate comparison confuses protocol quality with case-mix allocation.",
+  "reasoning_trace": "Step 1: Compare each stratum. Low-risk: B=95% > A=92%. Moderate-risk: B=80% > A=78%. Critical referrals: A=55% > B=50%. Step 2: Apply the target mix. A=0.5*0.92 + 0.3*0.78 + 0.2*0.55 = 0.804. B=0.5*0.95 + 0.3*0.80 + 0.2*0.50 = 0.815. Step 3: Recommend Protocol B for the target population.",
+  "python_verification": "pA = 0.5*0.92 + 0.3*0.78 + 0.2*0.55\npB = 0.5*0.95 + 0.3*0.80 + 0.2*0.50\nassert abs(pA - 0.804) < 0.001 and abs(pB - 0.815) < 0.001 and pB > pA"
+}

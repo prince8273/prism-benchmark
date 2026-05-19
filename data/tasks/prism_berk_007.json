@@ -1,0 +1,29 @@
+﻿{
+    "task_id":  "prism_berk_007",
+    "category":  "berkson",
+    "difficulty":  "medium",
+    "scenario":  "An ICU physician studies whether patients admitted with respiratory failure are less likely to also have cardiac arrest, using hospital records. The ICU admits any patient presenting with respiratory failure OR cardiac arrest.",
+    "data":  {
+                 "description":  "Population prevalence of respiratory failure and cardiac arrest. ICU criterion: admitted if respiratory failure OR cardiac arrest.",
+                 "values":  {
+                                "population_P_respiratory_failure":  0.08,
+                                "population_P_cardiac_arrest":  0.05,
+                                "population_independence":  true,
+                                "icu_criterion":  "admitted if respiratory_failure OR cardiac_arrest"
+                            }
+             },
+    "question":  "In the ICU, the physician observes P(respiratory failure | cardiac arrest) = 8% but P(respiratory failure | no cardiac arrest) â‰ˆ 100%. She concludes the two conditions are strongly negatively associated. (a) Verify these probabilities from the admission model. (b) What is the true population relationship? (c) What fraction of the population requires ICU admission under this criterion?",
+    "answer_type":  "numerical",
+    "ground_truth":  {
+                         "P_resp_given_cardiac_ICU":  0.080,
+                         "P_resp_given_no_cardiac_ICU":  1.000,
+                         "population_relationship":  "independent",
+                         "fraction_requiring_ICU":  0.1260,
+                         "explanation":  "Berkson\u0027s paradox. Among ICU patients without cardiac arrest, all have respiratory failure (their only admission route). Among cardiac arrest patients, respiratory failure appears at the population base rate. True population correlation is zero."
+                     },
+    "tolerance":  0.005,
+    "naive_answer":  "Respiratory failure and cardiac arrest are negatively associated: having one makes the other much less likely.",
+    "naive_trap":  "The ICU sample is a collider â€” admission requires at least one condition. Among admitted patients without cardiac arrest, every single patient must have respiratory failure. This induces the spurious negative association.",
+    "reasoning_trace":  "p_R=0.08, p_C=0.05, independent. P(ICU)=0.08+0.05-0.004=0.126. P(R|C,ICU)=P(R)*P(C)/P(C)=p_R=0.08. P(R|notC,ICU)=P(R)*P(notC)/(P(ICU)-P(C))=0.08*0.95/0.076=0.076/0.076=1.0.",
+    "python_verification":  "p_R=0.08; p_C=0.05; p_icu=p_R+p_C-p_R*p_C\ng_C=p_R; g_NC=p_R*(1-p_C)/(p_icu-p_C)\nassert abs(g_C-0.08)\u003c0.001 and abs(g_NC-1.00)\u003c0.001 and abs(p_icu-0.126)\u003c0.001"
+}
