@@ -1,0 +1,48 @@
+﻿{
+    "task_id":  "prism_simp_184",
+    "category":  "simpson",
+    "difficulty":  "hard",
+    "scenario":  "Two avalanche-forecasting models, AvaX and AvaY, are evaluated on correct-forecast rates across complex high-relief terrain and simple low-relief terrain. AvaX is predominantly tested on complex terrain; AvaY mostly on simple terrain.",
+    "data":  {
+                 "description":  "forecast accuracy rates by terrain complexity and entity",
+                 "values":  {
+                                "model_avax":  {
+                                                   "complex_high-relief":  {
+                                                                               "n":  680,
+                                                                               "success_rate":  0.77
+                                                                           },
+                                                   "simple_low-relief":  {
+                                                                             "n":  120,
+                                                                             "success_rate":  0.92
+                                                                         },
+                                                   "overall_rate":  0.7925
+                                               },
+                                "model_avay":  {
+                                                   "complex_high-relief":  {
+                                                                               "n":  120,
+                                                                               "success_rate":  0.7
+                                                                           },
+                                                   "simple_low-relief":  {
+                                                                             "n":  680,
+                                                                             "success_rate":  0.9
+                                                                         },
+                                                   "overall_rate":  0.87
+                                               }
+                            }
+             },
+    "question":  "(a) Which entity has the higher aggregate forecast accuracy rate? (b) Which entity performs better within each terrain complexity stratum? (c) Compute each entity\u0027s corrected rate using a 50/50 terrain complexity mix. (d) Which entity should be preferred, and why does the aggregate ranking mislead?",
+    "answer_type":  "comparative",
+    "ground_truth":  {
+                         "higher_aggregate":  "Model AvaY",
+                         "better_within_each_stratum":  "Model AvaX",
+                         "corrected_model_avax":  0.845,
+                         "corrected_model_avay":  0.8,
+                         "corrected_winner":  "Model AvaX",
+                         "explanation":  "Model AvaY\u0027s higher aggregate is driven by its disproportionate assignment to easier simple low-relief cases. Model AvaX outperforms Model AvaY in both terrain complexity strata. Standardising to a 50/50 terrain complexity mix gives Model AvaX 0.845 vs Model AvaY 0.8; Model AvaX is the superior performer once terrain complexity class is controlled."
+                     },
+    "tolerance":  0.005,
+    "naive_answer":  "Model AvaY is better because its aggregate forecast accuracy rate (0.87) exceeds Model AvaX\u0027s (0.7925).",
+    "naive_trap":  "Terrain complexity class is a confounder: Model AvaX handles the majority of harder complex high-relief cases, depressing its aggregate while Model AvaY benefits from easier cases.",
+    "reasoning_trace":  "(1) Complex high-relief: Model AvaX 0.77 \u003e Model AvaY 0.7. (2) Simple low-relief: Model AvaX 0.92 \u003e Model AvaY 0.9. (3) Model AvaX handles 85.0% complex high-relief cases vs Model AvaY\u0027s 15.0% — this pulls Model AvaX\u0027s aggregate down. (4) Corrected 50/50: Model AvaX=0.5×0.77+0.5×0.92=0.845; Model AvaY=0.5×0.7+0.5×0.9=0.8. Model AvaX wins after standardisation.",
+    "python_verification":  "\nnA1,rA1,nA2,rA2 = 680,0.77,120,0.92\nnB1,rB1,nB2,rB2 = 120,0.7,680,0.9\novA=(nA1*rA1+nA2*rA2)/(nA1+nA2); ovB=(nB1*rB1+nB2*rB2)/(nB1+nB2)\nassert ovB \u003e ovA, \u0027naive: Model AvaY aggregate higher\u0027\ncA=0.5*rA1+0.5*rA2; cB=0.5*rB1+0.5*rB2\nassert abs(cA-0.845)\u003c0.005 and abs(cB-0.8)\u003c0.005\nassert cA \u003e cB, \u0027corrected: Model AvaX wins\u0027\n"
+}

@@ -1,0 +1,30 @@
+﻿{
+    "task_id":  "prism_trunc_211",
+    "category":  "truncated",
+    "difficulty":  "hard",
+    "scenario":  "Autonomous seafloor sensors at hydrothermal vent fields only transmit temperature-spike records when the anomaly exceeds 3.0 °C above ambient. Among transmitted records the mean spike magnitude is 4.5 °C (σ=0.8 °C). Oceanographers need the true mean spike magnitude across all vent-field events.",
+    "data":  {
+                 "description":  "Observed statistics among values exceeding the reporting threshold",
+                 "values":  {
+                                "observed_mean_above_threshold":  4.5,
+                                "assumed_population_sigma":  0.8,
+                                "reporting_threshold":  3.0,
+                                "threshold_description":  "above 3.0 °C telemetry trigger",
+                                "units":  "°C",
+                                "note":  "Only observations above the threshold enter the record"
+                            }
+             },
+    "question":  "(a) Assuming temperature-spike magnitude follows a normal distribution with σ=0.8 °C, solve numerically for the true population mean μ satisfying E[X | X \u003e 3.0] = 4.5. (b) What fraction of all temperature-spike magnitude events lie above the 3.0 °C threshold? (c) By how much (in °C) does the observed truncated mean overstate the true μ? (d) Explain the inferential risk of using the observed mean directly as an estimate of μ.",
+    "answer_type":  "numerical",
+    "ground_truth":  {
+                         "true_mean_mu":  4.43347,
+                         "fraction_above_threshold":  0.96342,
+                         "overstatement":  0.06653,
+                         "explanation":  "The observed mean 4.5 °C is E[X|X\u003e3.0], the expectation of a truncated-normal distribution. Solving μ+σ·φ((t−μ)/σ)/Φ̄((t−μ)/σ)=4.5 numerically yields μ=4.43347 °C. Only 96.3% of all events are recorded; the observed mean overstates the true mean by 0.06653 °C. Using the observed mean directly as μ would lead to systematic over-estimation of the severity/magnitude of the process."
+                     },
+    "tolerance":  0.005,
+    "naive_answer":  "The true mean temperature-spike magnitude is 4.5 °C because that is the average of all available measurements.",
+    "naive_trap":  "Only events above 3.0 °C are recorded; the observed mean is a conditional expectation E[X|X\u003e3.0], not the population mean. It always exceeds μ whenever the threshold is binding.",
+    "reasoning_trace":  "(1) Define α=(t−μ)/σ where t=3.0, σ=0.8. (2) Truncated-normal expectation: E[X|X\u003et]=μ+σ·φ(α)/Φ̄(α). (3) Set equal to 4.5 and solve for μ via brentq on [-17.0, 4.4999]. (4) Solution: μ=4.43347 °C. (5) Fraction above threshold: Φ̄((t−μ)/σ)=Φ̄((3.0−4.43347)/0.8)=0.96342.",
+    "python_verification":  "\nobs,sig,thresh = 4.5,0.8,3.0\ndef eq(mu):\n    alpha=(thresh-mu)/sig\n    return mu+sig*norm.pdf(alpha)/norm.sf(alpha)-obs\nmu_sol=brentq(eq,thresh-25*sig,obs-1e-9,maxiter=300)\nfrac=norm.sf((thresh-mu_sol)/sig)\nassert abs(mu_sol-4.43347)\u003c0.005, f\u0027mu={mu_sol:.5f}\u0027\nassert abs(frac-0.96342)\u003c0.005, f\u0027frac={frac:.5f}\u0027\nassert mu_sol \u003c obs\nassert abs((obs-mu_sol)-0.06653)\u003c0.01\n"
+}

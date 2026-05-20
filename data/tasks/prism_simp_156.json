@@ -1,0 +1,48 @@
+﻿{
+    "task_id":  "prism_simp_156",
+    "category":  "simpson",
+    "difficulty":  "hard",
+    "scenario":  "Two international arbitration teams, Team Alpha and Team Beta, are compared on case-resolution success rates across complex multi-party disputes and simple bilateral disputes. Team Alpha takes on mostly complex cases; Team Beta mostly handles simple ones.",
+    "data":  {
+                 "description":  "Case-resolution success rates by dispute complexity",
+                 "values":  {
+                                "team_alpha":  {
+                                                   "complex":  {
+                                                                   "n":  700,
+                                                                   "success_rate":  0.68
+                                                               },
+                                                   "simple":  {
+                                                                  "n":  100,
+                                                                  "success_rate":  0.91
+                                                              },
+                                                   "overall_rate":  0.7087
+                                               },
+                                "team_beta":  {
+                                                  "complex":  {
+                                                                  "n":  100,
+                                                                  "success_rate":  0.61
+                                                              },
+                                                  "simple":  {
+                                                                 "n":  700,
+                                                                 "success_rate":  0.88
+                                                             },
+                                                  "overall_rate":  0.8462
+                                              }
+                            }
+             },
+    "question":  "(a) Which team has the higher aggregate resolution rate? (b) Which team is better within each complexity tier? (c) Compute corrected rates using equal 50/50 complexity weights.",
+    "answer_type":  "comparative",
+    "ground_truth":  {
+                         "higher_aggregate":  "Team Beta",
+                         "better_within_each_tier":  "Team Alpha",
+                         "corrected_alpha":  0.795,
+                         "corrected_beta":  0.745,
+                         "corrected_winner":  "Team Alpha",
+                         "explanation":  "Team Beta\u0027s aggregate advantage disappears once dispute complexity is controlled for. Team Alpha outperforms in both strata."
+                     },
+    "tolerance":  0.005,
+    "naive_answer":  "Team Beta is superior; overall rate 0.8462 vs Alpha\u0027s 0.7087.",
+    "naive_trap":  "Team Alpha shoulders 87.5% complex disputes, which are intrinsically harder, severely depressing its aggregate relative to Team Beta.",
+    "reasoning_trace":  "Complex: Alpha 0.68 \u003e Beta 0.61. Simple: Alpha 0.91 \u003e Beta 0.88. Corrected: Alpha=0.795, Beta=0.745. Alpha wins.",
+    "python_verification":  "\nnAc,rAc,nAs,rAs = 700,0.68,100,0.91\nnBc,rBc,nBs,rBs = 100,0.61,700,0.88\novA=(nAc*rAc+nAs*rAs)/(nAc+nAs); ovB=(nBc*rBc+nBs*rBs)/(nBc+nBs)\nassert ovB \u003e ovA\ncA=0.5*rAc+0.5*rAs; cB=0.5*rBc+0.5*rBs\nassert abs(cA-0.795)\u003c0.005 and abs(cB-0.745)\u003c0.005\nassert cA \u003e cB\n"
+}

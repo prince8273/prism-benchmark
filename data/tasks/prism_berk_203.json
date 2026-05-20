@@ -1,0 +1,31 @@
+﻿{
+    "task_id":  "prism_berk_203",
+    "category":  "berkson",
+    "difficulty":  "hard",
+    "scenario":  "An oil-exploration company recruits seismic analysts who demonstrate strong subsurface geophysics knowledge OR advanced digital signal-processing skill. The specialisms are independent in the graduate pool; the OR-gate generates negative within-team correlation.",
+    "data":  {
+                 "description":  "Population base rates and OR-gate selection mechanism",
+                 "values":  {
+                                "p_geophysics":  0.39,
+                                "p_signal_processing":  0.51,
+                                "selection_rule":  "OR gate: selected if (subsurface geophysics knowledge) OR (digital signal-processing skill)",
+                                "p_selected":  0.7011,
+                                "trait_independence_in_population":  true,
+                                "observed_within_selected_correlation":  "negative (Berkson collider bias)"
+                            }
+             },
+    "question":  "(a) Derive P(selected) from the OR-gate model. (b) Compute P(geophysics | ¬signal_processing, selected) and explain why it equals 1. (c) Compute P(geophysics | signal_processing, selected) and show it equals P(geophysics). (d) Quantify the induced conditional correlation direction and explain why it is a selection artefact rather than a genuine population relationship between subsurface geophysics knowledge and digital signal-processing skill.",
+    "answer_type":  "numerical",
+    "ground_truth":  {
+                         "p_selected":  0.7011,
+                         "p_geophysics_given_not_signal_processing_selected":  1.0,
+                         "p_geophysics_given_signal_processing_selected":  0.39,
+                         "collider_correlation_direction":  "negative",
+                         "explanation":  "Under OR-gate selection a candidate who lacks digital signal-processing skill must possess subsurface geophysics knowledge to be admitted — hence P(geophysics|¬signal_processing,sel)=1.0. A candidate who already has digital signal-processing skill is admitted regardless of subsurface geophysics knowledge, so P(geophysics|signal_processing,sel)=P(geophysics)=0.39. The gap (1.0 vs 0.39) creates a negative within-selected correlation that is purely a collider-selection artefact."
+                     },
+    "tolerance":  0.005,
+    "naive_answer":  "The negative correlation between subsurface geophysics knowledge and digital signal-processing skill observed among selected candidates reflects a genuine trade-off between these traits in the domain.",
+    "naive_trap":  "The negative correlation is entirely a Berkson collider artefact produced by the OR-gate admission rule; the two traits are independent in the full population.",
+    "reasoning_trace":  "(1) P(sel)=P(A)+P(B)-P(A)P(B)=0.39+0.51-0.39×0.51=0.7011. (2) Among candidates without digital signal-processing skill: only those with subsurface geophysics knowledge are selected → P(geophysics|¬signal_processing,sel)=1.0. (3) Among candidates with digital signal-processing skill: selected regardless of subsurface geophysics knowledge → P(geophysics|signal_processing,sel)=P(geophysics)=0.39. (4) Within-selected: knowing ¬signal_processing raises P(geophysics) from 0.39 to 1.0 → negative conditional correlation despite population independence.",
+    "python_verification":  "\npA,pB = 0.39,0.51\npSel = pA+pB-pA*pB\nassert abs(pSel-0.7011)\u003c0.005, f\u0027pSel={pSel}\u0027\npA_notB_sel = pA*(1-pB)/(pA*(1-pB))   # =1.0 by definition\nassert abs(pA_notB_sel-1.0)\u003c1e-9\npA_B_sel = pA*pB/pB                    # =pA by definition\nassert abs(pA_B_sel-0.39)\u003c1e-9\nassert pA_notB_sel \u003e pA_B_sel, \u0027negative collider correlation confirmed\u0027\n"
+}

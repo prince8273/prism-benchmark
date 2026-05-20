@@ -1,0 +1,30 @@
+﻿{
+    "task_id":  "prism_berk_162",
+    "category":  "berkson",
+    "difficulty":  "hard",
+    "scenario":  "A global debate camp selects participants with high argument quality OR strong delivery skills. Both traits are independent in the applicant population. Among selected participants, the OR-gate mechanism makes the two traits appear negatively correlated.",
+    "data":  {
+                 "description":  "Population base rates and OR-gate selection mechanism",
+                 "values":  {
+                                "p_argument_quality":  0.38,
+                                "p_delivery_skill":  0.52,
+                                "selection_rule":  "OR gate: selected if argument quality OR delivery skill",
+                                "p_selected":  0.7024,
+                                "observed_corr_among_selected":  "negative (Berkson bias)"
+                            }
+             },
+    "question":  "(a) What is P(selected)? (b) What is P(argument_quality|not_delivery_skill, selected)? (c) What is P(argument_quality|delivery_skill, selected)? (d) Explain why argument quality and delivery skill appear negatively correlated among selected candidates even though they are independent in the population.",
+    "answer_type":  "numerical",
+    "ground_truth":  {
+                         "p_selected":  0.7024,
+                         "p_argument_quality_given_not_delivery_skill_selected":  1.0,
+                         "p_argument_quality_given_delivery_skill_selected":  0.38,
+                         "conditional_correlation_direction":  "negative",
+                         "explanation":  "Under OR-gate selection, a candidate lacking delivery skill must have argument quality to be selected (P=1.0). A candidate who has delivery skill is selected regardless of argument quality, so P(argument quality | delivery skill, selected) = P(argument quality) = 0.38. This differential probability creates a negative within-selected correlation despite population independence."
+                     },
+    "tolerance":  0.005,
+    "naive_answer":  "The negative correlation among selected candidates reflects a genuine inverse relationship between argument quality and delivery skill in the domain.",
+    "naive_trap":  "The negative correlation is entirely an artefact of OR-gate collider selection, not a real population-level relationship between the two traits.",
+    "reasoning_trace":  "(1) P(sel)=P(A)+P(B)-P(A)P(B)=0.38+0.52-0.38×0.52=0.7024. (2) If not-B and selected, must have A → P(A|not-B,sel)=1.0. (3) If B and selected, selection is independent of A → P(A|B,sel)=P(A)=0.38. (4) The gap between 1.0 and 0.38 produces a negative association within the selected group via collider bias.",
+    "python_verification":  "\npA,pB = 0.38,0.52\npSel = pA+pB-pA*pB\nassert abs(pSel-0.7024)\u003c0.005\npA_notB_sel = pA*(1-pB)/(pA*(1-pB))   # =1.0\nassert abs(pA_notB_sel-1.0)\u003c0.005\npA_B_sel = pA*pB/pB                    # =pA\nassert abs(pA_B_sel-pA)\u003c0.005\nassert pA_notB_sel \u003e pA_B_sel          # negative collider bias confirmed\n"
+}

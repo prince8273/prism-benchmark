@@ -1,0 +1,48 @@
+﻿{
+    "task_id":  "prism_simp_191",
+    "category":  "simpson",
+    "difficulty":  "hard",
+    "scenario":  "Two crop-insurance adjusters, Adjuster Vega and Adjuster Lyra, are compared on correct-claim-assessment rates. Vega handles predominantly large-scale disaster claims; Lyra mostly processes small-loss routine claims.",
+    "data":  {
+                 "description":  "correct claim assessment rates by disaster magnitude and entity",
+                 "values":  {
+                                "adjuster_vega":  {
+                                                      "large-scale_disaster":  {
+                                                                                   "n":  680,
+                                                                                   "success_rate":  0.72
+                                                                               },
+                                                      "small-loss_routine":  {
+                                                                                 "n":  120,
+                                                                                 "success_rate":  0.91
+                                                                             },
+                                                      "overall_rate":  0.7485
+                                                  },
+                                "adjuster_lyra":  {
+                                                      "large-scale_disaster":  {
+                                                                                   "n":  120,
+                                                                                   "success_rate":  0.66
+                                                                               },
+                                                      "small-loss_routine":  {
+                                                                                 "n":  680,
+                                                                                 "success_rate":  0.89
+                                                                             },
+                                                      "overall_rate":  0.8555
+                                                  }
+                            }
+             },
+    "question":  "(a) Which entity has the higher aggregate correct claim assessment rate? (b) Which entity performs better within each disaster magnitude stratum? (c) Compute each entity\u0027s corrected rate using a 50/50 disaster magnitude mix. (d) Which entity should be preferred, and why does the aggregate ranking mislead?",
+    "answer_type":  "comparative",
+    "ground_truth":  {
+                         "higher_aggregate":  "Adjuster Lyra",
+                         "better_within_each_stratum":  "Adjuster Vega",
+                         "corrected_adjuster_vega":  0.815,
+                         "corrected_adjuster_lyra":  0.775,
+                         "corrected_winner":  "Adjuster Vega",
+                         "explanation":  "Adjuster Lyra\u0027s higher aggregate is driven by its disproportionate assignment to easier small-loss routine cases. Adjuster Vega outperforms Adjuster Lyra in both disaster magnitude strata. Standardising to a 50/50 disaster magnitude mix gives Adjuster Vega 0.815 vs Adjuster Lyra 0.775; Adjuster Vega is the superior performer once disaster-magnitude class is controlled."
+                     },
+    "tolerance":  0.005,
+    "naive_answer":  "Adjuster Lyra is better because its aggregate correct claim assessment rate (0.8555) exceeds Adjuster Vega\u0027s (0.7485).",
+    "naive_trap":  "Disaster-magnitude class is a confounder: Adjuster Vega handles the majority of harder large-scale disaster cases, depressing its aggregate while Adjuster Lyra benefits from easier cases.",
+    "reasoning_trace":  "(1) Large-scale disaster: Adjuster Vega 0.72 \u003e Adjuster Lyra 0.66. (2) Small-loss routine: Adjuster Vega 0.91 \u003e Adjuster Lyra 0.89. (3) Adjuster Vega handles 85.0% large-scale disaster cases vs Adjuster Lyra\u0027s 15.0% — this pulls Adjuster Vega\u0027s aggregate down. (4) Corrected 50/50: Adjuster Vega=0.5×0.72+0.5×0.91=0.815; Adjuster Lyra=0.5×0.66+0.5×0.89=0.775. Adjuster Vega wins after standardisation.",
+    "python_verification":  "\nnA1,rA1,nA2,rA2 = 680,0.72,120,0.91\nnB1,rB1,nB2,rB2 = 120,0.66,680,0.89\novA=(nA1*rA1+nA2*rA2)/(nA1+nA2); ovB=(nB1*rB1+nB2*rB2)/(nB1+nB2)\nassert ovB \u003e ovA, \u0027naive: Adjuster Lyra aggregate higher\u0027\ncA=0.5*rA1+0.5*rA2; cB=0.5*rB1+0.5*rB2\nassert abs(cA-0.815)\u003c0.005 and abs(cB-0.775)\u003c0.005\nassert cA \u003e cB, \u0027corrected: Adjuster Vega wins\u0027\n"
+}

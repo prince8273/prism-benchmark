@@ -1,0 +1,48 @@
+﻿{
+    "task_id":  "prism_simp_152",
+    "category":  "simpson",
+    "difficulty":  "hard",
+    "scenario":  "Two submarine cable repair vendors, Vendor X and Vendor Y, are compared on fault-resolution success rates. Vendor X is disproportionately dispatched to major cable breaks (harder), whereas Vendor Y mostly handles minor faults.",
+    "data":  {
+                 "description":  "Resolution success rates by fault severity",
+                 "values":  {
+                                "vendor_x":  {
+                                                 "major_fault":  {
+                                                                     "n":  600,
+                                                                     "success_rate":  0.76
+                                                                 },
+                                                 "minor_fault":  {
+                                                                     "n":  100,
+                                                                     "success_rate":  0.95
+                                                                 },
+                                                 "overall_rate":  0.7871
+                                             },
+                                "vendor_y":  {
+                                                 "major_fault":  {
+                                                                     "n":  100,
+                                                                     "success_rate":  0.7
+                                                                 },
+                                                 "minor_fault":  {
+                                                                     "n":  600,
+                                                                     "success_rate":  0.93
+                                                                 },
+                                                 "overall_rate":  0.8971
+                                             }
+                            }
+             },
+    "question":  "(a) Which vendor has the higher aggregate success rate? (b) Which vendor performs better within each fault-severity class? (c) Compute corrected rates using a 50/50 severity mix.",
+    "answer_type":  "comparative",
+    "ground_truth":  {
+                         "higher_aggregate":  "Vendor Y",
+                         "better_within_each_class":  "Vendor X",
+                         "corrected_x":  0.855,
+                         "corrected_y":  0.815,
+                         "corrected_winner":  "Vendor X",
+                         "explanation":  "Vendor Y\u0027s higher aggregate reflects its lighter workload (mostly minor faults). Stratifying eliminates this confound and reveals Vendor X is superior at both severity levels."
+                     },
+    "tolerance":  0.005,
+    "naive_answer":  "Vendor Y is superior with an overall rate of 0.8971 vs Vendor X\u0027s 0.7871.",
+    "naive_trap":  "Fault severity is a confounder: minor faults inflate Vendor Y\u0027s aggregate because it handles six times more minor than major cases.",
+    "reasoning_trace":  "Major: X 0.76 \u003e Y 0.70. Minor: X 0.95 \u003e Y 0.93. X handles 85.7% major cases, dragging its aggregate. Corrected 50/50: X=0.5×0.76+0.5×0.95=0.855, Y=0.5×0.70+0.5×0.93=0.815. X wins.",
+    "python_verification":  "\nnXm,rXm,nXn,rXn = 600,0.76,100,0.95\nnYm,rYm,nYn,rYn = 100,0.70,600,0.93\novX=(nXm*rXm+nXn*rXn)/(nXm+nXn); ovY=(nYm*rYm+nYn*rYn)/(nYm+nYn)\nassert ovY \u003e ovX\ncX=0.5*rXm+0.5*rXn; cY=0.5*rYm+0.5*rYn\nassert abs(cX-0.855)\u003c0.005 and abs(cY-0.815)\u003c0.005\nassert cX \u003e cY\n"
+}

@@ -1,0 +1,30 @@
+﻿{
+    "task_id":  "prism_trunc_219",
+    "category":  "truncated",
+    "difficulty":  "hard",
+    "scenario":  "Autonomous ice-shelf basal sensors only transmit melt-rate observations exceeding 3.5 m/yr (satellite-resolution floor). Transmitted observations show a mean of 5.1 m/yr (σ=0.9 m/yr). Glaciologists want the true mean basal melt rate across all ice-shelf positions.",
+    "data":  {
+                 "description":  "Observed statistics among values exceeding the reporting threshold",
+                 "values":  {
+                                "observed_mean_above_threshold":  5.1,
+                                "assumed_population_sigma":  0.9,
+                                "reporting_threshold":  3.5,
+                                "threshold_description":  "above 3.5 m/yr satellite-resolution floor",
+                                "units":  "m/yr",
+                                "note":  "Only observations above the threshold enter the record"
+                            }
+             },
+    "question":  "(a) Assuming basal melt rate follows a normal distribution with σ=0.9 m/yr, solve numerically for the true population mean μ satisfying E[X | X \u003e 3.5] = 5.1. (b) What fraction of all basal melt rate events lie above the 3.5 m/yr threshold? (c) By how much (in m/yr) does the observed truncated mean overstate the true μ? (d) Explain the inferential risk of using the observed mean directly as an estimate of μ.",
+    "answer_type":  "numerical",
+    "ground_truth":  {
+                         "true_mean_mu":  5.00733,
+                         "fraction_above_threshold":  0.95301,
+                         "overstatement":  0.09267,
+                         "explanation":  "The observed mean 5.1 m/yr is E[X|X\u003e3.5], the expectation of a truncated-normal distribution. Solving μ+σ·φ((t−μ)/σ)/Φ̄((t−μ)/σ)=5.1 numerically yields μ=5.00733 m/yr. Only 95.3% of all events are recorded; the observed mean overstates the true mean by 0.09267 m/yr. Using the observed mean directly as μ would lead to systematic over-estimation of the severity/magnitude of the process."
+                     },
+    "tolerance":  0.005,
+    "naive_answer":  "The true mean basal melt rate is 5.1 m/yr because that is the average of all available measurements.",
+    "naive_trap":  "Only events above 3.5 m/yr are recorded; the observed mean is a conditional expectation E[X|X\u003e3.5], not the population mean. It always exceeds μ whenever the threshold is binding.",
+    "reasoning_trace":  "(1) Define α=(t−μ)/σ where t=3.5, σ=0.9. (2) Truncated-normal expectation: E[X|X\u003et]=μ+σ·φ(α)/Φ̄(α). (3) Set equal to 5.1 and solve for μ via brentq on [-19.0, 5.0999]. (4) Solution: μ=5.00733 m/yr. (5) Fraction above threshold: Φ̄((t−μ)/σ)=Φ̄((3.5−5.00733)/0.9)=0.95301.",
+    "python_verification":  "\nobs,sig,thresh = 5.1,0.9,3.5\ndef eq(mu):\n    alpha=(thresh-mu)/sig\n    return mu+sig*norm.pdf(alpha)/norm.sf(alpha)-obs\nmu_sol=brentq(eq,thresh-25*sig,obs-1e-9,maxiter=300)\nfrac=norm.sf((thresh-mu_sol)/sig)\nassert abs(mu_sol-5.00733)\u003c0.005, f\u0027mu={mu_sol:.5f}\u0027\nassert abs(frac-0.95301)\u003c0.005, f\u0027frac={frac:.5f}\u0027\nassert mu_sol \u003c obs\nassert abs((obs-mu_sol)-0.09267)\u003c0.01\n"
+}

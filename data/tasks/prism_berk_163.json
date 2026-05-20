@@ -1,0 +1,30 @@
+﻿{
+    "task_id":  "prism_berk_163",
+    "category":  "berkson",
+    "difficulty":  "hard",
+    "scenario":  "Peacekeeping interpreter shortlisting requires candidates to demonstrate high language fluency OR strong field composure. The two traits are independent in the candidate pool; among shortlisted interpreters the OR-gate creates a negative collider correlation.",
+    "data":  {
+                 "description":  "Population base rates and OR-gate selection mechanism",
+                 "values":  {
+                                "p_language_fluency":  0.42,
+                                "p_field_composure":  0.48,
+                                "selection_rule":  "OR gate: selected if language fluency OR field composure",
+                                "p_selected":  0.6984,
+                                "observed_corr_among_selected":  "negative (Berkson bias)"
+                            }
+             },
+    "question":  "(a) What is P(selected)? (b) What is P(language_fluency|not_field_composure, selected)? (c) What is P(language_fluency|field_composure, selected)? (d) Explain why language fluency and field composure appear negatively correlated among selected candidates even though they are independent in the population.",
+    "answer_type":  "numerical",
+    "ground_truth":  {
+                         "p_selected":  0.6984,
+                         "p_language_fluency_given_not_field_composure_selected":  1.0,
+                         "p_language_fluency_given_field_composure_selected":  0.42,
+                         "conditional_correlation_direction":  "negative",
+                         "explanation":  "Under OR-gate selection, a candidate lacking field composure must have language fluency to be selected (P=1.0). A candidate who has field composure is selected regardless of language fluency, so P(language fluency | field composure, selected) = P(language fluency) = 0.42. This differential probability creates a negative within-selected correlation despite population independence."
+                     },
+    "tolerance":  0.005,
+    "naive_answer":  "The negative correlation among selected candidates reflects a genuine inverse relationship between language fluency and field composure in the domain.",
+    "naive_trap":  "The negative correlation is entirely an artefact of OR-gate collider selection, not a real population-level relationship between the two traits.",
+    "reasoning_trace":  "(1) P(sel)=P(A)+P(B)-P(A)P(B)=0.42+0.48-0.42×0.48=0.6984. (2) If not-B and selected, must have A → P(A|not-B,sel)=1.0. (3) If B and selected, selection is independent of A → P(A|B,sel)=P(A)=0.42. (4) The gap between 1.0 and 0.42 produces a negative association within the selected group via collider bias.",
+    "python_verification":  "\npA,pB = 0.42,0.48\npSel = pA+pB-pA*pB\nassert abs(pSel-0.6984)\u003c0.005\npA_notB_sel = pA*(1-pB)/(pA*(1-pB))   # =1.0\nassert abs(pA_notB_sel-1.0)\u003c0.005\npA_B_sel = pA*pB/pB                    # =pA\nassert abs(pA_B_sel-pA)\u003c0.005\nassert pA_notB_sel \u003e pA_B_sel          # negative collider bias confirmed\n"
+}

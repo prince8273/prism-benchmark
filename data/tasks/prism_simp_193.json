@@ -1,0 +1,48 @@
+﻿{
+    "task_id":  "prism_simp_193",
+    "category":  "simpson",
+    "difficulty":  "hard",
+    "scenario":  "Two clinical trial sites, Site Meridian and Site Zenith, are compared on protocol-adherence rates. Site Meridian predominantly runs high-deviation-risk oncology trials; Site Zenith mainly runs low-risk stable-disease trials.",
+    "data":  {
+                 "description":  "protocol adherence rates by protocol deviation risk and entity",
+                 "values":  {
+                                "site_meridian":  {
+                                                      "high-risk_oncology":  {
+                                                                                 "n":  720,
+                                                                                 "success_rate":  0.75
+                                                                             },
+                                                      "low-risk_stable-disease":  {
+                                                                                      "n":  80,
+                                                                                      "success_rate":  0.93
+                                                                                  },
+                                                      "overall_rate":  0.768
+                                                  },
+                                "site_zenith":  {
+                                                    "high-risk_oncology":  {
+                                                                               "n":  80,
+                                                                               "success_rate":  0.69
+                                                                           },
+                                                    "low-risk_stable-disease":  {
+                                                                                    "n":  720,
+                                                                                    "success_rate":  0.91
+                                                                                },
+                                                    "overall_rate":  0.888
+                                                }
+                            }
+             },
+    "question":  "(a) Which entity has the higher aggregate protocol adherence rate? (b) Which entity performs better within each protocol deviation risk stratum? (c) Compute each entity\u0027s corrected rate using a 50/50 protocol deviation risk mix. (d) Which entity should be preferred, and why does the aggregate ranking mislead?",
+    "answer_type":  "comparative",
+    "ground_truth":  {
+                         "higher_aggregate":  "Site Zenith",
+                         "better_within_each_stratum":  "Site Meridian",
+                         "corrected_site_meridian":  0.84,
+                         "corrected_site_zenith":  0.8,
+                         "corrected_winner":  "Site Meridian",
+                         "explanation":  "Site Zenith\u0027s higher aggregate is driven by its disproportionate assignment to easier low-risk stable-disease cases. Site Meridian outperforms Site Zenith in both protocol deviation risk strata. Standardising to a 50/50 protocol deviation risk mix gives Site Meridian 0.84 vs Site Zenith 0.8; Site Meridian is the superior performer once protocol deviation risk is controlled."
+                     },
+    "tolerance":  0.005,
+    "naive_answer":  "Site Zenith is better because its aggregate protocol adherence rate (0.888) exceeds Site Meridian\u0027s (0.768).",
+    "naive_trap":  "Protocol deviation risk is a confounder: Site Meridian handles the majority of harder high-risk oncology cases, depressing its aggregate while Site Zenith benefits from easier cases.",
+    "reasoning_trace":  "(1) High-risk oncology: Site Meridian 0.75 \u003e Site Zenith 0.69. (2) Low-risk stable-disease: Site Meridian 0.93 \u003e Site Zenith 0.91. (3) Site Meridian handles 90.0% high-risk oncology cases vs Site Zenith\u0027s 10.0% — this pulls Site Meridian\u0027s aggregate down. (4) Corrected 50/50: Site Meridian=0.5×0.75+0.5×0.93=0.84; Site Zenith=0.5×0.69+0.5×0.91=0.8. Site Meridian wins after standardisation.",
+    "python_verification":  "\nnA1,rA1,nA2,rA2 = 720,0.75,80,0.93\nnB1,rB1,nB2,rB2 = 80,0.69,720,0.91\novA=(nA1*rA1+nA2*rA2)/(nA1+nA2); ovB=(nB1*rB1+nB2*rB2)/(nB1+nB2)\nassert ovB \u003e ovA, \u0027naive: Site Zenith aggregate higher\u0027\ncA=0.5*rA1+0.5*rA2; cB=0.5*rB1+0.5*rB2\nassert abs(cA-0.84)\u003c0.005 and abs(cB-0.8)\u003c0.005\nassert cA \u003e cB, \u0027corrected: Site Meridian wins\u0027\n"
+}

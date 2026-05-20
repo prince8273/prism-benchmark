@@ -1,0 +1,48 @@
+﻿{
+    "task_id":  "prism_simp_185",
+    "category":  "simpson",
+    "difficulty":  "hard",
+    "scenario":  "Two paediatric surgery teams, Team Cobalt and Team Indigo, are measured on complication-free surgery rates. Team Cobalt handles predominantly complex multi-organ procedures; Team Indigo mostly performs straightforward single-organ operations.",
+    "data":  {
+                 "description":  "complication-free surgery rates by procedure complexity and entity",
+                 "values":  {
+                                "team_cobalt":  {
+                                                    "complex_multi-organ":  {
+                                                                                "n":  750,
+                                                                                "success_rate":  0.83
+                                                                            },
+                                                    "straightforward_single-organ":  {
+                                                                                         "n":  100,
+                                                                                         "success_rate":  0.96
+                                                                                     },
+                                                    "overall_rate":  0.8453
+                                                },
+                                "team_indigo":  {
+                                                    "complex_multi-organ":  {
+                                                                                "n":  100,
+                                                                                "success_rate":  0.77
+                                                                            },
+                                                    "straightforward_single-organ":  {
+                                                                                         "n":  750,
+                                                                                         "success_rate":  0.94
+                                                                                     },
+                                                    "overall_rate":  0.92
+                                                }
+                            }
+             },
+    "question":  "(a) Which entity has the higher aggregate complication-free surgery rate? (b) Which entity performs better within each procedure complexity stratum? (c) Compute each entity\u0027s corrected rate using a 50/50 procedure complexity mix. (d) Which entity should be preferred, and why does the aggregate ranking mislead?",
+    "answer_type":  "comparative",
+    "ground_truth":  {
+                         "higher_aggregate":  "Team Indigo",
+                         "better_within_each_stratum":  "Team Cobalt",
+                         "corrected_team_cobalt":  0.895,
+                         "corrected_team_indigo":  0.855,
+                         "corrected_winner":  "Team Cobalt",
+                         "explanation":  "Team Indigo\u0027s higher aggregate is driven by its disproportionate assignment to easier straightforward single-organ cases. Team Cobalt outperforms Team Indigo in both procedure complexity strata. Standardising to a 50/50 procedure complexity mix gives Team Cobalt 0.895 vs Team Indigo 0.855; Team Cobalt is the superior performer once procedure complexity is controlled."
+                     },
+    "tolerance":  0.005,
+    "naive_answer":  "Team Indigo is better because its aggregate complication-free surgery rate (0.92) exceeds Team Cobalt\u0027s (0.8453).",
+    "naive_trap":  "Procedure complexity is a confounder: Team Cobalt handles the majority of harder complex multi-organ cases, depressing its aggregate while Team Indigo benefits from easier cases.",
+    "reasoning_trace":  "(1) Complex multi-organ: Team Cobalt 0.83 \u003e Team Indigo 0.77. (2) Straightforward single-organ: Team Cobalt 0.96 \u003e Team Indigo 0.94. (3) Team Cobalt handles 88.2% complex multi-organ cases vs Team Indigo\u0027s 11.8% — this pulls Team Cobalt\u0027s aggregate down. (4) Corrected 50/50: Team Cobalt=0.5×0.83+0.5×0.96=0.895; Team Indigo=0.5×0.77+0.5×0.94=0.855. Team Cobalt wins after standardisation.",
+    "python_verification":  "\nnA1,rA1,nA2,rA2 = 750,0.83,100,0.96\nnB1,rB1,nB2,rB2 = 100,0.77,750,0.94\novA=(nA1*rA1+nA2*rA2)/(nA1+nA2); ovB=(nB1*rB1+nB2*rB2)/(nB1+nB2)\nassert ovB \u003e ovA, \u0027naive: Team Indigo aggregate higher\u0027\ncA=0.5*rA1+0.5*rA2; cB=0.5*rB1+0.5*rB2\nassert abs(cA-0.895)\u003c0.005 and abs(cB-0.855)\u003c0.005\nassert cA \u003e cB, \u0027corrected: Team Cobalt wins\u0027\n"
+}

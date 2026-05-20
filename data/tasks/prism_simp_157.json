@@ -1,0 +1,48 @@
+﻿{
+    "task_id":  "prism_simp_157",
+    "category":  "simpson",
+    "difficulty":  "hard",
+    "scenario":  "Two humanitarian nutrition programmes, NutriA and NutriB, are evaluated on recovery rates across severely and moderately malnourished children. NutriA operates predominantly in severely malnourished populations; NutriB mostly serves moderate cases.",
+    "data":  {
+                 "description":  "Recovery success rates by malnutrition severity",
+                 "values":  {
+                                "nutri_a":  {
+                                                "severe":  {
+                                                               "n":  750,
+                                                               "success_rate":  0.74
+                                                           },
+                                                "moderate":  {
+                                                                 "n":  100,
+                                                                 "success_rate":  0.94
+                                                             },
+                                                "overall_rate":  0.7635
+                                            },
+                                "nutri_b":  {
+                                                "severe":  {
+                                                               "n":  100,
+                                                               "success_rate":  0.67
+                                                           },
+                                                "moderate":  {
+                                                                 "n":  750,
+                                                                 "success_rate":  0.92
+                                                             },
+                                                "overall_rate":  0.8906
+                                            }
+                            }
+             },
+    "question":  "(a) Which programme has the higher aggregate recovery rate? (b) Which programme outperforms within each severity class? (c) Compute corrected rates using a 50/50 severity mix.",
+    "answer_type":  "comparative",
+    "ground_truth":  {
+                         "higher_aggregate":  "NutriB",
+                         "better_within_each_class":  "NutriA",
+                         "corrected_nutria":  0.84,
+                         "corrected_nutrib":  0.795,
+                         "corrected_winner":  "NutriA",
+                         "explanation":  "NutriB\u0027s higher overall rate is driven by its lighter patient load. When severity mix is equalised, NutriA achieves better outcomes in both strata."
+                     },
+    "tolerance":  0.005,
+    "naive_answer":  "NutriB is more effective; its overall recovery rate 0.8906 beats NutriA\u0027s 0.7635.",
+    "naive_trap":  "Malnutrition severity is a powerful confounder: NutriA treats 88% severe cases while NutriB treats 88% moderate cases.",
+    "reasoning_trace":  "Severe: A 0.74 \u003e B 0.67. Moderate: A 0.94 \u003e B 0.92. Corrected: A=0.84, B=0.795. A wins.",
+    "python_verification":  "\nnAs,rAs,nAm,rAm = 750,0.74,100,0.94\nnBs,rBs,nBm,rBm = 100,0.67,750,0.92\novA=(nAs*rAs+nAm*rAm)/(nAs+nAm); ovB=(nBs*rBs+nBm*rBm)/(nBs+nBm)\nassert ovB \u003e ovA\ncA=0.5*rAs+0.5*rAm; cB=0.5*rBs+0.5*rBm\nassert abs(cA-0.84)\u003c0.005 and abs(cB-0.795)\u003c0.005\nassert cA \u003e cB\n"
+}

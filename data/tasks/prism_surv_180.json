@@ -1,0 +1,28 @@
+﻿{
+    "task_id":  "prism_surv_180",
+    "category":  "survival",
+    "difficulty":  "hard",
+    "scenario":  "Railway historians study heritage railways that are still operational, finding a mean route length of 3.1 km (σ=0.7 km). The operational viability threshold is 2.0 km. The true mean route length across all heritage railways ever established is desired.",
+    "data":  {
+                 "description":  "Observed statistics among units that cleared the survival/publication filter",
+                 "values":  {
+                                "observed_mean_survivors":  3.1,
+                                "assumed_sigma":  0.7,
+                                "survival_threshold":  2.0,
+                                "filter":  "operational-viability survival filter (≥2.0 km)"
+                            }
+             },
+    "question":  "(a) Assuming route length is normally distributed with σ=0.7 km, solve for the pre-filter true mean μ such that E[X|X\u003e2.0]=3.1. (b) What fraction of all original units cleared the survival filter? (c) By how much does the observed (survivor) mean overstate the pre-filter true mean?",
+    "answer_type":  "numerical",
+    "ground_truth":  {
+                         "true_pre_filter_mean":  2.98801,
+                         "fraction_surviving":  0.92094,
+                         "overstatement":  0.112,
+                         "explanation":  "The heritage railways analysed only among those still running route length set is a truncated-normal sample above the 2.0 threshold. Solving E[X|X\u003e2.0]=μ+σφ((2.0−μ)/σ)/Φ̄((2.0−μ)/σ)=3.1 gives μ≈2.98801. Only 92.1% of all original units survived; the survivor mean overstates the true mean by 0.1120 km."
+                     },
+    "tolerance":  0.005,
+    "naive_answer":  "The true mean route length is 3.1 km because that is the observed average among heritage railways analysed only among those still running.",
+    "naive_trap":  "Survival/publication filters truncate the distribution from below; the observed mean among survivors is a conditional expectation and systematically overstates the pre-filter population mean.",
+    "reasoning_trace":  "(1) Survival filter is equivalent to truncated-normal sampling above threshold=2.0. (2) Truncated mean equation: μ+σ·φ((t−μ)/σ)/Φ̄((t−μ)/σ)=3.1. (3) Numerically solve with brentq → μ≈2.98801. (4) Fraction surviving: Φ̄((2.0−2.98801)/σ)≈0.92094.",
+    "python_verification":  "\nobs,sig,thresh = 3.1,0.7,2.0\ndef eq(mu):\n    alpha=(thresh-mu)/sig\n    return mu+sig*norm.pdf(alpha)/norm.sf(alpha)-obs\nmu_sol=brentq(eq,thresh-20*sig,obs-1e-9,maxiter=200)\nfrac=norm.sf((thresh-mu_sol)/sig)\nassert abs(mu_sol-2.98801)\u003c0.005\nassert abs(frac-0.92094)\u003c0.005\nassert mu_sol \u003c obs\n"
+}

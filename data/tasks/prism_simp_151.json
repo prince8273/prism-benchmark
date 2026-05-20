@@ -1,0 +1,48 @@
+﻿{
+    "task_id":  "prism_simp_151",
+    "category":  "simpson",
+    "difficulty":  "hard",
+    "scenario":  "An airport authority evaluates two de-icing teams, Alpha and Beta, on successful de-icing completion rates across wide-body and narrow-body aircraft. Alpha is assigned predominantly wide-body jets (harder, more complex), while Beta handles mostly narrow-body aircraft.",
+    "data":  {
+                 "description":  "De-icing success rates by aircraft class and team",
+                 "values":  {
+                                "team_alpha":  {
+                                                   "wide_body":  {
+                                                                     "n":  400,
+                                                                     "success_rate":  0.82
+                                                                 },
+                                                   "narrow_body":  {
+                                                                       "n":  100,
+                                                                       "success_rate":  0.91
+                                                                   },
+                                                   "overall_rate":  0.838
+                                               },
+                                "team_beta":  {
+                                                  "wide_body":  {
+                                                                    "n":  100,
+                                                                    "success_rate":  0.78
+                                                                },
+                                                  "narrow_body":  {
+                                                                      "n":  400,
+                                                                      "success_rate":  0.89
+                                                                  },
+                                                  "overall_rate":  0.868
+                                              }
+                            }
+             },
+    "question":  "(a) Which team has the higher aggregate success rate? (b) Which team performs better within each aircraft class? (c) What is each team\u0027s corrected success rate assuming a 50/50 mix of wide-body and narrow-body aircraft?",
+    "answer_type":  "comparative",
+    "ground_truth":  {
+                         "higher_aggregate":  "Beta",
+                         "better_within_each_class":  "Alpha",
+                         "corrected_alpha":  0.865,
+                         "corrected_beta":  0.835,
+                         "corrected_winner":  "Alpha",
+                         "explanation":  "Beta\u0027s higher aggregate rate is an artifact of being assigned mostly easy narrow-body aircraft. When rates are standardised to a 50/50 aircraft-class mix, Alpha outperforms Beta in both strata and overall."
+                     },
+    "tolerance":  0.005,
+    "naive_answer":  "Team Beta is better because its overall success rate (0.868) exceeds Alpha\u0027s (0.838).",
+    "naive_trap":  "Ignores that Beta is disproportionately assigned easier narrow-body aircraft, creating a confound between team assignment and aircraft class.",
+    "reasoning_trace":  "(1) Wide-body: Alpha 0.82 \u003e Beta 0.78. (2) Narrow-body: Alpha 0.91 \u003e Beta 0.89. (3) Alpha handles 80% wide-body vs Beta\u0027s 20%, pulling Alpha\u0027s aggregate down. (4) Corrected 50/50: Alpha = 0.5×0.82+0.5×0.91 = 0.865, Beta = 0.5×0.78+0.5×0.89 = 0.835. Alpha wins after standardisation.",
+    "python_verification":  "\nnAw,rAw,nAn,rAn = 400,0.82,100,0.91\nnBw,rBw,nBn,rBn = 100,0.78,400,0.89\novA=(nAw*rAw+nAn*rAn)/(nAw+nAn); ovB=(nBw*rBw+nBn*rBn)/(nBw+nBn)\nassert ovB \u003e ovA, \"naive: Beta aggregate higher\"\ncA=0.5*rAw+0.5*rAn; cB=0.5*rBw+0.5*rBn\nassert abs(cA-0.865)\u003c0.005 and abs(cB-0.835)\u003c0.005\nassert cA \u003e cB, \"corrected: Alpha wins\"\n"
+}

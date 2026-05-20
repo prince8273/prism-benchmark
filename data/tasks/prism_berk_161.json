@@ -1,0 +1,30 @@
+﻿{
+    "task_id":  "prism_berk_161",
+    "category":  "berkson",
+    "difficulty":  "hard",
+    "scenario":  "A luxury hotel shortlists concierge candidates who exhibit exceptional language proficiency OR outstanding service polish. These two traits are independent in the applicant pool; however, the OR-gate shortlisting creates a spurious negative association among shortlisted candidates.",
+    "data":  {
+                 "description":  "Population base rates and OR-gate selection mechanism",
+                 "values":  {
+                                "p_language_proficiency":  0.45,
+                                "p_service_polish":  0.55,
+                                "selection_rule":  "OR gate: selected if language proficiency OR service polish",
+                                "p_selected":  0.7525,
+                                "observed_corr_among_selected":  "negative (Berkson bias)"
+                            }
+             },
+    "question":  "(a) What is P(selected)? (b) What is P(language_proficiency|not_service_polish, selected)? (c) What is P(language_proficiency|service_polish, selected)? (d) Explain why language proficiency and service polish appear negatively correlated among selected candidates even though they are independent in the population.",
+    "answer_type":  "numerical",
+    "ground_truth":  {
+                         "p_selected":  0.7525,
+                         "p_language_proficiency_given_not_service_polish_selected":  1.0,
+                         "p_language_proficiency_given_service_polish_selected":  0.45,
+                         "conditional_correlation_direction":  "negative",
+                         "explanation":  "Under OR-gate selection, a candidate lacking service polish must have language proficiency to be selected (P=1.0). A candidate who has service polish is selected regardless of language proficiency, so P(language proficiency | service polish, selected) = P(language proficiency) = 0.45. This differential probability creates a negative within-selected correlation despite population independence."
+                     },
+    "tolerance":  0.005,
+    "naive_answer":  "The negative correlation among selected candidates reflects a genuine inverse relationship between language proficiency and service polish in the domain.",
+    "naive_trap":  "The negative correlation is entirely an artefact of OR-gate collider selection, not a real population-level relationship between the two traits.",
+    "reasoning_trace":  "(1) P(sel)=P(A)+P(B)-P(A)P(B)=0.45+0.55-0.45×0.55=0.7525. (2) If not-B and selected, must have A → P(A|not-B,sel)=1.0. (3) If B and selected, selection is independent of A → P(A|B,sel)=P(A)=0.45. (4) The gap between 1.0 and 0.45 produces a negative association within the selected group via collider bias.",
+    "python_verification":  "\npA,pB = 0.45,0.55\npSel = pA+pB-pA*pB\nassert abs(pSel-0.7525)\u003c0.005\npA_notB_sel = pA*(1-pB)/(pA*(1-pB))   # =1.0\nassert abs(pA_notB_sel-1.0)\u003c0.005\npA_B_sel = pA*pB/pB                    # =pA\nassert abs(pA_B_sel-pA)\u003c0.005\nassert pA_notB_sel \u003e pA_B_sel          # negative collider bias confirmed\n"
+}

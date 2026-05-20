@@ -1,0 +1,48 @@
+﻿{
+    "task_id":  "prism_simp_189",
+    "category":  "simpson",
+    "difficulty":  "hard",
+    "scenario":  "Two tunneling contractors, TunnelPro and TunnelCo, are assessed on on-time milestone completion rates. TunnelPro is predominantly assigned high-geological-risk ground conditions; TunnelCo mainly works in low-risk geology.",
+    "data":  {
+                 "description":  "on-time milestone completion rates by geological risk and entity",
+                 "values":  {
+                                "tunnelpro":  {
+                                                  "high-risk":  {
+                                                                    "n":  600,
+                                                                    "success_rate":  0.73
+                                                                },
+                                                  "low-risk":  {
+                                                                   "n":  100,
+                                                                   "success_rate":  0.91
+                                                               },
+                                                  "overall_rate":  0.7557
+                                              },
+                                "tunnelco":  {
+                                                 "high-risk":  {
+                                                                   "n":  100,
+                                                                   "success_rate":  0.67
+                                                               },
+                                                 "low-risk":  {
+                                                                  "n":  600,
+                                                                  "success_rate":  0.89
+                                                              },
+                                                 "overall_rate":  0.8586
+                                             }
+                            }
+             },
+    "question":  "(a) Which entity has the higher aggregate on-time milestone completion rate? (b) Which entity performs better within each geological risk stratum? (c) Compute each entity\u0027s corrected rate using a 50/50 geological risk mix. (d) Which entity should be preferred, and why does the aggregate ranking mislead?",
+    "answer_type":  "comparative",
+    "ground_truth":  {
+                         "higher_aggregate":  "TunnelCo",
+                         "better_within_each_stratum":  "TunnelPro",
+                         "corrected_tunnelpro":  0.82,
+                         "corrected_tunnelco":  0.78,
+                         "corrected_winner":  "TunnelPro",
+                         "explanation":  "TunnelCo\u0027s higher aggregate is driven by its disproportionate assignment to easier low-risk cases. TunnelPro outperforms TunnelCo in both geological risk strata. Standardising to a 50/50 geological risk mix gives TunnelPro 0.82 vs TunnelCo 0.78; TunnelPro is the superior performer once geological risk class is controlled."
+                     },
+    "tolerance":  0.005,
+    "naive_answer":  "TunnelCo is better because its aggregate on-time milestone completion rate (0.8586) exceeds TunnelPro\u0027s (0.7557).",
+    "naive_trap":  "Geological risk class is a confounder: TunnelPro handles the majority of harder high-risk cases, depressing its aggregate while TunnelCo benefits from easier cases.",
+    "reasoning_trace":  "(1) High-risk: TunnelPro 0.73 \u003e TunnelCo 0.67. (2) Low-risk: TunnelPro 0.91 \u003e TunnelCo 0.89. (3) TunnelPro handles 85.7% high-risk cases vs TunnelCo\u0027s 14.3% — this pulls TunnelPro\u0027s aggregate down. (4) Corrected 50/50: TunnelPro=0.5×0.73+0.5×0.91=0.82; TunnelCo=0.5×0.67+0.5×0.89=0.78. TunnelPro wins after standardisation.",
+    "python_verification":  "\nnA1,rA1,nA2,rA2 = 600,0.73,100,0.91\nnB1,rB1,nB2,rB2 = 100,0.67,600,0.89\novA=(nA1*rA1+nA2*rA2)/(nA1+nA2); ovB=(nB1*rB1+nB2*rB2)/(nB1+nB2)\nassert ovB \u003e ovA, \u0027naive: TunnelCo aggregate higher\u0027\ncA=0.5*rA1+0.5*rA2; cB=0.5*rB1+0.5*rB2\nassert abs(cA-0.82)\u003c0.005 and abs(cB-0.78)\u003c0.005\nassert cA \u003e cB, \u0027corrected: TunnelPro wins\u0027\n"
+}

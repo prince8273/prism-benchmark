@@ -1,0 +1,31 @@
+﻿{
+    "task_id":  "prism_berk_202",
+    "category":  "berkson",
+    "difficulty":  "hard",
+    "scenario":  "A national cyber-security agency selects incident responders who are expert in malware reverse-engineering OR in live-network forensics. The two skills are independent in the talent pool; OR-gate hiring produces a negative collider correlation within the response unit.",
+    "data":  {
+                 "description":  "Population base rates and OR-gate selection mechanism",
+                 "values":  {
+                                "p_malware_analysis":  0.43,
+                                "p_network_forensics":  0.47,
+                                "selection_rule":  "OR gate: selected if (malware reverse-engineering) OR (live-network forensics)",
+                                "p_selected":  0.6979,
+                                "trait_independence_in_population":  true,
+                                "observed_within_selected_correlation":  "negative (Berkson collider bias)"
+                            }
+             },
+    "question":  "(a) Derive P(selected) from the OR-gate model. (b) Compute P(malware_analysis | ¬network_forensics, selected) and explain why it equals 1. (c) Compute P(malware_analysis | network_forensics, selected) and show it equals P(malware_analysis). (d) Quantify the induced conditional correlation direction and explain why it is a selection artefact rather than a genuine population relationship between malware reverse-engineering and live-network forensics.",
+    "answer_type":  "numerical",
+    "ground_truth":  {
+                         "p_selected":  0.6979,
+                         "p_malware_analysis_given_not_network_forensics_selected":  1.0,
+                         "p_malware_analysis_given_network_forensics_selected":  0.43,
+                         "collider_correlation_direction":  "negative",
+                         "explanation":  "Under OR-gate selection a candidate who lacks live-network forensics must possess malware reverse-engineering to be admitted — hence P(malware_analysis|¬network_forensics,sel)=1.0. A candidate who already has live-network forensics is admitted regardless of malware reverse-engineering, so P(malware_analysis|network_forensics,sel)=P(malware_analysis)=0.43. The gap (1.0 vs 0.43) creates a negative within-selected correlation that is purely a collider-selection artefact."
+                     },
+    "tolerance":  0.005,
+    "naive_answer":  "The negative correlation between malware reverse-engineering and live-network forensics observed among selected candidates reflects a genuine trade-off between these traits in the domain.",
+    "naive_trap":  "The negative correlation is entirely a Berkson collider artefact produced by the OR-gate admission rule; the two traits are independent in the full population.",
+    "reasoning_trace":  "(1) P(sel)=P(A)+P(B)-P(A)P(B)=0.43+0.47-0.43×0.47=0.6979. (2) Among candidates without live-network forensics: only those with malware reverse-engineering are selected → P(malware_analysis|¬network_forensics,sel)=1.0. (3) Among candidates with live-network forensics: selected regardless of malware reverse-engineering → P(malware_analysis|network_forensics,sel)=P(malware_analysis)=0.43. (4) Within-selected: knowing ¬network_forensics raises P(malware_analysis) from 0.43 to 1.0 → negative conditional correlation despite population independence.",
+    "python_verification":  "\npA,pB = 0.43,0.47\npSel = pA+pB-pA*pB\nassert abs(pSel-0.6979)\u003c0.005, f\u0027pSel={pSel}\u0027\npA_notB_sel = pA*(1-pB)/(pA*(1-pB))   # =1.0 by definition\nassert abs(pA_notB_sel-1.0)\u003c1e-9\npA_B_sel = pA*pB/pB                    # =pA by definition\nassert abs(pA_B_sel-0.43)\u003c1e-9\nassert pA_notB_sel \u003e pA_B_sel, \u0027negative collider correlation confirmed\u0027\n"
+}

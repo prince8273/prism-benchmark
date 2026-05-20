@@ -1,0 +1,48 @@
+﻿{
+    "task_id":  "prism_simp_186",
+    "category":  "simpson",
+    "difficulty":  "hard",
+    "scenario":  "Two robotic inspection systems, RoboAlpha and RoboBeta, are compared on defect-detection accuracy across aged (\u003e30 yr) and modern (\u003c10 yr) reactor vessels. RoboAlpha is predominantly deployed in aged vessels; RoboBeta mostly in modern ones.",
+    "data":  {
+                 "description":  "defect-detection accuracy rates by reactor age class and entity",
+                 "values":  {
+                                "roboalpha":  {
+                                                  "aged_\u003e30_yr":  {
+                                                                           "n":  600,
+                                                                           "success_rate":  0.81
+                                                                       },
+                                                  "modern_\u003c10_yr":  {
+                                                                             "n":  100,
+                                                                             "success_rate":  0.95
+                                                                         },
+                                                  "overall_rate":  0.83
+                                              },
+                                "robobeta":  {
+                                                 "aged_\u003e30_yr":  {
+                                                                          "n":  100,
+                                                                          "success_rate":  0.75
+                                                                      },
+                                                 "modern_\u003c10_yr":  {
+                                                                            "n":  600,
+                                                                            "success_rate":  0.93
+                                                                        },
+                                                 "overall_rate":  0.9043
+                                             }
+                            }
+             },
+    "question":  "(a) Which entity has the higher aggregate defect-detection accuracy rate? (b) Which entity performs better within each reactor age class stratum? (c) Compute each entity\u0027s corrected rate using a 50/50 reactor age class mix. (d) Which entity should be preferred, and why does the aggregate ranking mislead?",
+    "answer_type":  "comparative",
+    "ground_truth":  {
+                         "higher_aggregate":  "RoboBeta",
+                         "better_within_each_stratum":  "RoboAlpha",
+                         "corrected_roboalpha":  0.88,
+                         "corrected_robobeta":  0.84,
+                         "corrected_winner":  "RoboAlpha",
+                         "explanation":  "RoboBeta\u0027s higher aggregate is driven by its disproportionate assignment to easier modern \u003c10 yr cases. RoboAlpha outperforms RoboBeta in both reactor age class strata. Standardising to a 50/50 reactor age class mix gives RoboAlpha 0.88 vs RoboBeta 0.84; RoboAlpha is the superior performer once reactor-age class is controlled."
+                     },
+    "tolerance":  0.005,
+    "naive_answer":  "RoboBeta is better because its aggregate defect-detection accuracy rate (0.9043) exceeds RoboAlpha\u0027s (0.83).",
+    "naive_trap":  "Reactor-age class is a confounder: RoboAlpha handles the majority of harder aged \u003e30 yr cases, depressing its aggregate while RoboBeta benefits from easier cases.",
+    "reasoning_trace":  "(1) Aged \u003e30 yr: RoboAlpha 0.81 \u003e RoboBeta 0.75. (2) Modern \u003c10 yr: RoboAlpha 0.95 \u003e RoboBeta 0.93. (3) RoboAlpha handles 85.7% aged \u003e30 yr cases vs RoboBeta\u0027s 14.3% — this pulls RoboAlpha\u0027s aggregate down. (4) Corrected 50/50: RoboAlpha=0.5×0.81+0.5×0.95=0.88; RoboBeta=0.5×0.75+0.5×0.93=0.84. RoboAlpha wins after standardisation.",
+    "python_verification":  "\nnA1,rA1,nA2,rA2 = 600,0.81,100,0.95\nnB1,rB1,nB2,rB2 = 100,0.75,600,0.93\novA=(nA1*rA1+nA2*rA2)/(nA1+nA2); ovB=(nB1*rB1+nB2*rB2)/(nB1+nB2)\nassert ovB \u003e ovA, \u0027naive: RoboBeta aggregate higher\u0027\ncA=0.5*rA1+0.5*rA2; cB=0.5*rB1+0.5*rB2\nassert abs(cA-0.88)\u003c0.005 and abs(cB-0.84)\u003c0.005\nassert cA \u003e cB, \u0027corrected: RoboAlpha wins\u0027\n"
+}

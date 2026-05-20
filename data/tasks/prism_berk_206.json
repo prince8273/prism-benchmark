@@ -1,0 +1,31 @@
+﻿{
+    "task_id":  "prism_berk_206",
+    "category":  "berkson",
+    "difficulty":  "hard",
+    "scenario":  "A rare-disease research centre admits clinical fellows who possess advanced biochemical pathway knowledge OR demonstrated patient-advocacy experience. The competencies are independent in the applicant pool; OR-gate admission induces negative within-cohort correlation.",
+    "data":  {
+                 "description":  "Population base rates and OR-gate selection mechanism",
+                 "values":  {
+                                "p_biochemistry":  0.4,
+                                "p_patient_advocacy":  0.5,
+                                "selection_rule":  "OR gate: selected if (biochemical pathway knowledge) OR (patient-advocacy experience)",
+                                "p_selected":  0.7,
+                                "trait_independence_in_population":  true,
+                                "observed_within_selected_correlation":  "negative (Berkson collider bias)"
+                            }
+             },
+    "question":  "(a) Derive P(selected) from the OR-gate model. (b) Compute P(biochemistry | ¬patient_advocacy, selected) and explain why it equals 1. (c) Compute P(biochemistry | patient_advocacy, selected) and show it equals P(biochemistry). (d) Quantify the induced conditional correlation direction and explain why it is a selection artefact rather than a genuine population relationship between biochemical pathway knowledge and patient-advocacy experience.",
+    "answer_type":  "numerical",
+    "ground_truth":  {
+                         "p_selected":  0.7,
+                         "p_biochemistry_given_not_patient_advocacy_selected":  1.0,
+                         "p_biochemistry_given_patient_advocacy_selected":  0.4,
+                         "collider_correlation_direction":  "negative",
+                         "explanation":  "Under OR-gate selection a candidate who lacks patient-advocacy experience must possess biochemical pathway knowledge to be admitted — hence P(biochemistry|¬patient_advocacy,sel)=1.0. A candidate who already has patient-advocacy experience is admitted regardless of biochemical pathway knowledge, so P(biochemistry|patient_advocacy,sel)=P(biochemistry)=0.4. The gap (1.0 vs 0.4) creates a negative within-selected correlation that is purely a collider-selection artefact."
+                     },
+    "tolerance":  0.005,
+    "naive_answer":  "The negative correlation between biochemical pathway knowledge and patient-advocacy experience observed among selected candidates reflects a genuine trade-off between these traits in the domain.",
+    "naive_trap":  "The negative correlation is entirely a Berkson collider artefact produced by the OR-gate admission rule; the two traits are independent in the full population.",
+    "reasoning_trace":  "(1) P(sel)=P(A)+P(B)-P(A)P(B)=0.4+0.5-0.4×0.5=0.7. (2) Among candidates without patient-advocacy experience: only those with biochemical pathway knowledge are selected → P(biochemistry|¬patient_advocacy,sel)=1.0. (3) Among candidates with patient-advocacy experience: selected regardless of biochemical pathway knowledge → P(biochemistry|patient_advocacy,sel)=P(biochemistry)=0.4. (4) Within-selected: knowing ¬patient_advocacy raises P(biochemistry) from 0.4 to 1.0 → negative conditional correlation despite population independence.",
+    "python_verification":  "\npA,pB = 0.4,0.5\npSel = pA+pB-pA*pB\nassert abs(pSel-0.7)\u003c0.005, f\u0027pSel={pSel}\u0027\npA_notB_sel = pA*(1-pB)/(pA*(1-pB))   # =1.0 by definition\nassert abs(pA_notB_sel-1.0)\u003c1e-9\npA_B_sel = pA*pB/pB                    # =pA by definition\nassert abs(pA_B_sel-0.4)\u003c1e-9\nassert pA_notB_sel \u003e pA_B_sel, \u0027negative collider correlation confirmed\u0027\n"
+}

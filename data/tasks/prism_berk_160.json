@@ -1,0 +1,30 @@
+﻿{
+    "task_id":  "prism_berk_160",
+    "category":  "berkson",
+    "difficulty":  "hard",
+    "scenario":  "An astronaut analogue programme admits volunteers who demonstrate high endurance OR advanced technical skill. In the volunteer population, endurance (A) and technical skill (B) are independent. The OR-gate selection induces apparent negative correlation between them in the programme cohort.",
+    "data":  {
+                 "description":  "Population base rates and OR-gate selection mechanism",
+                 "values":  {
+                                "p_endurance":  0.35,
+                                "p_technical_skill":  0.45,
+                                "selection_rule":  "OR gate: selected if endurance OR technical skill",
+                                "p_selected":  0.6425,
+                                "observed_corr_among_selected":  "negative (Berkson bias)"
+                            }
+             },
+    "question":  "(a) What is P(selected)? (b) What is P(endurance|not_technical_skill, selected)? (c) What is P(endurance|technical_skill, selected)? (d) Explain why endurance and technical skill appear negatively correlated among selected candidates even though they are independent in the population.",
+    "answer_type":  "numerical",
+    "ground_truth":  {
+                         "p_selected":  0.6425,
+                         "p_endurance_given_not_technical_skill_selected":  1.0,
+                         "p_endurance_given_technical_skill_selected":  0.35,
+                         "conditional_correlation_direction":  "negative",
+                         "explanation":  "Under OR-gate selection, a candidate lacking technical skill must have endurance to be selected (P=1.0). A candidate who has technical skill is selected regardless of endurance, so P(endurance | technical skill, selected) = P(endurance) = 0.35. This differential probability creates a negative within-selected correlation despite population independence."
+                     },
+    "tolerance":  0.005,
+    "naive_answer":  "The negative correlation among selected candidates reflects a genuine inverse relationship between endurance and technical skill in the domain.",
+    "naive_trap":  "The negative correlation is entirely an artefact of OR-gate collider selection, not a real population-level relationship between the two traits.",
+    "reasoning_trace":  "(1) P(sel)=P(A)+P(B)-P(A)P(B)=0.35+0.45-0.35×0.45=0.6425. (2) If not-B and selected, must have A → P(A|not-B,sel)=1.0. (3) If B and selected, selection is independent of A → P(A|B,sel)=P(A)=0.35. (4) The gap between 1.0 and 0.35 produces a negative association within the selected group via collider bias.",
+    "python_verification":  "\npA,pB = 0.35,0.45\npSel = pA+pB-pA*pB\nassert abs(pSel-0.6425)\u003c0.005\npA_notB_sel = pA*(1-pB)/(pA*(1-pB))   # =1.0\nassert abs(pA_notB_sel-1.0)\u003c0.005\npA_B_sel = pA*pB/pB                    # =pA\nassert abs(pA_B_sel-pA)\u003c0.005\nassert pA_notB_sel \u003e pA_B_sel          # negative collider bias confirmed\n"
+}

@@ -1,0 +1,31 @@
+﻿{
+    "task_id":  "prism_berk_196",
+    "category":  "berkson",
+    "difficulty":  "hard",
+    "scenario":  "A competitive offshore sailing programme selects crew members who demonstrate expert meteorological interpretation OR exceptional boat-handling skill. In the candidate population the two abilities are independent; the OR-gate selection induces a negative collider correlation among selected crew.",
+    "data":  {
+                 "description":  "Population base rates and OR-gate selection mechanism",
+                 "values":  {
+                                "p_meteo_skill":  0.38,
+                                "p_boat_handling":  0.47,
+                                "selection_rule":  "OR gate: selected if (meteorological interpretation) OR (boat-handling skill)",
+                                "p_selected":  0.6714,
+                                "trait_independence_in_population":  true,
+                                "observed_within_selected_correlation":  "negative (Berkson collider bias)"
+                            }
+             },
+    "question":  "(a) Derive P(selected) from the OR-gate model. (b) Compute P(meteo_skill | ¬boat_handling, selected) and explain why it equals 1. (c) Compute P(meteo_skill | boat_handling, selected) and show it equals P(meteo_skill). (d) Quantify the induced conditional correlation direction and explain why it is a selection artefact rather than a genuine population relationship between meteorological interpretation and boat-handling skill.",
+    "answer_type":  "numerical",
+    "ground_truth":  {
+                         "p_selected":  0.6714,
+                         "p_meteo_skill_given_not_boat_handling_selected":  1.0,
+                         "p_meteo_skill_given_boat_handling_selected":  0.38,
+                         "collider_correlation_direction":  "negative",
+                         "explanation":  "Under OR-gate selection a candidate who lacks boat-handling skill must possess meteorological interpretation to be admitted — hence P(meteo_skill|¬boat_handling,sel)=1.0. A candidate who already has boat-handling skill is admitted regardless of meteorological interpretation, so P(meteo_skill|boat_handling,sel)=P(meteo_skill)=0.38. The gap (1.0 vs 0.38) creates a negative within-selected correlation that is purely a collider-selection artefact."
+                     },
+    "tolerance":  0.005,
+    "naive_answer":  "The negative correlation between meteorological interpretation and boat-handling skill observed among selected candidates reflects a genuine trade-off between these traits in the domain.",
+    "naive_trap":  "The negative correlation is entirely a Berkson collider artefact produced by the OR-gate admission rule; the two traits are independent in the full population.",
+    "reasoning_trace":  "(1) P(sel)=P(A)+P(B)-P(A)P(B)=0.38+0.47-0.38×0.47=0.6714. (2) Among candidates without boat-handling skill: only those with meteorological interpretation are selected → P(meteo_skill|¬boat_handling,sel)=1.0. (3) Among candidates with boat-handling skill: selected regardless of meteorological interpretation → P(meteo_skill|boat_handling,sel)=P(meteo_skill)=0.38. (4) Within-selected: knowing ¬boat_handling raises P(meteo_skill) from 0.38 to 1.0 → negative conditional correlation despite population independence.",
+    "python_verification":  "\npA,pB = 0.38,0.47\npSel = pA+pB-pA*pB\nassert abs(pSel-0.6714)\u003c0.005, f\u0027pSel={pSel}\u0027\npA_notB_sel = pA*(1-pB)/(pA*(1-pB))   # =1.0 by definition\nassert abs(pA_notB_sel-1.0)\u003c1e-9\npA_B_sel = pA*pB/pB                    # =pA by definition\nassert abs(pA_B_sel-0.38)\u003c1e-9\nassert pA_notB_sel \u003e pA_B_sel, \u0027negative collider correlation confirmed\u0027\n"
+}

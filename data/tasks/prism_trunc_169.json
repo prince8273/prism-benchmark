@@ -1,0 +1,28 @@
+﻿{
+    "task_id":  "prism_trunc_169",
+    "category":  "truncated",
+    "difficulty":  "hard",
+    "scenario":  "Assay labs report rare-earth oxide (REO) concentrations only when they exceed the 0.60% instrument sensitivity floor. Among reported assays the mean REO concentration is 0.85% (σ=0.15%). The true mean concentration across all drill samples is of interest.",
+    "data":  {
+                 "description":  "Observed statistics among units exceeding reporting threshold",
+                 "values":  {
+                                "observed_mean_above_threshold":  0.85,
+                                "assumed_sigma":  0.15,
+                                "threshold":  0.6,
+                                "n_observed":  "only values above threshold are recorded"
+                            }
+             },
+    "question":  "(a) Assuming the true distribution of REO concentration is normal with σ=0.15 %, solve for the true population mean μ such that E[X|X\u003e0.6]=0.85. (b) What fraction of all events lie above the above 0.60% assay-sensitivity floor threshold? (c) By how much does the observed mean overstate the true mean?",
+    "answer_type":  "numerical",
+    "ground_truth":  {
+                         "true_mean_mu":  0.83038,
+                         "fraction_above_threshold":  0.93771,
+                         "overstatement":  0.0196,
+                         "explanation":  "Solving the truncated-normal equation μ + σ·φ((t−μ)/σ)/Φ̄((t−μ)/σ) = 0.85 numerically gives μ≈0.83038. Only 93.8% of all events are actually observed; the observed mean overstates the true mean by ≈0.0196 %."
+                     },
+    "tolerance":  0.005,
+    "naive_answer":  "The true mean REO concentration is approximately 0.85 % because that is what the data directly show.",
+    "naive_trap":  "The observed mean is a truncated-normal conditional expectation, not the population mean; it always exceeds the true mean for above-threshold samples.",
+    "reasoning_trace":  "(1) Let α=(t−μ)/σ. (2) E[X|X\u003et]=μ+σ·φ(α)/Φ̄(α). (3) Set equal to 0.85 and solve numerically for μ using brentq. (4) Solution: μ≈0.83038. (5) Fraction above threshold: Φ̄((0.6−0.83038)/σ)≈0.93771.",
+    "python_verification":  "\nobs,sig,thresh = 0.85,0.15,0.6\ndef eq(mu):\n    alpha=(thresh-mu)/sig\n    return mu+sig*norm.pdf(alpha)/norm.sf(alpha)-obs\nmu_sol=brentq(eq,thresh-20*sig,obs-1e-9,maxiter=200)\nfrac=norm.sf((thresh-mu_sol)/sig)\nassert abs(mu_sol-0.83038)\u003c0.005\nassert abs(frac-0.93771)\u003c0.005\nassert mu_sol \u003c obs\n"
+}

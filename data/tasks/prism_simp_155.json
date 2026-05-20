@@ -1,0 +1,48 @@
+﻿{
+    "task_id":  "prism_simp_155",
+    "category":  "simpson",
+    "difficulty":  "hard",
+    "scenario":  "Two wildfire drone-mapping systems, DroneX and DroneY, are evaluated on successful area-mapping rates across steep and flat terrain bands. DroneX is predominantly deployed in challenging steep terrain; DroneY mostly operates in flat terrain.",
+    "data":  {
+                 "description":  "Successful mapping completion rates by terrain band",
+                 "values":  {
+                                "dronex":  {
+                                               "steep_terrain":  {
+                                                                     "n":  600,
+                                                                     "success_rate":  0.8
+                                                                 },
+                                               "flat_terrain":  {
+                                                                    "n":  100,
+                                                                    "success_rate":  0.93
+                                                                },
+                                               "overall_rate":  0.8186
+                                           },
+                                "droney":  {
+                                               "steep_terrain":  {
+                                                                     "n":  100,
+                                                                     "success_rate":  0.74
+                                                                 },
+                                               "flat_terrain":  {
+                                                                    "n":  600,
+                                                                    "success_rate":  0.91
+                                                                },
+                                               "overall_rate":  0.8857
+                                           }
+                            }
+             },
+    "question":  "(a) Which system has the higher aggregate mapping rate? (b) Which performs better within each terrain band? (c) Compute corrected rates assuming a 50/50 terrain mix.",
+    "answer_type":  "comparative",
+    "ground_truth":  {
+                         "higher_aggregate":  "DroneY",
+                         "better_within_each_band":  "DroneX",
+                         "corrected_dronex":  0.865,
+                         "corrected_droney":  0.825,
+                         "corrected_winner":  "DroneX",
+                         "explanation":  "DroneY\u0027s better aggregate is caused by its easy flat-terrain workload. Standardising to 50/50 terrain reveals DroneX is superior in both strata."
+                     },
+    "tolerance":  0.005,
+    "naive_answer":  "DroneY is better; aggregate rate 0.8857 vs DroneX\u0027s 0.8186.",
+    "naive_trap":  "Terrain band confounds performance; DroneX handles 85.7% steep missions while DroneY handles 85.7% flat ones.",
+    "reasoning_trace":  "Steep: X 0.80 \u003e Y 0.74. Flat: X 0.93 \u003e Y 0.91. Corrected: X=0.865, Y=0.825. X wins.",
+    "python_verification":  "\nnD1s,rD1s,nD1f,rD1f = 600,0.80,100,0.93\nnD2s,rD2s,nD2f,rD2f = 100,0.74,600,0.91\novD1=(nD1s*rD1s+nD1f*rD1f)/(nD1s+nD1f); ovD2=(nD2s*rD2s+nD2f*rD2f)/(nD2s+nD2f)\nassert ovD2 \u003e ovD1\ncD1=0.5*rD1s+0.5*rD1f; cD2=0.5*rD2s+0.5*rD2f\nassert abs(cD1-0.865)\u003c0.005 and abs(cD2-0.825)\u003c0.005\nassert cD1 \u003e cD2\n"
+}

@@ -1,0 +1,31 @@
+﻿{
+    "task_id":  "prism_berk_198",
+    "category":  "berkson",
+    "difficulty":  "hard",
+    "scenario":  "A law-enforcement agency selects negotiators who demonstrate high emotional regulation OR advanced strategic deception detection. These abilities are independent in the candidate population; OR-gate selection creates a negative collider bias in the selected cohort.",
+    "data":  {
+                 "description":  "Population base rates and OR-gate selection mechanism",
+                 "values":  {
+                                "p_emotional_regulation":  0.41,
+                                "p_deception_detection":  0.49,
+                                "selection_rule":  "OR gate: selected if (emotional regulation) OR (strategic deception detection)",
+                                "p_selected":  0.6991,
+                                "trait_independence_in_population":  true,
+                                "observed_within_selected_correlation":  "negative (Berkson collider bias)"
+                            }
+             },
+    "question":  "(a) Derive P(selected) from the OR-gate model. (b) Compute P(emotional_regulation | ¬deception_detection, selected) and explain why it equals 1. (c) Compute P(emotional_regulation | deception_detection, selected) and show it equals P(emotional_regulation). (d) Quantify the induced conditional correlation direction and explain why it is a selection artefact rather than a genuine population relationship between emotional regulation and strategic deception detection.",
+    "answer_type":  "numerical",
+    "ground_truth":  {
+                         "p_selected":  0.6991,
+                         "p_emotional_regulation_given_not_deception_detection_selected":  1.0,
+                         "p_emotional_regulation_given_deception_detection_selected":  0.41,
+                         "collider_correlation_direction":  "negative",
+                         "explanation":  "Under OR-gate selection a candidate who lacks strategic deception detection must possess emotional regulation to be admitted — hence P(emotional_regulation|¬deception_detection,sel)=1.0. A candidate who already has strategic deception detection is admitted regardless of emotional regulation, so P(emotional_regulation|deception_detection,sel)=P(emotional_regulation)=0.41. The gap (1.0 vs 0.41) creates a negative within-selected correlation that is purely a collider-selection artefact."
+                     },
+    "tolerance":  0.005,
+    "naive_answer":  "The negative correlation between emotional regulation and strategic deception detection observed among selected candidates reflects a genuine trade-off between these traits in the domain.",
+    "naive_trap":  "The negative correlation is entirely a Berkson collider artefact produced by the OR-gate admission rule; the two traits are independent in the full population.",
+    "reasoning_trace":  "(1) P(sel)=P(A)+P(B)-P(A)P(B)=0.41+0.49-0.41×0.49=0.6991. (2) Among candidates without strategic deception detection: only those with emotional regulation are selected → P(emotional_regulation|¬deception_detection,sel)=1.0. (3) Among candidates with strategic deception detection: selected regardless of emotional regulation → P(emotional_regulation|deception_detection,sel)=P(emotional_regulation)=0.41. (4) Within-selected: knowing ¬deception_detection raises P(emotional_regulation) from 0.41 to 1.0 → negative conditional correlation despite population independence.",
+    "python_verification":  "\npA,pB = 0.41,0.49\npSel = pA+pB-pA*pB\nassert abs(pSel-0.6991)\u003c0.005, f\u0027pSel={pSel}\u0027\npA_notB_sel = pA*(1-pB)/(pA*(1-pB))   # =1.0 by definition\nassert abs(pA_notB_sel-1.0)\u003c1e-9\npA_B_sel = pA*pB/pB                    # =pA by definition\nassert abs(pA_B_sel-0.41)\u003c1e-9\nassert pA_notB_sel \u003e pA_B_sel, \u0027negative collider correlation confirmed\u0027\n"
+}

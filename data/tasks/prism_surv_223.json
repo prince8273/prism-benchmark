@@ -1,0 +1,30 @@
+﻿{
+    "task_id":  "prism_surv_223",
+    "category":  "survival",
+    "difficulty":  "hard",
+    "scenario":  "Development-agency researchers study only micro-hydropower plants that achieved grid-connection and are still generating. Mean annual energy output among studied plants is 420 MWh (σ=80 MWh); the grid-connection survival threshold is 260 MWh/year. The true mean output across all plants installed in the programme cohort is needed.",
+    "data":  {
+                 "description":  "Observed statistics among units that cleared the survival/publication filter",
+                 "values":  {
+                                "observed_mean_survivors":  420,
+                                "assumed_population_sigma":  80,
+                                "survival_threshold":  260,
+                                "filter_description":  "grid-connection and operational survival filter (≥260 MWh/yr)",
+                                "units":  "MWh",
+                                "note":  "Only units above the survival threshold appear in the observed sample"
+                            }
+             },
+    "question":  "(a) Assuming annual energy output is normally distributed with σ=80 MWh in the full pre-filter cohort, solve numerically for the true pre-filter population mean μ such that E[X | X \u003e 260] = 420. (b) What fraction of all original units cleared the survival filter? (c) By how much (in MWh) does the survivor mean overstate μ? (d) What policy or scientific conclusion error arises from ignoring the survival filter?",
+    "answer_type":  "numerical",
+    "ground_truth":  {
+                         "true_pre_filter_mean":  414.98057,
+                         "fraction_surviving":  0.97364,
+                         "overstatement":  5.01943,
+                         "explanation":  "The micro-hydropower plants in development-agency studies dataset is a truncated-normal sample above the survival threshold t=260 MWh. Solving E[X|X\u003et]=μ+σφ((t−μ)/σ)/Φ̄((t−μ)/σ)=420 numerically gives μ=414.98057 MWh. Only 97.36% of the original cohort survived; the observed mean overstates the true mean by 5.01943 MWh. Ignoring the filter leads to over-estimating the baseline quality/capacity of the full cohort, producing over-optimistic policy conclusions."
+                     },
+    "tolerance":  0.005,
+    "naive_answer":  "The true mean annual energy output is 420 MWh because that is the average observed among the surviving/studied units.",
+    "naive_trap":  "The observed sample consists only of units above the survival threshold. The observed mean is E[X|X\u003e260] — a truncated conditional expectation — not the population mean. It systematically overstates μ whenever the threshold is non-trivially binding.",
+    "reasoning_trace":  "(1) Survival filter ≡ truncated-normal sampling with lower truncation at t=260. (2) E[X|X\u003et] = μ + σ·φ((t−μ)/σ) / Φ̄((t−μ)/σ) = 420. (3) Solve numerically via brentq on [-1740.0, 419.9999] → μ=414.98057. (4) Fraction above threshold: Φ̄((260−414.98057)/80) = 0.97364. (5) Overstatement: 420−414.98057 = 5.01943 MWh.",
+    "python_verification":  "\nobs,sig,thresh = 420,80,260\ndef eq(mu):\n    alpha=(thresh-mu)/sig\n    return mu+sig*norm.pdf(alpha)/norm.sf(alpha)-obs\nmu_sol=brentq(eq,thresh-25*sig,obs-1e-9,maxiter=300)\nfrac=norm.sf((thresh-mu_sol)/sig)\nassert abs(mu_sol-414.98057)\u003c0.005, f\u0027mu={mu_sol:.5f}\u0027\nassert abs(frac-0.97364)\u003c0.005, f\u0027frac={frac:.5f}\u0027\nassert mu_sol \u003c obs\nassert abs((obs-mu_sol)-5.01943)\u003c0.01\n"
+}

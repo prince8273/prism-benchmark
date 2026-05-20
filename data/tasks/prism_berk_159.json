@@ -1,0 +1,30 @@
+﻿{
+    "task_id":  "prism_berk_159",
+    "category":  "berkson",
+    "difficulty":  "hard",
+    "scenario":  "An elite choir admits candidates who pass an audition requiring outstanding tone quality OR superior sight-reading ability. In the general applicant pool, tone quality (A) and sight-reading (B) are independent. Among selected candidates, the two traits appear negatively correlated.",
+    "data":  {
+                 "description":  "Population base rates and OR-gate selection mechanism",
+                 "values":  {
+                                "p_tone_quality":  0.4,
+                                "p_sight_reading":  0.5,
+                                "selection_rule":  "OR gate: selected if tone quality OR sight-reading",
+                                "p_selected":  0.7,
+                                "observed_corr_among_selected":  "negative (Berkson bias)"
+                            }
+             },
+    "question":  "(a) What is P(selected)? (b) What is P(tone_quality|not_sight_reading, selected)? (c) What is P(tone_quality|sight_reading, selected)? (d) Explain why tone quality and sight-reading appear negatively correlated among selected candidates even though they are independent in the population.",
+    "answer_type":  "numerical",
+    "ground_truth":  {
+                         "p_selected":  0.7,
+                         "p_tone_quality_given_not_sight_reading_selected":  1.0,
+                         "p_tone_quality_given_sight_reading_selected":  0.4,
+                         "conditional_correlation_direction":  "negative",
+                         "explanation":  "Under OR-gate selection, a candidate lacking sight-reading must have tone quality to be selected (P=1.0). A candidate who has sight-reading is selected regardless of tone quality, so P(tone quality | sight-reading, selected) = P(tone quality) = 0.4. This differential probability creates a negative within-selected correlation despite population independence."
+                     },
+    "tolerance":  0.005,
+    "naive_answer":  "The negative correlation among selected candidates reflects a genuine inverse relationship between tone quality and sight-reading in the domain.",
+    "naive_trap":  "The negative correlation is entirely an artefact of OR-gate collider selection, not a real population-level relationship between the two traits.",
+    "reasoning_trace":  "(1) P(sel)=P(A)+P(B)-P(A)P(B)=0.4+0.5-0.4×0.5=0.7. (2) If not-B and selected, must have A → P(A|not-B,sel)=1.0. (3) If B and selected, selection is independent of A → P(A|B,sel)=P(A)=0.4. (4) The gap between 1.0 and 0.4 produces a negative association within the selected group via collider bias.",
+    "python_verification":  "\npA,pB = 0.4,0.5\npSel = pA+pB-pA*pB\nassert abs(pSel-0.7)\u003c0.005\npA_notB_sel = pA*(1-pB)/(pA*(1-pB))   # =1.0\nassert abs(pA_notB_sel-1.0)\u003c0.005\npA_B_sel = pA*pB/pB                    # =pA\nassert abs(pA_B_sel-pA)\u003c0.005\nassert pA_notB_sel \u003e pA_B_sel          # negative collider bias confirmed\n"
+}

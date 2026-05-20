@@ -1,0 +1,48 @@
+﻿{
+    "task_id":  "prism_simp_158",
+    "category":  "simpson",
+    "difficulty":  "hard",
+    "scenario":  "Two contractors, ContractorM and ContractorN, maintain desalination plants and are evaluated on first-time repair success across mechanical and electrical failure types. ContractorM handles predominantly mechanical failures (harder); ContractorN primarily handles electrical faults.",
+    "data":  {
+                 "description":  "First-time repair success rates by failure type",
+                 "values":  {
+                                "contractor_m":  {
+                                                     "mechanical":  {
+                                                                        "n":  650,
+                                                                        "success_rate":  0.78
+                                                                    },
+                                                     "electrical":  {
+                                                                        "n":  100,
+                                                                        "success_rate":  0.95
+                                                                    },
+                                                     "overall_rate":  0.8027
+                                                 },
+                                "contractor_n":  {
+                                                     "mechanical":  {
+                                                                        "n":  100,
+                                                                        "success_rate":  0.71
+                                                                    },
+                                                     "electrical":  {
+                                                                        "n":  650,
+                                                                        "success_rate":  0.93
+                                                                    },
+                                                     "overall_rate":  0.9007
+                                                 }
+                            }
+             },
+    "question":  "(a) Which contractor has the higher aggregate first-time success rate? (b) Which performs better within each failure type? (c) Compute standardised rates using a 50/50 failure-type mix.",
+    "answer_type":  "comparative",
+    "ground_truth":  {
+                         "higher_aggregate":  "ContractorN",
+                         "better_within_each_type":  "ContractorM",
+                         "corrected_m":  0.865,
+                         "corrected_n":  0.82,
+                         "corrected_winner":  "ContractorM",
+                         "explanation":  "ContractorN\u0027s aggregate advantage is due to its easier electrical-heavy workload. In each failure type, ContractorM is the superior performer."
+                     },
+    "tolerance":  0.005,
+    "naive_answer":  "ContractorN is better; overall rate 0.9007 vs ContractorM\u0027s 0.8027.",
+    "naive_trap":  "Failure-type assignment is the confounder: mechanical faults are harder and ContractorM handles 86.7% of them.",
+    "reasoning_trace":  "Mechanical: M 0.78 \u003e N 0.71. Electrical: M 0.95 \u003e N 0.93. Corrected: M=0.865, N=0.82. M wins.",
+    "python_verification":  "\nnMm,rMm,nMe,rMe = 650,0.78,100,0.95\nnNm,rNm,nNe,rNe = 100,0.71,650,0.93\novM=(nMm*rMm+nMe*rMe)/(nMm+nMe); ovN=(nNm*rNm+nNe*rNe)/(nNm+nNe)\nassert ovN \u003e ovM\ncM=0.5*rMm+0.5*rMe; cN=0.5*rNm+0.5*rNe\nassert abs(cM-0.865)\u003c0.005 and abs(cN-0.82)\u003c0.005\nassert cM \u003e cN\n"
+}

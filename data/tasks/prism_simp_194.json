@@ -1,0 +1,48 @@
+﻿{
+    "task_id":  "prism_simp_194",
+    "category":  "simpson",
+    "difficulty":  "hard",
+    "scenario":  "Two airtanker units, Unit Phoenix and Unit Condor, are assessed on accurate fire-retardant delivery rates. Unit Phoenix predominantly operates against extreme-behaviour crown fires; Unit Condor mostly tackles surface fires.",
+    "data":  {
+                 "description":  "accurate retardant delivery rates by fire behaviour class and entity",
+                 "values":  {
+                                "unit_phoenix":  {
+                                                     "extreme_crown_fire":  {
+                                                                                "n":  650,
+                                                                                "success_rate":  0.77
+                                                                            },
+                                                     "surface_fire":  {
+                                                                          "n":  100,
+                                                                          "success_rate":  0.92
+                                                                      },
+                                                     "overall_rate":  0.79
+                                                 },
+                                "unit_condor":  {
+                                                    "extreme_crown_fire":  {
+                                                                               "n":  100,
+                                                                               "success_rate":  0.71
+                                                                           },
+                                                    "surface_fire":  {
+                                                                         "n":  650,
+                                                                         "success_rate":  0.9
+                                                                     },
+                                                    "overall_rate":  0.8747
+                                                }
+                            }
+             },
+    "question":  "(a) Which entity has the higher aggregate accurate retardant delivery rate? (b) Which entity performs better within each fire behaviour class stratum? (c) Compute each entity\u0027s corrected rate using a 50/50 fire behaviour class mix. (d) Which entity should be preferred, and why does the aggregate ranking mislead?",
+    "answer_type":  "comparative",
+    "ground_truth":  {
+                         "higher_aggregate":  "Unit Condor",
+                         "better_within_each_stratum":  "Unit Phoenix",
+                         "corrected_unit_phoenix":  0.845,
+                         "corrected_unit_condor":  0.805,
+                         "corrected_winner":  "Unit Phoenix",
+                         "explanation":  "Unit Condor\u0027s higher aggregate is driven by its disproportionate assignment to easier surface fire cases. Unit Phoenix outperforms Unit Condor in both fire behaviour class strata. Standardising to a 50/50 fire behaviour class mix gives Unit Phoenix 0.845 vs Unit Condor 0.805; Unit Phoenix is the superior performer once fire-behaviour class is controlled."
+                     },
+    "tolerance":  0.005,
+    "naive_answer":  "Unit Condor is better because its aggregate accurate retardant delivery rate (0.8747) exceeds Unit Phoenix\u0027s (0.79).",
+    "naive_trap":  "Fire-behaviour class is a confounder: Unit Phoenix handles the majority of harder extreme crown fire cases, depressing its aggregate while Unit Condor benefits from easier cases.",
+    "reasoning_trace":  "(1) Extreme crown fire: Unit Phoenix 0.77 \u003e Unit Condor 0.71. (2) Surface fire: Unit Phoenix 0.92 \u003e Unit Condor 0.9. (3) Unit Phoenix handles 86.7% extreme crown fire cases vs Unit Condor\u0027s 13.3% — this pulls Unit Phoenix\u0027s aggregate down. (4) Corrected 50/50: Unit Phoenix=0.5×0.77+0.5×0.92=0.845; Unit Condor=0.5×0.71+0.5×0.9=0.805. Unit Phoenix wins after standardisation.",
+    "python_verification":  "\nnA1,rA1,nA2,rA2 = 650,0.77,100,0.92\nnB1,rB1,nB2,rB2 = 100,0.71,650,0.9\novA=(nA1*rA1+nA2*rA2)/(nA1+nA2); ovB=(nB1*rB1+nB2*rB2)/(nB1+nB2)\nassert ovB \u003e ovA, \u0027naive: Unit Condor aggregate higher\u0027\ncA=0.5*rA1+0.5*rA2; cB=0.5*rB1+0.5*rB2\nassert abs(cA-0.845)\u003c0.005 and abs(cB-0.805)\u003c0.005\nassert cA \u003e cB, \u0027corrected: Unit Phoenix wins\u0027\n"
+}

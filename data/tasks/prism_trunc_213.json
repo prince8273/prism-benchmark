@@ -1,0 +1,30 @@
+﻿{
+    "task_id":  "prism_trunc_213",
+    "category":  "truncated",
+    "difficulty":  "hard",
+    "scenario":  "Photomultiplier sensors on deep-sea gliders only record bioluminescence flashes exceeding 4.0 relative light units (RLU), the detection floor. Recorded events show a mean intensity of 6.2 RLU (σ=1.1 RLU). Marine biologists want the true mean flash intensity across all emission events.",
+    "data":  {
+                 "description":  "Observed statistics among values exceeding the reporting threshold",
+                 "values":  {
+                                "observed_mean_above_threshold":  6.2,
+                                "assumed_population_sigma":  1.1,
+                                "reporting_threshold":  4.0,
+                                "threshold_description":  "above 4.0 RLU sensor detection floor",
+                                "units":  "RLU",
+                                "note":  "Only observations above the threshold enter the record"
+                            }
+             },
+    "question":  "(a) Assuming bioluminescence flash intensity follows a normal distribution with σ=1.1 RLU, solve numerically for the true population mean μ satisfying E[X | X \u003e 4.0] = 6.2. (b) What fraction of all bioluminescence flash intensity events lie above the 4.0 RLU threshold? (c) By how much (in RLU) does the observed truncated mean overstate the true μ? (d) Explain the inferential risk of using the observed mean directly as an estimate of μ.",
+    "answer_type":  "numerical",
+    "ground_truth":  {
+                         "true_mean_mu":  6.13098,
+                         "fraction_above_threshold":  0.97364,
+                         "overstatement":  0.06902,
+                         "explanation":  "The observed mean 6.2 RLU is E[X|X\u003e4.0], the expectation of a truncated-normal distribution. Solving μ+σ·φ((t−μ)/σ)/Φ̄((t−μ)/σ)=6.2 numerically yields μ=6.13098 RLU. Only 97.4% of all events are recorded; the observed mean overstates the true mean by 0.06902 RLU. Using the observed mean directly as μ would lead to systematic over-estimation of the severity/magnitude of the process."
+                     },
+    "tolerance":  0.005,
+    "naive_answer":  "The true mean bioluminescence flash intensity is 6.2 RLU because that is the average of all available measurements.",
+    "naive_trap":  "Only events above 4.0 RLU are recorded; the observed mean is a conditional expectation E[X|X\u003e4.0], not the population mean. It always exceeds μ whenever the threshold is binding.",
+    "reasoning_trace":  "(1) Define α=(t−μ)/σ where t=4.0, σ=1.1. (2) Truncated-normal expectation: E[X|X\u003et]=μ+σ·φ(α)/Φ̄(α). (3) Set equal to 6.2 and solve for μ via brentq on [-23.5, 6.1999]. (4) Solution: μ=6.13098 RLU. (5) Fraction above threshold: Φ̄((t−μ)/σ)=Φ̄((4.0−6.13098)/1.1)=0.97364.",
+    "python_verification":  "\nobs,sig,thresh = 6.2,1.1,4.0\ndef eq(mu):\n    alpha=(thresh-mu)/sig\n    return mu+sig*norm.pdf(alpha)/norm.sf(alpha)-obs\nmu_sol=brentq(eq,thresh-25*sig,obs-1e-9,maxiter=300)\nfrac=norm.sf((thresh-mu_sol)/sig)\nassert abs(mu_sol-6.13098)\u003c0.005, f\u0027mu={mu_sol:.5f}\u0027\nassert abs(frac-0.97364)\u003c0.005, f\u0027frac={frac:.5f}\u0027\nassert mu_sol \u003c obs\nassert abs((obs-mu_sol)-0.06902)\u003c0.01\n"
+}

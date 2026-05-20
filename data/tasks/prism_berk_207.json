@@ -1,0 +1,31 @@
+﻿{
+    "task_id":  "prism_berk_207",
+    "category":  "berkson",
+    "difficulty":  "hard",
+    "scenario":  "A geospatial intelligence agency recruits analysts who demonstrate expert multi-spectral image analysis OR advanced GIS spatial reasoning. Both skills are independent in the candidate pool; OR-gate selection produces negative within-analyst correlation.",
+    "data":  {
+                 "description":  "Population base rates and OR-gate selection mechanism",
+                 "values":  {
+                                "p_spectral_analysis":  0.34,
+                                "p_gis_reasoning":  0.46,
+                                "selection_rule":  "OR gate: selected if (multi-spectral image analysis) OR (GIS spatial reasoning)",
+                                "p_selected":  0.6436,
+                                "trait_independence_in_population":  true,
+                                "observed_within_selected_correlation":  "negative (Berkson collider bias)"
+                            }
+             },
+    "question":  "(a) Derive P(selected) from the OR-gate model. (b) Compute P(spectral_analysis | ¬gis_reasoning, selected) and explain why it equals 1. (c) Compute P(spectral_analysis | gis_reasoning, selected) and show it equals P(spectral_analysis). (d) Quantify the induced conditional correlation direction and explain why it is a selection artefact rather than a genuine population relationship between multi-spectral image analysis and GIS spatial reasoning.",
+    "answer_type":  "numerical",
+    "ground_truth":  {
+                         "p_selected":  0.6436,
+                         "p_spectral_analysis_given_not_gis_reasoning_selected":  1.0,
+                         "p_spectral_analysis_given_gis_reasoning_selected":  0.34,
+                         "collider_correlation_direction":  "negative",
+                         "explanation":  "Under OR-gate selection a candidate who lacks GIS spatial reasoning must possess multi-spectral image analysis to be admitted — hence P(spectral_analysis|¬gis_reasoning,sel)=1.0. A candidate who already has GIS spatial reasoning is admitted regardless of multi-spectral image analysis, so P(spectral_analysis|gis_reasoning,sel)=P(spectral_analysis)=0.34. The gap (1.0 vs 0.34) creates a negative within-selected correlation that is purely a collider-selection artefact."
+                     },
+    "tolerance":  0.005,
+    "naive_answer":  "The negative correlation between multi-spectral image analysis and GIS spatial reasoning observed among selected candidates reflects a genuine trade-off between these traits in the domain.",
+    "naive_trap":  "The negative correlation is entirely a Berkson collider artefact produced by the OR-gate admission rule; the two traits are independent in the full population.",
+    "reasoning_trace":  "(1) P(sel)=P(A)+P(B)-P(A)P(B)=0.34+0.46-0.34×0.46=0.6436. (2) Among candidates without GIS spatial reasoning: only those with multi-spectral image analysis are selected → P(spectral_analysis|¬gis_reasoning,sel)=1.0. (3) Among candidates with GIS spatial reasoning: selected regardless of multi-spectral image analysis → P(spectral_analysis|gis_reasoning,sel)=P(spectral_analysis)=0.34. (4) Within-selected: knowing ¬gis_reasoning raises P(spectral_analysis) from 0.34 to 1.0 → negative conditional correlation despite population independence.",
+    "python_verification":  "\npA,pB = 0.34,0.46\npSel = pA+pB-pA*pB\nassert abs(pSel-0.6436)\u003c0.005, f\u0027pSel={pSel}\u0027\npA_notB_sel = pA*(1-pB)/(pA*(1-pB))   # =1.0 by definition\nassert abs(pA_notB_sel-1.0)\u003c1e-9\npA_B_sel = pA*pB/pB                    # =pA by definition\nassert abs(pA_B_sel-0.34)\u003c1e-9\nassert pA_notB_sel \u003e pA_B_sel, \u0027negative collider correlation confirmed\u0027\n"
+}

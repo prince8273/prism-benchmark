@@ -1,0 +1,48 @@
+﻿{
+    "task_id":  "prism_simp_183",
+    "category":  "simpson",
+    "difficulty":  "hard",
+    "scenario":  "Two mountain-rescue teams, Sierra and Nordic, are assessed on successful rescue completion rates. Team Sierra is predominantly dispatched to severe high-altitude incidents; Team Nordic handles mostly low-altitude moderate incidents.",
+    "data":  {
+                 "description":  "rescue completion rates by incident severity and entity",
+                 "values":  {
+                                "team_sierra":  {
+                                                    "severe":  {
+                                                                   "n":  600,
+                                                                   "success_rate":  0.74
+                                                               },
+                                                    "moderate":  {
+                                                                     "n":  100,
+                                                                     "success_rate":  0.93
+                                                                 },
+                                                    "overall_rate":  0.7671
+                                                },
+                                "team_nordic":  {
+                                                    "severe":  {
+                                                                   "n":  100,
+                                                                   "success_rate":  0.68
+                                                               },
+                                                    "moderate":  {
+                                                                     "n":  600,
+                                                                     "success_rate":  0.91
+                                                                 },
+                                                    "overall_rate":  0.8771
+                                                }
+                            }
+             },
+    "question":  "(a) Which entity has the higher aggregate rescue completion rate? (b) Which entity performs better within each incident severity stratum? (c) Compute each entity\u0027s corrected rate using a 50/50 incident severity mix. (d) Which entity should be preferred, and why does the aggregate ranking mislead?",
+    "answer_type":  "comparative",
+    "ground_truth":  {
+                         "higher_aggregate":  "Team Nordic",
+                         "better_within_each_stratum":  "Team Sierra",
+                         "corrected_team_sierra":  0.835,
+                         "corrected_team_nordic":  0.795,
+                         "corrected_winner":  "Team Sierra",
+                         "explanation":  "Team Nordic\u0027s higher aggregate is driven by its disproportionate assignment to easier moderate cases. Team Sierra outperforms Team Nordic in both incident severity strata. Standardising to a 50/50 incident severity mix gives Team Sierra 0.835 vs Team Nordic 0.795; Team Sierra is the superior performer once incident severity is controlled."
+                     },
+    "tolerance":  0.005,
+    "naive_answer":  "Team Nordic is better because its aggregate rescue completion rate (0.8771) exceeds Team Sierra\u0027s (0.7671).",
+    "naive_trap":  "Incident severity is a confounder: Team Sierra handles the majority of harder severe cases, depressing its aggregate while Team Nordic benefits from easier cases.",
+    "reasoning_trace":  "(1) Severe: Team Sierra 0.74 \u003e Team Nordic 0.68. (2) Moderate: Team Sierra 0.93 \u003e Team Nordic 0.91. (3) Team Sierra handles 85.7% severe cases vs Team Nordic\u0027s 14.3% — this pulls Team Sierra\u0027s aggregate down. (4) Corrected 50/50: Team Sierra=0.5×0.74+0.5×0.93=0.835; Team Nordic=0.5×0.68+0.5×0.91=0.795. Team Sierra wins after standardisation.",
+    "python_verification":  "\nnA1,rA1,nA2,rA2 = 600,0.74,100,0.93\nnB1,rB1,nB2,rB2 = 100,0.68,600,0.91\novA=(nA1*rA1+nA2*rA2)/(nA1+nA2); ovB=(nB1*rB1+nB2*rB2)/(nB1+nB2)\nassert ovB \u003e ovA, \u0027naive: Team Nordic aggregate higher\u0027\ncA=0.5*rA1+0.5*rA2; cB=0.5*rB1+0.5*rB2\nassert abs(cA-0.835)\u003c0.005 and abs(cB-0.795)\u003c0.005\nassert cA \u003e cB, \u0027corrected: Team Sierra wins\u0027\n"
+}

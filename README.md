@@ -70,11 +70,11 @@ Interpretation guide: if flagship models land around 40-60% overall ACC with a c
 
 | Category | Count | Difficulty split |
 |----------|-------|------------------|
-| Simpson's paradox | 41 | 2 easy / 6 medium / 33 hard |
-| Berkson's paradox | 36 | 0 easy / 7 medium / 29 hard |
-| Truncated sampling | 37 | 0 easy / 12 medium / 25 hard |
-| Survivorship bias | 36 | 0 easy / 7 medium / 29 hard |
-| **Total** | **150** | |
+| Simpson's paradox | 64 | 2 easy / 6 medium / 56 hard |
+| Berkson's paradox | 58 | 0 easy / 7 medium / 51 hard |
+| Truncated sampling | 54 | 0 easy / 12 medium / 42 hard |
+| Survivorship bias | 54 | 0 easy / 7 medium / 47 hard |
+| **Total** | **230** | |
 
 ---
 
@@ -86,13 +86,13 @@ prism-benchmark/
 |-- requirements.txt
 |-- evaluate.py
 |-- data/
-|   `-- tasks/                     # 150 total task files
+|   `-- tasks/                     # 230 total task files
 |       |-- prism_simp_001.json
 |       |-- prism_berk_002.json
 |       |-- prism_trunc_001.json
 |       |-- prism_surv_002.json
-|       |-- prism_simp_101.json
-|       `-- prism_surv_150.json
+|       |-- prism_simp_181.json
+|       `-- prism_surv_230.json
 |-- docs/
 |   |-- schema.md
 |   |-- scoring.md

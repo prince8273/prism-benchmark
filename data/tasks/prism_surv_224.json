@@ -1,0 +1,30 @@
+﻿{
+    "task_id":  "prism_surv_224",
+    "category":  "survival",
+    "difficulty":  "hard",
+    "scenario":  "Polar-science literature analyses only Antarctic field stations that are still active. Mean station logistical-capacity score (a composite index) among studied stations is 6.5 (σ=1.2); the activity threshold is 4.2. The true mean capacity across all stations ever established is sought.",
+    "data":  {
+                 "description":  "Observed statistics among units that cleared the survival/publication filter",
+                 "values":  {
+                                "observed_mean_survivors":  6.5,
+                                "assumed_population_sigma":  1.2,
+                                "survival_threshold":  4.2,
+                                "filter_description":  "operational-activity survival filter (score≥4.2)",
+                                "units":  "index points",
+                                "note":  "Only units above the survival threshold appear in the observed sample"
+                            }
+             },
+    "question":  "(a) Assuming logistical capacity score is normally distributed with σ=1.2 index points in the full pre-filter cohort, solve numerically for the true pre-filter population mean μ such that E[X | X \u003e 4.2] = 6.5. (b) What fraction of all original units cleared the survival filter? (c) By how much (in index points) does the survivor mean overstate μ? (d) What policy or scientific conclusion error arises from ignoring the survival filter?",
+    "answer_type":  "numerical",
+    "ground_truth":  {
+                         "true_pre_filter_mean":  6.40907,
+                         "fraction_surviving":  0.96718,
+                         "overstatement":  0.09093,
+                         "explanation":  "The Antarctic field research stations in polar-science literature dataset is a truncated-normal sample above the survival threshold t=4.2 index points. Solving E[X|X\u003et]=μ+σφ((t−μ)/σ)/Φ̄((t−μ)/σ)=6.5 numerically gives μ=6.40907 index points. Only 96.72% of the original cohort survived; the observed mean overstates the true mean by 0.09093 index points. Ignoring the filter leads to over-estimating the baseline quality/capacity of the full cohort, producing over-optimistic policy conclusions."
+                     },
+    "tolerance":  0.005,
+    "naive_answer":  "The true mean logistical capacity score is 6.5 index points because that is the average observed among the surviving/studied units.",
+    "naive_trap":  "The observed sample consists only of units above the survival threshold. The observed mean is E[X|X\u003e4.2] — a truncated conditional expectation — not the population mean. It systematically overstates μ whenever the threshold is non-trivially binding.",
+    "reasoning_trace":  "(1) Survival filter ≡ truncated-normal sampling with lower truncation at t=4.2. (2) E[X|X\u003et] = μ + σ·φ((t−μ)/σ) / Φ̄((t−μ)/σ) = 6.5. (3) Solve numerically via brentq on [-25.8, 6.4999] → μ=6.40907. (4) Fraction above threshold: Φ̄((4.2−6.40907)/1.2) = 0.96718. (5) Overstatement: 6.5−6.40907 = 0.09093 index points.",
+    "python_verification":  "\nobs,sig,thresh = 6.5,1.2,4.2\ndef eq(mu):\n    alpha=(thresh-mu)/sig\n    return mu+sig*norm.pdf(alpha)/norm.sf(alpha)-obs\nmu_sol=brentq(eq,thresh-25*sig,obs-1e-9,maxiter=300)\nfrac=norm.sf((thresh-mu_sol)/sig)\nassert abs(mu_sol-6.40907)\u003c0.005, f\u0027mu={mu_sol:.5f}\u0027\nassert abs(frac-0.96718)\u003c0.005, f\u0027frac={frac:.5f}\u0027\nassert mu_sol \u003c obs\nassert abs((obs-mu_sol)-0.09093)\u003c0.01\n"
+}

@@ -1,0 +1,30 @@
+﻿{
+    "task_id":  "prism_surv_225",
+    "category":  "survival",
+    "difficulty":  "hard",
+    "scenario":  "Food-security policy reports cite only artisanal fisheries that survived stock-collapse events. Mean annual catch (in tonnes) among cited fisheries is 95 t (σ=18 t); the survival threshold is 60 t/year. The true mean annual catch across all artisanal fisheries registered at the start of the monitoring period is sought.",
+    "data":  {
+                 "description":  "Observed statistics among units that cleared the survival/publication filter",
+                 "values":  {
+                                "observed_mean_survivors":  95,
+                                "assumed_population_sigma":  18,
+                                "survival_threshold":  60,
+                                "filter_description":  "post-stock-collapse survival filter (≥60 t/yr)",
+                                "units":  "tonnes",
+                                "note":  "Only units above the survival threshold appear in the observed sample"
+                            }
+             },
+    "question":  "(a) Assuming annual catch is normally distributed with σ=18 tonnes in the full pre-filter cohort, solve numerically for the true pre-filter population mean μ such that E[X | X \u003e 60] = 95. (b) What fraction of all original units cleared the survival filter? (c) By how much (in tonnes) does the survivor mean overstate μ? (d) What policy or scientific conclusion error arises from ignoring the survival filter?",
+    "answer_type":  "numerical",
+    "ground_truth":  {
+                         "true_pre_filter_mean":  93.71871,
+                         "fraction_surviving":  0.96948,
+                         "overstatement":  1.28129,
+                         "explanation":  "The artisanal fisheries cited in food-security policy reports dataset is a truncated-normal sample above the survival threshold t=60 tonnes. Solving E[X|X\u003et]=μ+σφ((t−μ)/σ)/Φ̄((t−μ)/σ)=95 numerically gives μ=93.71871 tonnes. Only 96.95% of the original cohort survived; the observed mean overstates the true mean by 1.28129 tonnes. Ignoring the filter leads to over-estimating the baseline quality/capacity of the full cohort, producing over-optimistic policy conclusions."
+                     },
+    "tolerance":  0.005,
+    "naive_answer":  "The true mean annual catch is 95 tonnes because that is the average observed among the surviving/studied units.",
+    "naive_trap":  "The observed sample consists only of units above the survival threshold. The observed mean is E[X|X\u003e60] — a truncated conditional expectation — not the population mean. It systematically overstates μ whenever the threshold is non-trivially binding.",
+    "reasoning_trace":  "(1) Survival filter ≡ truncated-normal sampling with lower truncation at t=60. (2) E[X|X\u003et] = μ + σ·φ((t−μ)/σ) / Φ̄((t−μ)/σ) = 95. (3) Solve numerically via brentq on [-390.0, 94.9999] → μ=93.71871. (4) Fraction above threshold: Φ̄((60−93.71871)/18) = 0.96948. (5) Overstatement: 95−93.71871 = 1.28129 tonnes.",
+    "python_verification":  "\nobs,sig,thresh = 95,18,60\ndef eq(mu):\n    alpha=(thresh-mu)/sig\n    return mu+sig*norm.pdf(alpha)/norm.sf(alpha)-obs\nmu_sol=brentq(eq,thresh-25*sig,obs-1e-9,maxiter=300)\nfrac=norm.sf((thresh-mu_sol)/sig)\nassert abs(mu_sol-93.71871)\u003c0.005, f\u0027mu={mu_sol:.5f}\u0027\nassert abs(frac-0.96948)\u003c0.005, f\u0027frac={frac:.5f}\u0027\nassert mu_sol \u003c obs\nassert abs((obs-mu_sol)-1.28129)\u003c0.01\n"
+}

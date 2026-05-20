@@ -1,0 +1,30 @@
+﻿{
+    "task_id":  "prism_surv_229",
+    "category":  "survival",
+    "difficulty":  "hard",
+    "scenario":  "Ocean-energy engineers analyse only tidal arrays that are still generating electricity. Mean rated power output among studied arrays is 340 kW (σ=65 kW); the operational threshold is 200 kW. The true mean rated output across all arrays deployed in the demonstration period is needed.",
+    "data":  {
+                 "description":  "Observed statistics among units that cleared the survival/publication filter",
+                 "values":  {
+                                "observed_mean_survivors":  340,
+                                "assumed_population_sigma":  65,
+                                "survival_threshold":  200,
+                                "filter_description":  "operational-generation survival filter (≥200 kW)",
+                                "units":  "kW",
+                                "note":  "Only units above the survival threshold appear in the observed sample"
+                            }
+             },
+    "question":  "(a) Assuming rated power output is normally distributed with σ=65 kW in the full pre-filter cohort, solve numerically for the true pre-filter population mean μ such that E[X | X \u003e 200] = 340. (b) What fraction of all original units cleared the survival filter? (c) By how much (in kW) does the survivor mean overstate μ? (d) What policy or scientific conclusion error arises from ignoring the survival filter?",
+    "answer_type":  "numerical",
+    "ground_truth":  {
+                         "true_pre_filter_mean":  337.15106,
+                         "fraction_surviving":  0.98257,
+                         "overstatement":  2.84894,
+                         "explanation":  "The tidal-energy arrays in ocean-energy engineering literature dataset is a truncated-normal sample above the survival threshold t=200 kW. Solving E[X|X\u003et]=μ+σφ((t−μ)/σ)/Φ̄((t−μ)/σ)=340 numerically gives μ=337.15106 kW. Only 98.26% of the original cohort survived; the observed mean overstates the true mean by 2.84894 kW. Ignoring the filter leads to over-estimating the baseline quality/capacity of the full cohort, producing over-optimistic policy conclusions."
+                     },
+    "tolerance":  0.005,
+    "naive_answer":  "The true mean rated power output is 340 kW because that is the average observed among the surviving/studied units.",
+    "naive_trap":  "The observed sample consists only of units above the survival threshold. The observed mean is E[X|X\u003e200] — a truncated conditional expectation — not the population mean. It systematically overstates μ whenever the threshold is non-trivially binding.",
+    "reasoning_trace":  "(1) Survival filter ≡ truncated-normal sampling with lower truncation at t=200. (2) E[X|X\u003et] = μ + σ·φ((t−μ)/σ) / Φ̄((t−μ)/σ) = 340. (3) Solve numerically via brentq on [-1425.0, 339.9999] → μ=337.15106. (4) Fraction above threshold: Φ̄((200−337.15106)/65) = 0.98257. (5) Overstatement: 340−337.15106 = 2.84894 kW.",
+    "python_verification":  "\nobs,sig,thresh = 340,65,200\ndef eq(mu):\n    alpha=(thresh-mu)/sig\n    return mu+sig*norm.pdf(alpha)/norm.sf(alpha)-obs\nmu_sol=brentq(eq,thresh-25*sig,obs-1e-9,maxiter=300)\nfrac=norm.sf((thresh-mu_sol)/sig)\nassert abs(mu_sol-337.15106)\u003c0.005, f\u0027mu={mu_sol:.5f}\u0027\nassert abs(frac-0.98257)\u003c0.005, f\u0027frac={frac:.5f}\u0027\nassert mu_sol \u003c obs\nassert abs((obs-mu_sol)-2.84894)\u003c0.01\n"
+}

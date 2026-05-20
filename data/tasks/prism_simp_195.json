@@ -1,0 +1,48 @@
+﻿{
+    "task_id":  "prism_simp_195",
+    "category":  "simpson",
+    "difficulty":  "hard",
+    "scenario":  "Two bridge-inspection drone systems, DroneSpan and DroneTruss, are evaluated on structural-defect-detection accuracy. DroneSpan predominantly inspects structurally complex suspension and cable-stayed bridges; DroneTruss mainly inspects simple beam bridges.",
+    "data":  {
+                 "description":  "structural defect detection rates by structural complexity and entity",
+                 "values":  {
+                                "dronespan":  {
+                                                  "complex_suspension/cable-stayed":  {
+                                                                                          "n":  600,
+                                                                                          "success_rate":  0.82
+                                                                                      },
+                                                  "simple_beam":  {
+                                                                      "n":  100,
+                                                                      "success_rate":  0.96
+                                                                  },
+                                                  "overall_rate":  0.84
+                                              },
+                                "dronetruss":  {
+                                                   "complex_suspension/cable-stayed":  {
+                                                                                           "n":  100,
+                                                                                           "success_rate":  0.76
+                                                                                       },
+                                                   "simple_beam":  {
+                                                                       "n":  600,
+                                                                       "success_rate":  0.94
+                                                                   },
+                                                   "overall_rate":  0.9143
+                                               }
+                            }
+             },
+    "question":  "(a) Which entity has the higher aggregate structural defect detection rate? (b) Which entity performs better within each structural complexity stratum? (c) Compute each entity\u0027s corrected rate using a 50/50 structural complexity mix. (d) Which entity should be preferred, and why does the aggregate ranking mislead?",
+    "answer_type":  "comparative",
+    "ground_truth":  {
+                         "higher_aggregate":  "DroneTruss",
+                         "better_within_each_stratum":  "DroneSpan",
+                         "corrected_dronespan":  0.89,
+                         "corrected_dronetruss":  0.85,
+                         "corrected_winner":  "DroneSpan",
+                         "explanation":  "DroneTruss\u0027s higher aggregate is driven by its disproportionate assignment to easier simple beam cases. DroneSpan outperforms DroneTruss in both structural complexity strata. Standardising to a 50/50 structural complexity mix gives DroneSpan 0.89 vs DroneTruss 0.85; DroneSpan is the superior performer once bridge structural complexity is controlled."
+                     },
+    "tolerance":  0.005,
+    "naive_answer":  "DroneTruss is better because its aggregate structural defect detection rate (0.9143) exceeds DroneSpan\u0027s (0.84).",
+    "naive_trap":  "Bridge structural complexity is a confounder: DroneSpan handles the majority of harder complex suspension/cable-stayed cases, depressing its aggregate while DroneTruss benefits from easier cases.",
+    "reasoning_trace":  "(1) Complex suspension/cable-stayed: DroneSpan 0.82 \u003e DroneTruss 0.76. (2) Simple beam: DroneSpan 0.96 \u003e DroneTruss 0.94. (3) DroneSpan handles 85.7% complex suspension/cable-stayed cases vs DroneTruss\u0027s 14.3% — this pulls DroneSpan\u0027s aggregate down. (4) Corrected 50/50: DroneSpan=0.5×0.82+0.5×0.96=0.89; DroneTruss=0.5×0.76+0.5×0.94=0.85. DroneSpan wins after standardisation.",
+    "python_verification":  "\nnA1,rA1,nA2,rA2 = 600,0.82,100,0.96\nnB1,rB1,nB2,rB2 = 100,0.76,600,0.94\novA=(nA1*rA1+nA2*rA2)/(nA1+nA2); ovB=(nB1*rB1+nB2*rB2)/(nB1+nB2)\nassert ovB \u003e ovA, \u0027naive: DroneTruss aggregate higher\u0027\ncA=0.5*rA1+0.5*rA2; cB=0.5*rB1+0.5*rB2\nassert abs(cA-0.89)\u003c0.005 and abs(cB-0.85)\u003c0.005\nassert cA \u003e cB, \u0027corrected: DroneSpan wins\u0027\n"
+}

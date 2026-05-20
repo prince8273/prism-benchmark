@@ -1,0 +1,48 @@
+﻿{
+    "task_id":  "prism_simp_187",
+    "category":  "simpson",
+    "difficulty":  "hard",
+    "scenario":  "Two offshore installation crews, Crew Titan and Crew Atlas, are evaluated on on-schedule installation completion rates. Crew Titan operates predominantly in harsh weather windows; Crew Atlas mostly in benign weather.",
+    "data":  {
+                 "description":  "on-schedule completion rates by weather severity and entity",
+                 "values":  {
+                                "crew_titan":  {
+                                                   "harsh":  {
+                                                                 "n":  700,
+                                                                 "success_rate":  0.76
+                                                             },
+                                                   "benign":  {
+                                                                  "n":  100,
+                                                                  "success_rate":  0.92
+                                                              },
+                                                   "overall_rate":  0.78
+                                               },
+                                "crew_atlas":  {
+                                                   "harsh":  {
+                                                                 "n":  100,
+                                                                 "success_rate":  0.7
+                                                             },
+                                                   "benign":  {
+                                                                  "n":  700,
+                                                                  "success_rate":  0.9
+                                                              },
+                                                   "overall_rate":  0.875
+                                               }
+                            }
+             },
+    "question":  "(a) Which entity has the higher aggregate on-schedule completion rate? (b) Which entity performs better within each weather severity stratum? (c) Compute each entity\u0027s corrected rate using a 50/50 weather severity mix. (d) Which entity should be preferred, and why does the aggregate ranking mislead?",
+    "answer_type":  "comparative",
+    "ground_truth":  {
+                         "higher_aggregate":  "Crew Atlas",
+                         "better_within_each_stratum":  "Crew Titan",
+                         "corrected_crew_titan":  0.84,
+                         "corrected_crew_atlas":  0.8,
+                         "corrected_winner":  "Crew Titan",
+                         "explanation":  "Crew Atlas\u0027s higher aggregate is driven by its disproportionate assignment to easier benign cases. Crew Titan outperforms Crew Atlas in both weather severity strata. Standardising to a 50/50 weather severity mix gives Crew Titan 0.84 vs Crew Atlas 0.8; Crew Titan is the superior performer once weather-severity window is controlled."
+                     },
+    "tolerance":  0.005,
+    "naive_answer":  "Crew Atlas is better because its aggregate on-schedule completion rate (0.875) exceeds Crew Titan\u0027s (0.78).",
+    "naive_trap":  "Weather-severity window is a confounder: Crew Titan handles the majority of harder harsh cases, depressing its aggregate while Crew Atlas benefits from easier cases.",
+    "reasoning_trace":  "(1) Harsh: Crew Titan 0.76 \u003e Crew Atlas 0.7. (2) Benign: Crew Titan 0.92 \u003e Crew Atlas 0.9. (3) Crew Titan handles 87.5% harsh cases vs Crew Atlas\u0027s 12.5% — this pulls Crew Titan\u0027s aggregate down. (4) Corrected 50/50: Crew Titan=0.5×0.76+0.5×0.92=0.84; Crew Atlas=0.5×0.7+0.5×0.9=0.8. Crew Titan wins after standardisation.",
+    "python_verification":  "\nnA1,rA1,nA2,rA2 = 700,0.76,100,0.92\nnB1,rB1,nB2,rB2 = 100,0.7,700,0.9\novA=(nA1*rA1+nA2*rA2)/(nA1+nA2); ovB=(nB1*rB1+nB2*rB2)/(nB1+nB2)\nassert ovB \u003e ovA, \u0027naive: Crew Atlas aggregate higher\u0027\ncA=0.5*rA1+0.5*rA2; cB=0.5*rB1+0.5*rB2\nassert abs(cA-0.84)\u003c0.005 and abs(cB-0.8)\u003c0.005\nassert cA \u003e cB, \u0027corrected: Crew Titan wins\u0027\n"
+}

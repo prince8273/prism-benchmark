@@ -1,0 +1,28 @@
+﻿{
+    "task_id":  "prism_surv_174",
+    "category":  "survival",
+    "difficulty":  "hard",
+    "scenario":  "Documentary-film scholars study films that are still discussed on the festival circuit, observing a mean critical-score of 6.8 out of 10 (σ=1.5). The recall threshold is 4.5 (minimum score to remain in festival circulation). The true mean quality across all documentaries produced is unknown.",
+    "data":  {
+                 "description":  "Observed statistics among units that cleared the survival/publication filter",
+                 "values":  {
+                                "observed_mean_survivors":  6.8,
+                                "assumed_sigma":  1.5,
+                                "survival_threshold":  4.5,
+                                "filter":  "festival-circuit survival filter (score≥4.5)"
+                            }
+             },
+    "question":  "(a) Assuming critical score is normally distributed with σ=1.5 score points, solve for the pre-filter true mean μ such that E[X|X\u003e4.5]=6.8. (b) What fraction of all original units cleared the survival filter? (c) By how much does the observed (survivor) mean overstate the pre-filter true mean?",
+    "answer_type":  "numerical",
+    "ground_truth":  {
+                         "true_pre_filter_mean":  6.5401,
+                         "fraction_surviving":  0.9131,
+                         "overstatement":  0.2599,
+                         "explanation":  "The documentary films remembered after festival circuit critical score set is a truncated-normal sample above the 4.5 threshold. Solving E[X|X\u003e4.5]=μ+σφ((4.5−μ)/σ)/Φ̄((4.5−μ)/σ)=6.8 gives μ≈6.5401. Only 91.3% of all original units survived; the survivor mean overstates the true mean by 0.2599 score points."
+                     },
+    "tolerance":  0.005,
+    "naive_answer":  "The true mean critical score is 6.8 score points because that is the observed average among documentary films remembered after festival circuit.",
+    "naive_trap":  "Survival/publication filters truncate the distribution from below; the observed mean among survivors is a conditional expectation and systematically overstates the pre-filter population mean.",
+    "reasoning_trace":  "(1) Survival filter is equivalent to truncated-normal sampling above threshold=4.5. (2) Truncated mean equation: μ+σ·φ((t−μ)/σ)/Φ̄((t−μ)/σ)=6.8. (3) Numerically solve with brentq → μ≈6.5401. (4) Fraction surviving: Φ̄((4.5−6.5401)/σ)≈0.9131.",
+    "python_verification":  "\nobs,sig,thresh = 6.8,1.5,4.5\ndef eq(mu):\n    alpha=(thresh-mu)/sig\n    return mu+sig*norm.pdf(alpha)/norm.sf(alpha)-obs\nmu_sol=brentq(eq,thresh-20*sig,obs-1e-9,maxiter=200)\nfrac=norm.sf((thresh-mu_sol)/sig)\nassert abs(mu_sol-6.5401)\u003c0.005\nassert abs(frac-0.9131)\u003c0.005\nassert mu_sol \u003c obs\n"
+}

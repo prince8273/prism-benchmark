@@ -1,0 +1,30 @@
+﻿{
+    "task_id":  "prism_trunc_216",
+    "category":  "truncated",
+    "difficulty":  "hard",
+    "scenario":  "Balloon-borne cosmic-ray detectors only log flux measurements exceeding 90 counts/min (hardware trigger threshold). Logged values show a mean of 145 counts/min (σ=30 counts/min). Physicists want the true mean cosmic-ray flux at balloon altitude.",
+    "data":  {
+                 "description":  "Observed statistics among values exceeding the reporting threshold",
+                 "values":  {
+                                "observed_mean_above_threshold":  145,
+                                "assumed_population_sigma":  30,
+                                "reporting_threshold":  90,
+                                "threshold_description":  "above 90 counts/min hardware trigger threshold",
+                                "units":  "counts/min",
+                                "note":  "Only observations above the threshold enter the record"
+                            }
+             },
+    "question":  "(a) Assuming cosmic-ray flux follows a normal distribution with σ=30 counts/min, solve numerically for the true population mean μ satisfying E[X | X \u003e 90] = 145. (b) What fraction of all cosmic-ray flux events lie above the 90 counts/min threshold? (c) By how much (in counts/min) does the observed truncated mean overstate the true μ? (d) Explain the inferential risk of using the observed mean directly as an estimate of μ.",
+    "answer_type":  "numerical",
+    "ground_truth":  {
+                         "true_mean_mu":  142.26451,
+                         "fraction_above_threshold":  0.95926,
+                         "overstatement":  2.73549,
+                         "explanation":  "The observed mean 145 counts/min is E[X|X\u003e90], the expectation of a truncated-normal distribution. Solving μ+σ·φ((t−μ)/σ)/Φ̄((t−μ)/σ)=145 numerically yields μ=142.26451 counts/min. Only 95.9% of all events are recorded; the observed mean overstates the true mean by 2.73549 counts/min. Using the observed mean directly as μ would lead to systematic over-estimation of the severity/magnitude of the process."
+                     },
+    "tolerance":  0.005,
+    "naive_answer":  "The true mean cosmic-ray flux is 145 counts/min because that is the average of all available measurements.",
+    "naive_trap":  "Only events above 90 counts/min are recorded; the observed mean is a conditional expectation E[X|X\u003e90], not the population mean. It always exceeds μ whenever the threshold is binding.",
+    "reasoning_trace":  "(1) Define α=(t−μ)/σ where t=90, σ=30. (2) Truncated-normal expectation: E[X|X\u003et]=μ+σ·φ(α)/Φ̄(α). (3) Set equal to 145 and solve for μ via brentq on [-660.0, 144.9999]. (4) Solution: μ=142.26451 counts/min. (5) Fraction above threshold: Φ̄((t−μ)/σ)=Φ̄((90−142.26451)/30)=0.95926.",
+    "python_verification":  "\nobs,sig,thresh = 145,30,90\ndef eq(mu):\n    alpha=(thresh-mu)/sig\n    return mu+sig*norm.pdf(alpha)/norm.sf(alpha)-obs\nmu_sol=brentq(eq,thresh-25*sig,obs-1e-9,maxiter=300)\nfrac=norm.sf((thresh-mu_sol)/sig)\nassert abs(mu_sol-142.26451)\u003c0.005, f\u0027mu={mu_sol:.5f}\u0027\nassert abs(frac-0.95926)\u003c0.005, f\u0027frac={frac:.5f}\u0027\nassert mu_sol \u003c obs\nassert abs((obs-mu_sol)-2.73549)\u003c0.01\n"
+}

@@ -1,0 +1,28 @@
+﻿{
+    "task_id":  "prism_surv_176",
+    "category":  "survival",
+    "difficulty":  "hard",
+    "scenario":  "Marine-tourism researchers study only reef-tour operators that survived three or more consecutive storm seasons; their mean annual revenue is $4.2M (σ=$0.9M). The survival threshold is $2.5M annual revenue. Researchers want the true mean revenue across all operators before attrition.",
+    "data":  {
+                 "description":  "Observed statistics among units that cleared the survival/publication filter",
+                 "values":  {
+                                "observed_mean_survivors":  4.2,
+                                "assumed_sigma":  0.9,
+                                "survival_threshold":  2.5,
+                                "filter":  "storm-season survival filter (revenue≥$2.5M)"
+                            }
+             },
+    "question":  "(a) Assuming annual revenue is normally distributed with σ=0.9 million USD, solve for the pre-filter true mean μ such that E[X|X\u003e2.5]=4.2. (b) What fraction of all original units cleared the survival filter? (c) By how much does the observed (survivor) mean overstate the pre-filter true mean?",
+    "answer_type":  "numerical",
+    "ground_truth":  {
+                         "true_pre_filter_mean":  4.12744,
+                         "fraction_surviving":  0.96472,
+                         "overstatement":  0.0726,
+                         "explanation":  "The reef-tour operators surviving repeated storm seasons annual revenue set is a truncated-normal sample above the 2.5 threshold. Solving E[X|X\u003e2.5]=μ+σφ((2.5−μ)/σ)/Φ̄((2.5−μ)/σ)=4.2 gives μ≈4.12744. Only 96.5% of all original units survived; the survivor mean overstates the true mean by 0.0726 million USD."
+                     },
+    "tolerance":  0.005,
+    "naive_answer":  "The true mean annual revenue is 4.2 million USD because that is the observed average among reef-tour operators surviving repeated storm seasons.",
+    "naive_trap":  "Survival/publication filters truncate the distribution from below; the observed mean among survivors is a conditional expectation and systematically overstates the pre-filter population mean.",
+    "reasoning_trace":  "(1) Survival filter is equivalent to truncated-normal sampling above threshold=2.5. (2) Truncated mean equation: μ+σ·φ((t−μ)/σ)/Φ̄((t−μ)/σ)=4.2. (3) Numerically solve with brentq → μ≈4.12744. (4) Fraction surviving: Φ̄((2.5−4.12744)/σ)≈0.96472.",
+    "python_verification":  "\nobs,sig,thresh = 4.2,0.9,2.5\ndef eq(mu):\n    alpha=(thresh-mu)/sig\n    return mu+sig*norm.pdf(alpha)/norm.sf(alpha)-obs\nmu_sol=brentq(eq,thresh-20*sig,obs-1e-9,maxiter=200)\nfrac=norm.sf((thresh-mu_sol)/sig)\nassert abs(mu_sol-4.12744)\u003c0.005\nassert abs(frac-0.96472)\u003c0.005\nassert mu_sol \u003c obs\n"
+}

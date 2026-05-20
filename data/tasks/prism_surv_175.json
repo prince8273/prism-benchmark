@@ -1,0 +1,28 @@
+﻿{
+    "task_id":  "prism_surv_175",
+    "category":  "survival",
+    "difficulty":  "hard",
+    "scenario":  "A software-ecosystem study examines only open-source libraries still receiving downloads after maintainer-burnout attrition, recording mean weekly downloads of 48k (σ=10k). The active-use threshold is 30k downloads per week. The true mean downloads across all libraries at launch is sought.",
+    "data":  {
+                 "description":  "Observed statistics among units that cleared the survival/publication filter",
+                 "values":  {
+                                "observed_mean_survivors":  48,
+                                "assumed_sigma":  10,
+                                "survival_threshold":  30,
+                                "filter":  "maintainer-burnout survival filter (≥30k/week)"
+                            }
+             },
+    "question":  "(a) Assuming weekly downloads is normally distributed with σ=10 k downloads, solve for the pre-filter true mean μ such that E[X|X\u003e30]=48. (b) What fraction of all original units cleared the survival filter? (c) By how much does the observed (survivor) mean overstate the pre-filter true mean?",
+    "answer_type":  "numerical",
+    "ground_truth":  {
+                         "true_pre_filter_mean":  47.019,
+                         "fraction_surviving":  0.95561,
+                         "overstatement":  0.981,
+                         "explanation":  "The open-source libraries still in active use weekly downloads set is a truncated-normal sample above the 30 threshold. Solving E[X|X\u003e30]=μ+σφ((30−μ)/σ)/Φ̄((30−μ)/σ)=48 gives μ≈47.019. Only 95.6% of all original units survived; the survivor mean overstates the true mean by 0.9810 k downloads."
+                     },
+    "tolerance":  0.005,
+    "naive_answer":  "The true mean weekly downloads is 48 k downloads because that is the observed average among open-source libraries still in active use.",
+    "naive_trap":  "Survival/publication filters truncate the distribution from below; the observed mean among survivors is a conditional expectation and systematically overstates the pre-filter population mean.",
+    "reasoning_trace":  "(1) Survival filter is equivalent to truncated-normal sampling above threshold=30. (2) Truncated mean equation: μ+σ·φ((t−μ)/σ)/Φ̄((t−μ)/σ)=48. (3) Numerically solve with brentq → μ≈47.019. (4) Fraction surviving: Φ̄((30−47.019)/σ)≈0.95561.",
+    "python_verification":  "\nobs,sig,thresh = 48,10,30\ndef eq(mu):\n    alpha=(thresh-mu)/sig\n    return mu+sig*norm.pdf(alpha)/norm.sf(alpha)-obs\nmu_sol=brentq(eq,thresh-20*sig,obs-1e-9,maxiter=200)\nfrac=norm.sf((thresh-mu_sol)/sig)\nassert abs(mu_sol-47.019)\u003c0.005\nassert abs(frac-0.95561)\u003c0.005\nassert mu_sol \u003c obs\n"
+}

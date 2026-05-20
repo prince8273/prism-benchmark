@@ -1,0 +1,31 @@
+﻿{
+    "task_id":  "prism_berk_209",
+    "category":  "berkson",
+    "difficulty":  "hard",
+    "scenario":  "A global health agency selects logistics officers who demonstrate epidemiological modelling competence OR advanced supply-chain optimisation skill. The competencies are independent in the applicant pool; OR-gate selection induces a negative within-officer correlation.",
+    "data":  {
+                 "description":  "Population base rates and OR-gate selection mechanism",
+                 "values":  {
+                                "p_epi_modelling":  0.37,
+                                "p_supply_chain":  0.47,
+                                "selection_rule":  "OR gate: selected if (epidemiological modelling competence) OR (supply-chain optimisation skill)",
+                                "p_selected":  0.6661,
+                                "trait_independence_in_population":  true,
+                                "observed_within_selected_correlation":  "negative (Berkson collider bias)"
+                            }
+             },
+    "question":  "(a) Derive P(selected) from the OR-gate model. (b) Compute P(epi_modelling | ¬supply_chain, selected) and explain why it equals 1. (c) Compute P(epi_modelling | supply_chain, selected) and show it equals P(epi_modelling). (d) Quantify the induced conditional correlation direction and explain why it is a selection artefact rather than a genuine population relationship between epidemiological modelling competence and supply-chain optimisation skill.",
+    "answer_type":  "numerical",
+    "ground_truth":  {
+                         "p_selected":  0.6661,
+                         "p_epi_modelling_given_not_supply_chain_selected":  1.0,
+                         "p_epi_modelling_given_supply_chain_selected":  0.37,
+                         "collider_correlation_direction":  "negative",
+                         "explanation":  "Under OR-gate selection a candidate who lacks supply-chain optimisation skill must possess epidemiological modelling competence to be admitted — hence P(epi_modelling|¬supply_chain,sel)=1.0. A candidate who already has supply-chain optimisation skill is admitted regardless of epidemiological modelling competence, so P(epi_modelling|supply_chain,sel)=P(epi_modelling)=0.37. The gap (1.0 vs 0.37) creates a negative within-selected correlation that is purely a collider-selection artefact."
+                     },
+    "tolerance":  0.005,
+    "naive_answer":  "The negative correlation between epidemiological modelling competence and supply-chain optimisation skill observed among selected candidates reflects a genuine trade-off between these traits in the domain.",
+    "naive_trap":  "The negative correlation is entirely a Berkson collider artefact produced by the OR-gate admission rule; the two traits are independent in the full population.",
+    "reasoning_trace":  "(1) P(sel)=P(A)+P(B)-P(A)P(B)=0.37+0.47-0.37×0.47=0.6661. (2) Among candidates without supply-chain optimisation skill: only those with epidemiological modelling competence are selected → P(epi_modelling|¬supply_chain,sel)=1.0. (3) Among candidates with supply-chain optimisation skill: selected regardless of epidemiological modelling competence → P(epi_modelling|supply_chain,sel)=P(epi_modelling)=0.37. (4) Within-selected: knowing ¬supply_chain raises P(epi_modelling) from 0.37 to 1.0 → negative conditional correlation despite population independence.",
+    "python_verification":  "\npA,pB = 0.37,0.47\npSel = pA+pB-pA*pB\nassert abs(pSel-0.6661)\u003c0.005, f\u0027pSel={pSel}\u0027\npA_notB_sel = pA*(1-pB)/(pA*(1-pB))   # =1.0 by definition\nassert abs(pA_notB_sel-1.0)\u003c1e-9\npA_B_sel = pA*pB/pB                    # =pA by definition\nassert abs(pA_B_sel-0.37)\u003c1e-9\nassert pA_notB_sel \u003e pA_B_sel, \u0027negative collider correlation confirmed\u0027\n"
+}

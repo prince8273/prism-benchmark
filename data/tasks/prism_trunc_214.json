@@ -1,0 +1,30 @@
+﻿{
+    "task_id":  "prism_trunc_214",
+    "category":  "truncated",
+    "difficulty":  "hard",
+    "scenario":  "Satellite-based SO₂ sensors only record volcanic flux events exceeding 60 kt/day (detection sensitivity limit). Recorded events show a mean flux of 92 kt/day (σ=18 kt/day). Volcanologists need the true mean SO₂ flux across all eruptive events.",
+    "data":  {
+                 "description":  "Observed statistics among values exceeding the reporting threshold",
+                 "values":  {
+                                "observed_mean_above_threshold":  92,
+                                "assumed_population_sigma":  18,
+                                "reporting_threshold":  60,
+                                "threshold_description":  "above 60 kt/day satellite sensitivity threshold",
+                                "units":  "kt/day",
+                                "note":  "Only observations above the threshold enter the record"
+                            }
+             },
+    "question":  "(a) Assuming SO₂ flux follows a normal distribution with σ=18 kt/day, solve numerically for the true population mean μ satisfying E[X | X \u003e 60] = 92. (b) What fraction of all SO₂ flux events lie above the 60 kt/day threshold? (c) By how much (in kt/day) does the observed truncated mean overstate the true μ? (d) Explain the inferential risk of using the observed mean directly as an estimate of μ.",
+    "answer_type":  "numerical",
+    "ground_truth":  {
+                         "true_mean_mu":  90.14651,
+                         "fraction_above_threshold":  0.95301,
+                         "overstatement":  1.85349,
+                         "explanation":  "The observed mean 92 kt/day is E[X|X\u003e60], the expectation of a truncated-normal distribution. Solving μ+σ·φ((t−μ)/σ)/Φ̄((t−μ)/σ)=92 numerically yields μ=90.14651 kt/day. Only 95.3% of all events are recorded; the observed mean overstates the true mean by 1.85349 kt/day. Using the observed mean directly as μ would lead to systematic over-estimation of the severity/magnitude of the process."
+                     },
+    "tolerance":  0.005,
+    "naive_answer":  "The true mean SO₂ flux is 92 kt/day because that is the average of all available measurements.",
+    "naive_trap":  "Only events above 60 kt/day are recorded; the observed mean is a conditional expectation E[X|X\u003e60], not the population mean. It always exceeds μ whenever the threshold is binding.",
+    "reasoning_trace":  "(1) Define α=(t−μ)/σ where t=60, σ=18. (2) Truncated-normal expectation: E[X|X\u003et]=μ+σ·φ(α)/Φ̄(α). (3) Set equal to 92 and solve for μ via brentq on [-390.0, 91.9999]. (4) Solution: μ=90.14651 kt/day. (5) Fraction above threshold: Φ̄((t−μ)/σ)=Φ̄((60−90.14651)/18)=0.95301.",
+    "python_verification":  "\nobs,sig,thresh = 92,18,60\ndef eq(mu):\n    alpha=(thresh-mu)/sig\n    return mu+sig*norm.pdf(alpha)/norm.sf(alpha)-obs\nmu_sol=brentq(eq,thresh-25*sig,obs-1e-9,maxiter=300)\nfrac=norm.sf((thresh-mu_sol)/sig)\nassert abs(mu_sol-90.14651)\u003c0.005, f\u0027mu={mu_sol:.5f}\u0027\nassert abs(frac-0.95301)\u003c0.005, f\u0027frac={frac:.5f}\u0027\nassert mu_sol \u003c obs\nassert abs((obs-mu_sol)-1.85349)\u003c0.01\n"
+}

@@ -1,0 +1,30 @@
+﻿{
+    "task_id":  "prism_surv_228",
+    "category":  "survival",
+    "difficulty":  "hard",
+    "scenario":  "Linguistics researchers study only indigenous language revitalisation programmes that are still active. Mean programme vitality index (a composite score) among studied programmes is 7.9 (σ=1.5); the active-programme threshold is 5.5. The true mean vitality across all programmes launched in the study decade is sought.",
+    "data":  {
+                 "description":  "Observed statistics among units that cleared the survival/publication filter",
+                 "values":  {
+                                "observed_mean_survivors":  7.9,
+                                "assumed_population_sigma":  1.5,
+                                "survival_threshold":  5.5,
+                                "filter_description":  "programme-active survival filter (score≥5.5)",
+                                "units":  "index points",
+                                "note":  "Only units above the survival threshold appear in the observed sample"
+                            }
+             },
+    "question":  "(a) Assuming programme vitality index is normally distributed with σ=1.5 index points in the full pre-filter cohort, solve numerically for the true pre-filter population mean μ such that E[X | X \u003e 5.5] = 7.9. (b) What fraction of all original units cleared the survival filter? (c) By how much (in index points) does the survivor mean overstate μ? (d) What policy or scientific conclusion error arises from ignoring the survival filter?",
+    "answer_type":  "numerical",
+    "ground_truth":  {
+                         "true_pre_filter_mean":  7.67402,
+                         "fraction_surviving":  0.92638,
+                         "overstatement":  0.22598,
+                         "explanation":  "The indigenous language revitalisation programmes in linguistics literature dataset is a truncated-normal sample above the survival threshold t=5.5 index points. Solving E[X|X\u003et]=μ+σφ((t−μ)/σ)/Φ̄((t−μ)/σ)=7.9 numerically gives μ=7.67402 index points. Only 92.64% of the original cohort survived; the observed mean overstates the true mean by 0.22598 index points. Ignoring the filter leads to over-estimating the baseline quality/capacity of the full cohort, producing over-optimistic policy conclusions."
+                     },
+    "tolerance":  0.005,
+    "naive_answer":  "The true mean programme vitality index is 7.9 index points because that is the average observed among the surviving/studied units.",
+    "naive_trap":  "The observed sample consists only of units above the survival threshold. The observed mean is E[X|X\u003e5.5] — a truncated conditional expectation — not the population mean. It systematically overstates μ whenever the threshold is non-trivially binding.",
+    "reasoning_trace":  "(1) Survival filter ≡ truncated-normal sampling with lower truncation at t=5.5. (2) E[X|X\u003et] = μ + σ·φ((t−μ)/σ) / Φ̄((t−μ)/σ) = 7.9. (3) Solve numerically via brentq on [-32.0, 7.8999] → μ=7.67402. (4) Fraction above threshold: Φ̄((5.5−7.67402)/1.5) = 0.92638. (5) Overstatement: 7.9−7.67402 = 0.22598 index points.",
+    "python_verification":  "\nobs,sig,thresh = 7.9,1.5,5.5\ndef eq(mu):\n    alpha=(thresh-mu)/sig\n    return mu+sig*norm.pdf(alpha)/norm.sf(alpha)-obs\nmu_sol=brentq(eq,thresh-25*sig,obs-1e-9,maxiter=300)\nfrac=norm.sf((thresh-mu_sol)/sig)\nassert abs(mu_sol-7.67402)\u003c0.005, f\u0027mu={mu_sol:.5f}\u0027\nassert abs(frac-0.92638)\u003c0.005, f\u0027frac={frac:.5f}\u0027\nassert mu_sol \u003c obs\nassert abs((obs-mu_sol)-0.22598)\u003c0.01\n"
+}

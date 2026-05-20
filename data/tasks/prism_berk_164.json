@@ -1,0 +1,30 @@
+﻿{
+    "task_id":  "prism_berk_164",
+    "category":  "berkson",
+    "difficulty":  "hard",
+    "scenario":  "A rare-manuscript restoration fellowship admits applicants who show advanced chemistry knowledge OR deep art-history expertise. These qualities are independent in the applicant pool, but among admitted fellows the OR-gate selection produces a negative correlation.",
+    "data":  {
+                 "description":  "Population base rates and OR-gate selection mechanism",
+                 "values":  {
+                                "p_chemistry_knowledge":  0.36,
+                                "p_art_history_expertise":  0.44,
+                                "selection_rule":  "OR gate: selected if chemistry knowledge OR art-history expertise",
+                                "p_selected":  0.6416,
+                                "observed_corr_among_selected":  "negative (Berkson bias)"
+                            }
+             },
+    "question":  "(a) What is P(selected)? (b) What is P(chemistry_knowledge|not_art_history_expertise, selected)? (c) What is P(chemistry_knowledge|art_history_expertise, selected)? (d) Explain why chemistry knowledge and art-history expertise appear negatively correlated among selected candidates even though they are independent in the population.",
+    "answer_type":  "numerical",
+    "ground_truth":  {
+                         "p_selected":  0.6416,
+                         "p_chemistry_knowledge_given_not_art_history_expertise_selected":  1.0,
+                         "p_chemistry_knowledge_given_art_history_expertise_selected":  0.36,
+                         "conditional_correlation_direction":  "negative",
+                         "explanation":  "Under OR-gate selection, a candidate lacking art-history expertise must have chemistry knowledge to be selected (P=1.0). A candidate who has art-history expertise is selected regardless of chemistry knowledge, so P(chemistry knowledge | art-history expertise, selected) = P(chemistry knowledge) = 0.36. This differential probability creates a negative within-selected correlation despite population independence."
+                     },
+    "tolerance":  0.005,
+    "naive_answer":  "The negative correlation among selected candidates reflects a genuine inverse relationship between chemistry knowledge and art-history expertise in the domain.",
+    "naive_trap":  "The negative correlation is entirely an artefact of OR-gate collider selection, not a real population-level relationship between the two traits.",
+    "reasoning_trace":  "(1) P(sel)=P(A)+P(B)-P(A)P(B)=0.36+0.44-0.36×0.44=0.6416. (2) If not-B and selected, must have A → P(A|not-B,sel)=1.0. (3) If B and selected, selection is independent of A → P(A|B,sel)=P(A)=0.36. (4) The gap between 1.0 and 0.36 produces a negative association within the selected group via collider bias.",
+    "python_verification":  "\npA,pB = 0.36,0.44\npSel = pA+pB-pA*pB\nassert abs(pSel-0.6416)\u003c0.005\npA_notB_sel = pA*(1-pB)/(pA*(1-pB))   # =1.0\nassert abs(pA_notB_sel-1.0)\u003c0.005\npA_B_sel = pA*pB/pB                    # =pA\nassert abs(pA_B_sel-pA)\u003c0.005\nassert pA_notB_sel \u003e pA_B_sel          # negative collider bias confirmed\n"
+}

@@ -1,0 +1,48 @@
+﻿{
+    "task_id":  "prism_simp_153",
+    "category":  "simpson",
+    "difficulty":  "hard",
+    "scenario":  "Two passport-printing centres, Centre P and Centre Q, are evaluated on on-time delivery rates across urgent and routine applications. Centre P processes mainly urgent applications; Centre Q handles mostly routine ones.",
+    "data":  {
+                 "description":  "On-time delivery rates by application urgency tier",
+                 "values":  {
+                                "centre_p":  {
+                                                 "urgent":  {
+                                                                "n":  700,
+                                                                "success_rate":  0.88
+                                                            },
+                                                 "routine":  {
+                                                                 "n":  100,
+                                                                 "success_rate":  0.97
+                                                             },
+                                                 "overall_rate":  0.8912
+                                             },
+                                "centre_q":  {
+                                                 "urgent":  {
+                                                                "n":  100,
+                                                                "success_rate":  0.83
+                                                            },
+                                                 "routine":  {
+                                                                 "n":  700,
+                                                                 "success_rate":  0.95
+                                                             },
+                                                 "overall_rate":  0.935
+                                             }
+                            }
+             },
+    "question":  "(a) Which centre has the higher aggregate on-time rate? (b) Which performs better within each urgency tier? (c) Compute corrected rates using equal 50/50 tier weights.",
+    "answer_type":  "comparative",
+    "ground_truth":  {
+                         "higher_aggregate":  "Centre Q",
+                         "better_within_each_tier":  "Centre P",
+                         "corrected_p":  0.925,
+                         "corrected_q":  0.89,
+                         "corrected_winner":  "Centre P",
+                         "explanation":  "Centre Q\u0027s inflated aggregate is driven by handling mainly routine (easier) applications. Within each tier, Centre P consistently outperforms Centre Q."
+                     },
+    "tolerance":  0.005,
+    "naive_answer":  "Centre Q is better; its aggregate on-time rate 0.935 exceeds Centre P\u0027s 0.8912.",
+    "naive_trap":  "Application urgency confounds the comparison: urgent applications are harder and Centre P handles seven times as many of them.",
+    "reasoning_trace":  "Urgent: P 0.88 \u003e Q 0.83. Routine: P 0.97 \u003e Q 0.95. P\u0027s aggregate is dragged down by its heavy urgent workload. Corrected 50/50: P=0.925, Q=0.89. P wins.",
+    "python_verification":  "\nnPu,rPu,nPr,rPr = 700,0.88,100,0.97\nnQu,rQu,nQr,rQr = 100,0.83,700,0.95\novP=(nPu*rPu+nPr*rPr)/(nPu+nPr); ovQ=(nQu*rQu+nQr*rQr)/(nQu+nQr)\nassert ovQ \u003e ovP\ncP=0.5*rPu+0.5*rPr; cQ=0.5*rQu+0.5*rQr\nassert abs(cP-0.925)\u003c0.005 and abs(cQ-0.89)\u003c0.005\nassert cP \u003e cQ\n"
+}

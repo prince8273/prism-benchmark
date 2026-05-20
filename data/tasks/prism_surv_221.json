@@ -1,0 +1,30 @@
+﻿{
+    "task_id":  "prism_surv_221",
+    "category":  "survival",
+    "difficulty":  "hard",
+    "scenario":  "A technology-transfer analyst studies biotech spinouts that appear in patent citation databases, all of which survived beyond early-stage dissolution. The mean number of granted patents among cited spinouts is 58 (σ=12). The analyst wants the true mean patent count across all spinouts that were founded in the same cohort.",
+    "data":  {
+                 "description":  "Observed statistics among units that cleared the survival/publication filter",
+                 "values":  {
+                                "observed_mean_survivors":  58,
+                                "assumed_population_sigma":  12,
+                                "survival_threshold":  35,
+                                "filter_description":  "10-year survival and citation filter (≥35 patents)",
+                                "units":  "patents",
+                                "note":  "Only units above the survival threshold appear in the observed sample"
+                            }
+             },
+    "question":  "(a) Assuming granted patent count is normally distributed with σ=12 patents in the full pre-filter cohort, solve numerically for the true pre-filter population mean μ such that E[X | X \u003e 35] = 58. (b) What fraction of all original units cleared the survival filter? (c) By how much (in patents) does the survivor mean overstate μ? (d) What policy or scientific conclusion error arises from ignoring the survival filter?",
+    "answer_type":  "numerical",
+    "ground_truth":  {
+                         "true_pre_filter_mean":  57.09072,
+                         "fraction_surviving":  0.96718,
+                         "overstatement":  0.90928,
+                         "explanation":  "The biotech spinouts in patent citation databases dataset is a truncated-normal sample above the survival threshold t=35 patents. Solving E[X|X\u003et]=μ+σφ((t−μ)/σ)/Φ̄((t−μ)/σ)=58 numerically gives μ=57.09072 patents. Only 96.72% of the original cohort survived; the observed mean overstates the true mean by 0.90928 patents. Ignoring the filter leads to over-estimating the baseline quality/capacity of the full cohort, producing over-optimistic policy conclusions."
+                     },
+    "tolerance":  0.005,
+    "naive_answer":  "The true mean granted patent count is 58 patents because that is the average observed among the surviving/studied units.",
+    "naive_trap":  "The observed sample consists only of units above the survival threshold. The observed mean is E[X|X\u003e35] — a truncated conditional expectation — not the population mean. It systematically overstates μ whenever the threshold is non-trivially binding.",
+    "reasoning_trace":  "(1) Survival filter ≡ truncated-normal sampling with lower truncation at t=35. (2) E[X|X\u003et] = μ + σ·φ((t−μ)/σ) / Φ̄((t−μ)/σ) = 58. (3) Solve numerically via brentq on [-265.0, 57.9999] → μ=57.09072. (4) Fraction above threshold: Φ̄((35−57.09072)/12) = 0.96718. (5) Overstatement: 58−57.09072 = 0.90928 patents.",
+    "python_verification":  "\nobs,sig,thresh = 58,12,35\ndef eq(mu):\n    alpha=(thresh-mu)/sig\n    return mu+sig*norm.pdf(alpha)/norm.sf(alpha)-obs\nmu_sol=brentq(eq,thresh-25*sig,obs-1e-9,maxiter=300)\nfrac=norm.sf((thresh-mu_sol)/sig)\nassert abs(mu_sol-57.09072)\u003c0.005, f\u0027mu={mu_sol:.5f}\u0027\nassert abs(frac-0.96718)\u003c0.005, f\u0027frac={frac:.5f}\u0027\nassert mu_sol \u003c obs\nassert abs((obs-mu_sol)-0.90928)\u003c0.01\n"
+}

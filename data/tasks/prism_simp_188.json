@@ -1,0 +1,48 @@
+﻿{
+    "task_id":  "prism_simp_188",
+    "category":  "simpson",
+    "difficulty":  "hard",
+    "scenario":  "Two forensic DNA labs, Lab Helix and Lab Strand, are compared on full-profile-generation success rates. Lab Helix processes predominantly highly degraded crime-scene samples; Lab Strand mainly handles fresh, well-preserved samples.",
+    "data":  {
+                 "description":  "full DNA-profile generation rates by sample degradation and entity",
+                 "values":  {
+                                "lab_helix":  {
+                                                  "highly_degraded":  {
+                                                                          "n":  650,
+                                                                          "success_rate":  0.8
+                                                                      },
+                                                  "well-preserved":  {
+                                                                         "n":  100,
+                                                                         "success_rate":  0.95
+                                                                     },
+                                                  "overall_rate":  0.82
+                                              },
+                                "lab_strand":  {
+                                                   "highly_degraded":  {
+                                                                           "n":  100,
+                                                                           "success_rate":  0.74
+                                                                       },
+                                                   "well-preserved":  {
+                                                                          "n":  650,
+                                                                          "success_rate":  0.93
+                                                                      },
+                                                   "overall_rate":  0.9047
+                                               }
+                            }
+             },
+    "question":  "(a) Which entity has the higher aggregate full DNA-profile generation rate? (b) Which entity performs better within each sample degradation stratum? (c) Compute each entity\u0027s corrected rate using a 50/50 sample degradation mix. (d) Which entity should be preferred, and why does the aggregate ranking mislead?",
+    "answer_type":  "comparative",
+    "ground_truth":  {
+                         "higher_aggregate":  "Lab Strand",
+                         "better_within_each_stratum":  "Lab Helix",
+                         "corrected_lab_helix":  0.875,
+                         "corrected_lab_strand":  0.835,
+                         "corrected_winner":  "Lab Helix",
+                         "explanation":  "Lab Strand\u0027s higher aggregate is driven by its disproportionate assignment to easier well-preserved cases. Lab Helix outperforms Lab Strand in both sample degradation strata. Standardising to a 50/50 sample degradation mix gives Lab Helix 0.875 vs Lab Strand 0.835; Lab Helix is the superior performer once sample degradation level is controlled."
+                     },
+    "tolerance":  0.005,
+    "naive_answer":  "Lab Strand is better because its aggregate full DNA-profile generation rate (0.9047) exceeds Lab Helix\u0027s (0.82).",
+    "naive_trap":  "Sample degradation level is a confounder: Lab Helix handles the majority of harder highly degraded cases, depressing its aggregate while Lab Strand benefits from easier cases.",
+    "reasoning_trace":  "(1) Highly degraded: Lab Helix 0.8 \u003e Lab Strand 0.74. (2) Well-preserved: Lab Helix 0.95 \u003e Lab Strand 0.93. (3) Lab Helix handles 86.7% highly degraded cases vs Lab Strand\u0027s 13.3% — this pulls Lab Helix\u0027s aggregate down. (4) Corrected 50/50: Lab Helix=0.5×0.8+0.5×0.95=0.875; Lab Strand=0.5×0.74+0.5×0.93=0.835. Lab Helix wins after standardisation.",
+    "python_verification":  "\nnA1,rA1,nA2,rA2 = 650,0.8,100,0.95\nnB1,rB1,nB2,rB2 = 100,0.74,650,0.93\novA=(nA1*rA1+nA2*rA2)/(nA1+nA2); ovB=(nB1*rB1+nB2*rB2)/(nB1+nB2)\nassert ovB \u003e ovA, \u0027naive: Lab Strand aggregate higher\u0027\ncA=0.5*rA1+0.5*rA2; cB=0.5*rB1+0.5*rB2\nassert abs(cA-0.875)\u003c0.005 and abs(cB-0.835)\u003c0.005\nassert cA \u003e cB, \u0027corrected: Lab Helix wins\u0027\n"
+}

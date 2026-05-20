@@ -1,0 +1,28 @@
+﻿{
+    "task_id":  "prism_trunc_170",
+    "category":  "truncated",
+    "difficulty":  "hard",
+    "scenario":  "A museum\u0027s donor-recognition wall lists only donors who give at least $8,000. Among listed donors the mean donation is $12,000 (σ=$3,000). The museum\u0027s development office wants the true mean over all donations.",
+    "data":  {
+                 "description":  "Observed statistics among units exceeding reporting threshold",
+                 "values":  {
+                                "observed_mean_above_threshold":  12000,
+                                "assumed_sigma":  3000,
+                                "threshold":  8000,
+                                "n_observed":  "only values above threshold are recorded"
+                            }
+             },
+    "question":  "(a) Assuming the true distribution of donation amount is normal with σ=3000 USD, solve for the true population mean μ such that E[X|X\u003e8000]=12000. (b) What fraction of all events lie above the above $8,000 donor-wall threshold threshold? (c) By how much does the observed mean overstate the true mean?",
+    "answer_type":  "numerical",
+    "ground_truth":  {
+                         "true_mean_mu":  11214.29312,
+                         "fraction_above_threshold":  0.85801,
+                         "overstatement":  785.7069,
+                         "explanation":  "Solving the truncated-normal equation μ + σ·φ((t−μ)/σ)/Φ̄((t−μ)/σ) = 12000 numerically gives μ≈11214.29312. Only 85.8% of all events are actually observed; the observed mean overstates the true mean by ≈785.7069 USD."
+                     },
+    "tolerance":  0.005,
+    "naive_answer":  "The true mean donation amount is approximately 12000 USD because that is what the data directly show.",
+    "naive_trap":  "The observed mean is a truncated-normal conditional expectation, not the population mean; it always exceeds the true mean for above-threshold samples.",
+    "reasoning_trace":  "(1) Let α=(t−μ)/σ. (2) E[X|X\u003et]=μ+σ·φ(α)/Φ̄(α). (3) Set equal to 12000 and solve numerically for μ using brentq. (4) Solution: μ≈11214.29312. (5) Fraction above threshold: Φ̄((8000−11214.29312)/σ)≈0.85801.",
+    "python_verification":  "\nobs,sig,thresh = 12000,3000,8000\ndef eq(mu):\n    alpha=(thresh-mu)/sig\n    return mu+sig*norm.pdf(alpha)/norm.sf(alpha)-obs\nmu_sol=brentq(eq,thresh-20*sig,obs-1e-9,maxiter=200)\nfrac=norm.sf((thresh-mu_sol)/sig)\nassert abs(mu_sol-11214.29312)\u003c0.005\nassert abs(frac-0.85801)\u003c0.005\nassert mu_sol \u003c obs\n"
+}

@@ -1,0 +1,30 @@
+﻿{
+    "task_id":  "prism_surv_226",
+    "category":  "survival",
+    "difficulty":  "hard",
+    "scenario":  "Media-plurality researchers study only community radio stations that retained their broadcast licence. Mean weekly broadcast hours among studied stations is 5.8 (σ=1.1); the licence-retention threshold is 3.8 hours/week. The true mean broadcast hours across all stations at launch is sought.",
+    "data":  {
+                 "description":  "Observed statistics among units that cleared the survival/publication filter",
+                 "values":  {
+                                "observed_mean_survivors":  5.8,
+                                "assumed_population_sigma":  1.1,
+                                "survival_threshold":  3.8,
+                                "filter_description":  "broadcast-licence retention survival filter (≥3.8 hr/wk)",
+                                "units":  "hours/week",
+                                "note":  "Only units above the survival threshold appear in the observed sample"
+                            }
+             },
+    "question":  "(a) Assuming weekly broadcast hours is normally distributed with σ=1.1 hours/week in the full pre-filter cohort, solve numerically for the true pre-filter population mean μ such that E[X | X \u003e 3.8] = 5.8. (b) What fraction of all original units cleared the survival filter? (c) By how much (in hours/week) does the survivor mean overstate μ? (d) What policy or scientific conclusion error arises from ignoring the survival filter?",
+    "answer_type":  "numerical",
+    "ground_truth":  {
+                         "true_pre_filter_mean":  5.6963,
+                         "fraction_surviving":  0.95764,
+                         "overstatement":  0.1037,
+                         "explanation":  "The community radio stations in media-plurality academic studies dataset is a truncated-normal sample above the survival threshold t=3.8 hours/week. Solving E[X|X\u003et]=μ+σφ((t−μ)/σ)/Φ̄((t−μ)/σ)=5.8 numerically gives μ=5.6963 hours/week. Only 95.76% of the original cohort survived; the observed mean overstates the true mean by 0.1037 hours/week. Ignoring the filter leads to over-estimating the baseline quality/capacity of the full cohort, producing over-optimistic policy conclusions."
+                     },
+    "tolerance":  0.005,
+    "naive_answer":  "The true mean weekly broadcast hours is 5.8 hours/week because that is the average observed among the surviving/studied units.",
+    "naive_trap":  "The observed sample consists only of units above the survival threshold. The observed mean is E[X|X\u003e3.8] — a truncated conditional expectation — not the population mean. It systematically overstates μ whenever the threshold is non-trivially binding.",
+    "reasoning_trace":  "(1) Survival filter ≡ truncated-normal sampling with lower truncation at t=3.8. (2) E[X|X\u003et] = μ + σ·φ((t−μ)/σ) / Φ̄((t−μ)/σ) = 5.8. (3) Solve numerically via brentq on [-23.7, 5.7999] → μ=5.6963. (4) Fraction above threshold: Φ̄((3.8−5.6963)/1.1) = 0.95764. (5) Overstatement: 5.8−5.6963 = 0.1037 hours/week.",
+    "python_verification":  "\nobs,sig,thresh = 5.8,1.1,3.8\ndef eq(mu):\n    alpha=(thresh-mu)/sig\n    return mu+sig*norm.pdf(alpha)/norm.sf(alpha)-obs\nmu_sol=brentq(eq,thresh-25*sig,obs-1e-9,maxiter=300)\nfrac=norm.sf((thresh-mu_sol)/sig)\nassert abs(mu_sol-5.6963)\u003c0.005, f\u0027mu={mu_sol:.5f}\u0027\nassert abs(frac-0.95764)\u003c0.005, f\u0027frac={frac:.5f}\u0027\nassert mu_sol \u003c obs\nassert abs((obs-mu_sol)-0.1037)\u003c0.01\n"
+}

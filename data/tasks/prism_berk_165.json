@@ -1,0 +1,30 @@
+﻿{
+    "task_id":  "prism_berk_165",
+    "category":  "berkson",
+    "difficulty":  "hard",
+    "scenario":  "A polar research station staffs personnel who demonstrate strong engineering competency OR high isolation tolerance. Both traits are independent in the candidate population; the OR-gate admission mechanism produces a negative collider bias among deployed staff.",
+    "data":  {
+                 "description":  "Population base rates and OR-gate selection mechanism",
+                 "values":  {
+                                "p_engineering_competency":  0.4,
+                                "p_isolation_tolerance":  0.5,
+                                "selection_rule":  "OR gate: selected if engineering competency OR isolation tolerance",
+                                "p_selected":  0.7,
+                                "observed_corr_among_selected":  "negative (Berkson bias)"
+                            }
+             },
+    "question":  "(a) What is P(selected)? (b) What is P(engineering_competency|not_isolation_tolerance, selected)? (c) What is P(engineering_competency|isolation_tolerance, selected)? (d) Explain why engineering competency and isolation tolerance appear negatively correlated among selected candidates even though they are independent in the population.",
+    "answer_type":  "numerical",
+    "ground_truth":  {
+                         "p_selected":  0.7,
+                         "p_engineering_competency_given_not_isolation_tolerance_selected":  1.0,
+                         "p_engineering_competency_given_isolation_tolerance_selected":  0.4,
+                         "conditional_correlation_direction":  "negative",
+                         "explanation":  "Under OR-gate selection, a candidate lacking isolation tolerance must have engineering competency to be selected (P=1.0). A candidate who has isolation tolerance is selected regardless of engineering competency, so P(engineering competency | isolation tolerance, selected) = P(engineering competency) = 0.4. This differential probability creates a negative within-selected correlation despite population independence."
+                     },
+    "tolerance":  0.005,
+    "naive_answer":  "The negative correlation among selected candidates reflects a genuine inverse relationship between engineering competency and isolation tolerance in the domain.",
+    "naive_trap":  "The negative correlation is entirely an artefact of OR-gate collider selection, not a real population-level relationship between the two traits.",
+    "reasoning_trace":  "(1) P(sel)=P(A)+P(B)-P(A)P(B)=0.4+0.5-0.4×0.5=0.7. (2) If not-B and selected, must have A → P(A|not-B,sel)=1.0. (3) If B and selected, selection is independent of A → P(A|B,sel)=P(A)=0.4. (4) The gap between 1.0 and 0.4 produces a negative association within the selected group via collider bias.",
+    "python_verification":  "\npA,pB = 0.4,0.5\npSel = pA+pB-pA*pB\nassert abs(pSel-0.7)\u003c0.005\npA_notB_sel = pA*(1-pB)/(pA*(1-pB))   # =1.0\nassert abs(pA_notB_sel-1.0)\u003c0.005\npA_B_sel = pA*pB/pB                    # =pA\nassert abs(pA_B_sel-pA)\u003c0.005\nassert pA_notB_sel \u003e pA_B_sel          # negative collider bias confirmed\n"
+}

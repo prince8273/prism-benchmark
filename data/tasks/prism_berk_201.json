@@ -1,0 +1,31 @@
+﻿{
+    "task_id":  "prism_berk_201",
+    "category":  "berkson",
+    "difficulty":  "hard",
+    "scenario":  "A mining company staffs emergency rescue teams with personnel who demonstrate advanced gas-detection skill OR expert confined-space navigation. The competencies are independent in the workforce pool; OR-gate selection creates apparent negative correlation among rescue team members.",
+    "data":  {
+                 "description":  "Population base rates and OR-gate selection mechanism",
+                 "values":  {
+                                "p_gas_detection":  0.36,
+                                "p_confined_nav":  0.54,
+                                "selection_rule":  "OR gate: selected if (gas-detection skill) OR (confined-space navigation)",
+                                "p_selected":  0.7056,
+                                "trait_independence_in_population":  true,
+                                "observed_within_selected_correlation":  "negative (Berkson collider bias)"
+                            }
+             },
+    "question":  "(a) Derive P(selected) from the OR-gate model. (b) Compute P(gas_detection | ¬confined_nav, selected) and explain why it equals 1. (c) Compute P(gas_detection | confined_nav, selected) and show it equals P(gas_detection). (d) Quantify the induced conditional correlation direction and explain why it is a selection artefact rather than a genuine population relationship between gas-detection skill and confined-space navigation.",
+    "answer_type":  "numerical",
+    "ground_truth":  {
+                         "p_selected":  0.7056,
+                         "p_gas_detection_given_not_confined_nav_selected":  1.0,
+                         "p_gas_detection_given_confined_nav_selected":  0.36,
+                         "collider_correlation_direction":  "negative",
+                         "explanation":  "Under OR-gate selection a candidate who lacks confined-space navigation must possess gas-detection skill to be admitted — hence P(gas_detection|¬confined_nav,sel)=1.0. A candidate who already has confined-space navigation is admitted regardless of gas-detection skill, so P(gas_detection|confined_nav,sel)=P(gas_detection)=0.36. The gap (1.0 vs 0.36) creates a negative within-selected correlation that is purely a collider-selection artefact."
+                     },
+    "tolerance":  0.005,
+    "naive_answer":  "The negative correlation between gas-detection skill and confined-space navigation observed among selected candidates reflects a genuine trade-off between these traits in the domain.",
+    "naive_trap":  "The negative correlation is entirely a Berkson collider artefact produced by the OR-gate admission rule; the two traits are independent in the full population.",
+    "reasoning_trace":  "(1) P(sel)=P(A)+P(B)-P(A)P(B)=0.36+0.54-0.36×0.54=0.7056. (2) Among candidates without confined-space navigation: only those with gas-detection skill are selected → P(gas_detection|¬confined_nav,sel)=1.0. (3) Among candidates with confined-space navigation: selected regardless of gas-detection skill → P(gas_detection|confined_nav,sel)=P(gas_detection)=0.36. (4) Within-selected: knowing ¬confined_nav raises P(gas_detection) from 0.36 to 1.0 → negative conditional correlation despite population independence.",
+    "python_verification":  "\npA,pB = 0.36,0.54\npSel = pA+pB-pA*pB\nassert abs(pSel-0.7056)\u003c0.005, f\u0027pSel={pSel}\u0027\npA_notB_sel = pA*(1-pB)/(pA*(1-pB))   # =1.0 by definition\nassert abs(pA_notB_sel-1.0)\u003c1e-9\npA_B_sel = pA*pB/pB                    # =pA by definition\nassert abs(pA_B_sel-0.36)\u003c1e-9\nassert pA_notB_sel \u003e pA_B_sel, \u0027negative collider correlation confirmed\u0027\n"
+}

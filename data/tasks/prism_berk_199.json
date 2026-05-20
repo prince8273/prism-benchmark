@@ -1,0 +1,31 @@
+﻿{
+    "task_id":  "prism_berk_199",
+    "category":  "berkson",
+    "difficulty":  "hard",
+    "scenario":  "A space-medicine fellowship admits candidates who have deep expertise in radiation biology OR in human-factors engineering. Both specialisms are independent in the applicant pool; OR-gate admission produces a within-cohort negative correlation.",
+    "data":  {
+                 "description":  "Population base rates and OR-gate selection mechanism",
+                 "values":  {
+                                "p_radiation_biology":  0.37,
+                                "p_human_factors":  0.53,
+                                "selection_rule":  "OR gate: selected if (radiation biology expertise) OR (human-factors engineering expertise)",
+                                "p_selected":  0.7039,
+                                "trait_independence_in_population":  true,
+                                "observed_within_selected_correlation":  "negative (Berkson collider bias)"
+                            }
+             },
+    "question":  "(a) Derive P(selected) from the OR-gate model. (b) Compute P(radiation_biology | ¬human_factors, selected) and explain why it equals 1. (c) Compute P(radiation_biology | human_factors, selected) and show it equals P(radiation_biology). (d) Quantify the induced conditional correlation direction and explain why it is a selection artefact rather than a genuine population relationship between radiation biology expertise and human-factors engineering expertise.",
+    "answer_type":  "numerical",
+    "ground_truth":  {
+                         "p_selected":  0.7039,
+                         "p_radiation_biology_given_not_human_factors_selected":  1.0,
+                         "p_radiation_biology_given_human_factors_selected":  0.37,
+                         "collider_correlation_direction":  "negative",
+                         "explanation":  "Under OR-gate selection a candidate who lacks human-factors engineering expertise must possess radiation biology expertise to be admitted — hence P(radiation_biology|¬human_factors,sel)=1.0. A candidate who already has human-factors engineering expertise is admitted regardless of radiation biology expertise, so P(radiation_biology|human_factors,sel)=P(radiation_biology)=0.37. The gap (1.0 vs 0.37) creates a negative within-selected correlation that is purely a collider-selection artefact."
+                     },
+    "tolerance":  0.005,
+    "naive_answer":  "The negative correlation between radiation biology expertise and human-factors engineering expertise observed among selected candidates reflects a genuine trade-off between these traits in the domain.",
+    "naive_trap":  "The negative correlation is entirely a Berkson collider artefact produced by the OR-gate admission rule; the two traits are independent in the full population.",
+    "reasoning_trace":  "(1) P(sel)=P(A)+P(B)-P(A)P(B)=0.37+0.53-0.37×0.53=0.7039. (2) Among candidates without human-factors engineering expertise: only those with radiation biology expertise are selected → P(radiation_biology|¬human_factors,sel)=1.0. (3) Among candidates with human-factors engineering expertise: selected regardless of radiation biology expertise → P(radiation_biology|human_factors,sel)=P(radiation_biology)=0.37. (4) Within-selected: knowing ¬human_factors raises P(radiation_biology) from 0.37 to 1.0 → negative conditional correlation despite population independence.",
+    "python_verification":  "\npA,pB = 0.37,0.53\npSel = pA+pB-pA*pB\nassert abs(pSel-0.7039)\u003c0.005, f\u0027pSel={pSel}\u0027\npA_notB_sel = pA*(1-pB)/(pA*(1-pB))   # =1.0 by definition\nassert abs(pA_notB_sel-1.0)\u003c1e-9\npA_B_sel = pA*pB/pB                    # =pA by definition\nassert abs(pA_B_sel-0.37)\u003c1e-9\nassert pA_notB_sel \u003e pA_B_sel, \u0027negative collider correlation confirmed\u0027\n"
+}

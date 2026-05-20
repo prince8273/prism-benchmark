@@ -1,0 +1,28 @@
+﻿{
+    "task_id":  "prism_surv_177",
+    "category":  "survival",
+    "difficulty":  "hard",
+    "scenario":  "Technology journalists cover only satellite startups that have successfully deployed at least one orbital asset. Among covered startups the mean funding raised is $85M (σ=$18M). The survival/coverage threshold is $55M raised. The true mean funding across all satellite startups is sought.",
+    "data":  {
+                 "description":  "Observed statistics among units that cleared the survival/publication filter",
+                 "values":  {
+                                "observed_mean_survivors":  85,
+                                "assumed_sigma":  18,
+                                "survival_threshold":  55,
+                                "filter":  "successful-deployment survival filter (≥$55M raised)"
+                            }
+             },
+    "question":  "(a) Assuming funding raised is normally distributed with σ=18 million USD, solve for the pre-filter true mean μ such that E[X|X\u003e55]=85. (b) What fraction of all original units cleared the survival filter? (c) By how much does the observed (survivor) mean overstate the pre-filter true mean?",
+    "answer_type":  "numerical",
+    "ground_truth":  {
+                         "true_pre_filter_mean":  82.64556,
+                         "fraction_surviving":  0.93771,
+                         "overstatement":  2.3544,
+                         "explanation":  "The satellite startups in media after orbital deployment funding raised set is a truncated-normal sample above the 55 threshold. Solving E[X|X\u003e55]=μ+σφ((55−μ)/σ)/Φ̄((55−μ)/σ)=85 gives μ≈82.64556. Only 93.8% of all original units survived; the survivor mean overstates the true mean by 2.3544 million USD."
+                     },
+    "tolerance":  0.005,
+    "naive_answer":  "The true mean funding raised is 85 million USD because that is the observed average among satellite startups in media after orbital deployment.",
+    "naive_trap":  "Survival/publication filters truncate the distribution from below; the observed mean among survivors is a conditional expectation and systematically overstates the pre-filter population mean.",
+    "reasoning_trace":  "(1) Survival filter is equivalent to truncated-normal sampling above threshold=55. (2) Truncated mean equation: μ+σ·φ((t−μ)/σ)/Φ̄((t−μ)/σ)=85. (3) Numerically solve with brentq → μ≈82.64556. (4) Fraction surviving: Φ̄((55−82.64556)/σ)≈0.93771.",
+    "python_verification":  "\nobs,sig,thresh = 85,18,55\ndef eq(mu):\n    alpha=(thresh-mu)/sig\n    return mu+sig*norm.pdf(alpha)/norm.sf(alpha)-obs\nmu_sol=brentq(eq,thresh-20*sig,obs-1e-9,maxiter=200)\nfrac=norm.sf((thresh-mu_sol)/sig)\nassert abs(mu_sol-82.64556)\u003c0.005\nassert abs(frac-0.93771)\u003c0.005\nassert mu_sol \u003c obs\n"
+}

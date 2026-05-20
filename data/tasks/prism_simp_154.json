@@ -1,0 +1,48 @@
+﻿{
+    "task_id":  "prism_simp_154",
+    "category":  "simpson",
+    "difficulty":  "hard",
+    "scenario":  "Two hospital blood-bank labs, Lab A and Lab B, are measured on successful inventory-match rates across rare and common blood groups. Lab A primarily processes rare blood groups (harder to match); Lab B handles mostly common groups.",
+    "data":  {
+                 "description":  "Successful match rates by blood-group rarity",
+                 "values":  {
+                                "lab_a":  {
+                                              "rare_groups":  {
+                                                                  "n":  800,
+                                                                  "success_rate":  0.72
+                                                              },
+                                              "common_groups":  {
+                                                                    "n":  100,
+                                                                    "success_rate":  0.96
+                                                                },
+                                              "overall_rate":  0.7467
+                                          },
+                                "lab_b":  {
+                                              "rare_groups":  {
+                                                                  "n":  100,
+                                                                  "success_rate":  0.65
+                                                              },
+                                              "common_groups":  {
+                                                                    "n":  800,
+                                                                    "success_rate":  0.94
+                                                                },
+                                              "overall_rate":  0.9078
+                                          }
+                            }
+             },
+    "question":  "(a) Which lab has the higher aggregate match rate? (b) Which lab is better within each rarity class? (c) Compute corrected rates using a 50/50 rarity mix.",
+    "answer_type":  "comparative",
+    "ground_truth":  {
+                         "higher_aggregate":  "Lab B",
+                         "better_within_each_class":  "Lab A",
+                         "corrected_a":  0.84,
+                         "corrected_b":  0.795,
+                         "corrected_winner":  "Lab A",
+                         "explanation":  "Lab B\u0027s higher aggregate is an artefact of processing mostly easy common blood groups. Lab A outperforms Lab B in both strata once rarity mix is standardised."
+                     },
+    "tolerance":  0.005,
+    "naive_answer":  "Lab B is superior with aggregate rate 0.9078 compared to Lab A\u0027s 0.7467.",
+    "naive_trap":  "Blood-group rarity is a strong confounder; Lab A\u0027s case-mix is 89% rare groups while Lab B\u0027s is only 11%.",
+    "reasoning_trace":  "Rare: A 0.72 \u003e B 0.65. Common: A 0.96 \u003e B 0.94. Corrected 50/50: A=0.84, B=0.795. A wins.",
+    "python_verification":  "\nnAr,rAr,nAc,rAc = 800,0.72,100,0.96\nnBr,rBr,nBc,rBc = 100,0.65,800,0.94\novA=(nAr*rAr+nAc*rAc)/(nAr+nAc); ovB=(nBr*rBr+nBc*rBc)/(nBr+nBc)\nassert ovB \u003e ovA\ncA=0.5*rAr+0.5*rAc; cB=0.5*rBr+0.5*rBc\nassert abs(cA-0.84)\u003c0.005 and abs(cB-0.795)\u003c0.005\nassert cA \u003e cB\n"
+}

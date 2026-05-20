@@ -1,0 +1,28 @@
+﻿{
+    "task_id":  "prism_trunc_167",
+    "category":  "truncated",
+    "difficulty":  "hard",
+    "scenario":  "Satellite sensors detect glacier calving events only when the calved iceberg exceeds 2.0 km² in area. Observed mean area among detected events is 2.8 km² (σ=0.6 km²). Analysts wish to estimate the true mean calving size across all events.",
+    "data":  {
+                 "description":  "Observed statistics among units exceeding reporting threshold",
+                 "values":  {
+                                "observed_mean_above_threshold":  2.8,
+                                "assumed_sigma":  0.6,
+                                "threshold":  2.0,
+                                "n_observed":  "only values above threshold are recorded"
+                            }
+             },
+    "question":  "(a) Assuming the true distribution of calved area is normal with σ=0.6 km², solve for the true population mean μ such that E[X|X\u003e2.0]=2.8. (b) What fraction of all events lie above the above 2.0 km² satellite-detection threshold threshold? (c) By how much does the observed mean overstate the true mean?",
+    "answer_type":  "numerical",
+    "ground_truth":  {
+                         "true_mean_mu":  2.64286,
+                         "fraction_above_threshold":  0.85801,
+                         "overstatement":  0.1571,
+                         "explanation":  "Solving the truncated-normal equation μ + σ·φ((t−μ)/σ)/Φ̄((t−μ)/σ) = 2.8 numerically gives μ≈2.64286. Only 85.8% of all events are actually observed; the observed mean overstates the true mean by ≈0.1571 km²."
+                     },
+    "tolerance":  0.005,
+    "naive_answer":  "The true mean calved area is approximately 2.8 km² because that is what the data directly show.",
+    "naive_trap":  "The observed mean is a truncated-normal conditional expectation, not the population mean; it always exceeds the true mean for above-threshold samples.",
+    "reasoning_trace":  "(1) Let α=(t−μ)/σ. (2) E[X|X\u003et]=μ+σ·φ(α)/Φ̄(α). (3) Set equal to 2.8 and solve numerically for μ using brentq. (4) Solution: μ≈2.64286. (5) Fraction above threshold: Φ̄((2.0−2.64286)/σ)≈0.85801.",
+    "python_verification":  "\nobs,sig,thresh = 2.8,0.6,2.0\ndef eq(mu):\n    alpha=(thresh-mu)/sig\n    return mu+sig*norm.pdf(alpha)/norm.sf(alpha)-obs\nmu_sol=brentq(eq,thresh-20*sig,obs-1e-9,maxiter=200)\nfrac=norm.sf((thresh-mu_sol)/sig)\nassert abs(mu_sol-2.64286)\u003c0.005\nassert abs(frac-0.85801)\u003c0.005\nassert mu_sol \u003c obs\n"
+}

@@ -1,0 +1,28 @@
+﻿{
+    "task_id":  "prism_surv_178",
+    "category":  "survival",
+    "difficulty":  "hard",
+    "scenario":  "A confectionery analyst examines craft chocolate brands currently in national retail, all of which survived early-phase attrition. Mean shelf-life score (a composite retail metric) is 5.5 (σ=1.2); the retail-entry threshold is 3.0. The true mean score across all brands that launched is of interest.",
+    "data":  {
+                 "description":  "Observed statistics among units that cleared the survival/publication filter",
+                 "values":  {
+                                "observed_mean_survivors":  5.5,
+                                "assumed_sigma":  1.2,
+                                "survival_threshold":  3.0,
+                                "filter":  "retail-survival filter (score≥3.0)"
+                            }
+             },
+    "question":  "(a) Assuming retail shelf-life score is normally distributed with σ=1.2 score points, solve for the pre-filter true mean μ such that E[X|X\u003e3.0]=5.5. (b) What fraction of all original units cleared the survival filter? (c) By how much does the observed (survivor) mean overstate the pre-filter true mean?",
+    "answer_type":  "numerical",
+    "ground_truth":  {
+                         "true_pre_filter_mean":  5.4379,
+                         "fraction_surviving":  0.9789,
+                         "overstatement":  0.0621,
+                         "explanation":  "The craft chocolate brands in retail after early exits retail shelf-life score set is a truncated-normal sample above the 3.0 threshold. Solving E[X|X\u003e3.0]=μ+σφ((3.0−μ)/σ)/Φ̄((3.0−μ)/σ)=5.5 gives μ≈5.4379. Only 97.9% of all original units survived; the survivor mean overstates the true mean by 0.0621 score points."
+                     },
+    "tolerance":  0.005,
+    "naive_answer":  "The true mean retail shelf-life score is 5.5 score points because that is the observed average among craft chocolate brands in retail after early exits.",
+    "naive_trap":  "Survival/publication filters truncate the distribution from below; the observed mean among survivors is a conditional expectation and systematically overstates the pre-filter population mean.",
+    "reasoning_trace":  "(1) Survival filter is equivalent to truncated-normal sampling above threshold=3.0. (2) Truncated mean equation: μ+σ·φ((t−μ)/σ)/Φ̄((t−μ)/σ)=5.5. (3) Numerically solve with brentq → μ≈5.4379. (4) Fraction surviving: Φ̄((3.0−5.4379)/σ)≈0.9789.",
+    "python_verification":  "\nobs,sig,thresh = 5.5,1.2,3.0\ndef eq(mu):\n    alpha=(thresh-mu)/sig\n    return mu+sig*norm.pdf(alpha)/norm.sf(alpha)-obs\nmu_sol=brentq(eq,thresh-20*sig,obs-1e-9,maxiter=200)\nfrac=norm.sf((thresh-mu_sol)/sig)\nassert abs(mu_sol-5.4379)\u003c0.005\nassert abs(frac-0.9789)\u003c0.005\nassert mu_sol \u003c obs\n"
+}

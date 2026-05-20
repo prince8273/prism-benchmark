@@ -1,0 +1,28 @@
+﻿{
+    "task_id":  "prism_trunc_172",
+    "category":  "truncated",
+    "difficulty":  "hard",
+    "scenario":  "A railway authority files formal reports only for delays exceeding 60 minutes. Among filed reports the mean delay is 95 minutes (σ=20 min). Policy analysts need the true mean delay across all delayed freight movements.",
+    "data":  {
+                 "description":  "Observed statistics among units exceeding reporting threshold",
+                 "values":  {
+                                "observed_mean_above_threshold":  95,
+                                "assumed_sigma":  20,
+                                "threshold":  60,
+                                "n_observed":  "only values above threshold are recorded"
+                            }
+             },
+    "question":  "(a) Assuming the true distribution of delay duration is normal with σ=20 minutes, solve for the true population mean μ such that E[X|X\u003e60]=95. (b) What fraction of all events lie above the above 60-minute incident-report threshold threshold? (c) By how much does the observed mean overstate the true mean?",
+    "answer_type":  "numerical",
+    "ground_truth":  {
+                         "true_mean_mu":  92.8126,
+                         "fraction_above_threshold":  0.94956,
+                         "overstatement":  2.1874,
+                         "explanation":  "Solving the truncated-normal equation μ + σ·φ((t−μ)/σ)/Φ̄((t−μ)/σ) = 95 numerically gives μ≈92.8126. Only 95.0% of all events are actually observed; the observed mean overstates the true mean by ≈2.1874 minutes."
+                     },
+    "tolerance":  0.005,
+    "naive_answer":  "The true mean delay duration is approximately 95 minutes because that is what the data directly show.",
+    "naive_trap":  "The observed mean is a truncated-normal conditional expectation, not the population mean; it always exceeds the true mean for above-threshold samples.",
+    "reasoning_trace":  "(1) Let α=(t−μ)/σ. (2) E[X|X\u003et]=μ+σ·φ(α)/Φ̄(α). (3) Set equal to 95 and solve numerically for μ using brentq. (4) Solution: μ≈92.8126. (5) Fraction above threshold: Φ̄((60−92.8126)/σ)≈0.94956.",
+    "python_verification":  "\nobs,sig,thresh = 95,20,60\ndef eq(mu):\n    alpha=(thresh-mu)/sig\n    return mu+sig*norm.pdf(alpha)/norm.sf(alpha)-obs\nmu_sol=brentq(eq,thresh-20*sig,obs-1e-9,maxiter=200)\nfrac=norm.sf((thresh-mu_sol)/sig)\nassert abs(mu_sol-92.8126)\u003c0.005\nassert abs(frac-0.94956)\u003c0.005\nassert mu_sol \u003c obs\n"
+}

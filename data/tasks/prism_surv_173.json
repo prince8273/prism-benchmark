@@ -1,0 +1,28 @@
+﻿{
+    "task_id":  "prism_surv_173",
+    "category":  "survival",
+    "difficulty":  "hard",
+    "scenario":  "A retail analyst studies independent bookstores appearing on \u0027best independent bookshop\u0027 lists, all of which have survived at least 10 years. The mean number of staff among listed stores is 72 (σ=15). The analyst wants the true mean staffing across all bookstores that opened 10 years ago.",
+    "data":  {
+                 "description":  "Observed statistics among units that cleared the survival/publication filter",
+                 "values":  {
+                                "observed_mean_survivors":  72,
+                                "assumed_sigma":  15,
+                                "survival_threshold":  50,
+                                "filter":  "10-year survival filter"
+                            }
+             },
+    "question":  "(a) Assuming staff count is normally distributed with σ=15 staff, solve for the pre-filter true mean μ such that E[X|X\u003e50]=72. (b) What fraction of all original units cleared the survival filter? (c) By how much does the observed (survivor) mean overstate the pre-filter true mean?",
+    "answer_type":  "numerical",
+    "ground_truth":  {
+                         "true_pre_filter_mean":  69.0145,
+                         "fraction_surviving":  0.89754,
+                         "overstatement":  2.9855,
+                         "explanation":  "The independent bookstores in best-shop lists staff count set is a truncated-normal sample above the 50 threshold. Solving E[X|X\u003e50]=μ+σφ((50−μ)/σ)/Φ̄((50−μ)/σ)=72 gives μ≈69.0145. Only 89.8% of all original units survived; the survivor mean overstates the true mean by 2.9855 staff."
+                     },
+    "tolerance":  0.005,
+    "naive_answer":  "The true mean staff count is 72 staff because that is the observed average among independent bookstores in best-shop lists.",
+    "naive_trap":  "Survival/publication filters truncate the distribution from below; the observed mean among survivors is a conditional expectation and systematically overstates the pre-filter population mean.",
+    "reasoning_trace":  "(1) Survival filter is equivalent to truncated-normal sampling above threshold=50. (2) Truncated mean equation: μ+σ·φ((t−μ)/σ)/Φ̄((t−μ)/σ)=72. (3) Numerically solve with brentq → μ≈69.0145. (4) Fraction surviving: Φ̄((50−69.0145)/σ)≈0.89754.",
+    "python_verification":  "\nobs,sig,thresh = 72,15,50\ndef eq(mu):\n    alpha=(thresh-mu)/sig\n    return mu+sig*norm.pdf(alpha)/norm.sf(alpha)-obs\nmu_sol=brentq(eq,thresh-20*sig,obs-1e-9,maxiter=200)\nfrac=norm.sf((thresh-mu_sol)/sig)\nassert abs(mu_sol-69.0145)\u003c0.005\nassert abs(frac-0.89754)\u003c0.005\nassert mu_sol \u003c obs\n"
+}

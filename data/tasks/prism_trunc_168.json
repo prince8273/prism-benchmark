@@ -1,0 +1,28 @@
+﻿{
+    "task_id":  "prism_trunc_168",
+    "category":  "truncated",
+    "difficulty":  "hard",
+    "scenario":  "A charter-industry database records only voyages exceeding 12 days (the minimum commercial reporting threshold). The observed mean charter duration among recorded voyages is 18.0 days (σ=4.0 days). The true mean over all charters is sought.",
+    "data":  {
+                 "description":  "Observed statistics among units exceeding reporting threshold",
+                 "values":  {
+                                "observed_mean_above_threshold":  18.0,
+                                "assumed_sigma":  4.0,
+                                "threshold":  12.0,
+                                "n_observed":  "only values above threshold are recorded"
+                            }
+             },
+    "question":  "(a) Assuming the true distribution of charter duration is normal with σ=4.0 days, solve for the true population mean μ such that E[X|X\u003e12.0]=18.0. (b) What fraction of all events lie above the above 12-day reporting minimum threshold? (c) By how much does the observed mean overstate the true mean?",
+    "answer_type":  "numerical",
+    "ground_truth":  {
+                         "true_mean_mu":  17.25708,
+                         "fraction_above_threshold":  0.90562,
+                         "overstatement":  0.7429,
+                         "explanation":  "Solving the truncated-normal equation μ + σ·φ((t−μ)/σ)/Φ̄((t−μ)/σ) = 18.0 numerically gives μ≈17.25708. Only 90.6% of all events are actually observed; the observed mean overstates the true mean by ≈0.7429 days."
+                     },
+    "tolerance":  0.005,
+    "naive_answer":  "The true mean charter duration is approximately 18.0 days because that is what the data directly show.",
+    "naive_trap":  "The observed mean is a truncated-normal conditional expectation, not the population mean; it always exceeds the true mean for above-threshold samples.",
+    "reasoning_trace":  "(1) Let α=(t−μ)/σ. (2) E[X|X\u003et]=μ+σ·φ(α)/Φ̄(α). (3) Set equal to 18.0 and solve numerically for μ using brentq. (4) Solution: μ≈17.25708. (5) Fraction above threshold: Φ̄((12.0−17.25708)/σ)≈0.90562.",
+    "python_verification":  "\nobs,sig,thresh = 18.0,4.0,12.0\ndef eq(mu):\n    alpha=(thresh-mu)/sig\n    return mu+sig*norm.pdf(alpha)/norm.sf(alpha)-obs\nmu_sol=brentq(eq,thresh-20*sig,obs-1e-9,maxiter=200)\nfrac=norm.sf((thresh-mu_sol)/sig)\nassert abs(mu_sol-17.25708)\u003c0.005\nassert abs(frac-0.90562)\u003c0.005\nassert mu_sol \u003c obs\n"
+}

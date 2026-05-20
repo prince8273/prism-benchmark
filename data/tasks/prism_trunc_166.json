@@ -1,0 +1,28 @@
+﻿{
+    "task_id":  "prism_trunc_166",
+    "category":  "truncated",
+    "difficulty":  "hard",
+    "scenario":  "Undersea acoustic sensors report battery life only when the remaining charge exceeds a 100-hour telemetry cutoff. Analysts observe a mean reported battery life of 120 hours (σ=15 h) among reporting sensors. The true fleet-wide mean is unknown.",
+    "data":  {
+                 "description":  "Observed statistics among units exceeding reporting threshold",
+                 "values":  {
+                                "observed_mean_above_threshold":  120,
+                                "assumed_sigma":  15,
+                                "threshold":  100,
+                                "n_observed":  "only values above threshold are recorded"
+                            }
+             },
+    "question":  "(a) Assuming the true distribution of battery life is normal with σ=15 hours, solve for the true population mean μ such that E[X|X\u003e100]=120. (b) What fraction of all events lie above the above 100-hour telemetry cutoff threshold? (c) By how much does the observed mean overstate the true mean?",
+    "answer_type":  "numerical",
+    "ground_truth":  {
+                         "true_mean_mu":  116.07147,
+                         "fraction_above_threshold":  0.85801,
+                         "overstatement":  3.9285,
+                         "explanation":  "Solving the truncated-normal equation μ + σ·φ((t−μ)/σ)/Φ̄((t−μ)/σ) = 120 numerically gives μ≈116.07147. Only 85.8% of all events are actually observed; the observed mean overstates the true mean by ≈3.9285 hours."
+                     },
+    "tolerance":  0.005,
+    "naive_answer":  "The true mean battery life is approximately 120 hours because that is what the data directly show.",
+    "naive_trap":  "The observed mean is a truncated-normal conditional expectation, not the population mean; it always exceeds the true mean for above-threshold samples.",
+    "reasoning_trace":  "(1) Let α=(t−μ)/σ. (2) E[X|X\u003et]=μ+σ·φ(α)/Φ̄(α). (3) Set equal to 120 and solve numerically for μ using brentq. (4) Solution: μ≈116.07147. (5) Fraction above threshold: Φ̄((100−116.07147)/σ)≈0.85801.",
+    "python_verification":  "\nobs,sig,thresh = 120,15,100\ndef eq(mu):\n    alpha=(thresh-mu)/sig\n    return mu+sig*norm.pdf(alpha)/norm.sf(alpha)-obs\nmu_sol=brentq(eq,thresh-20*sig,obs-1e-9,maxiter=200)\nfrac=norm.sf((thresh-mu_sol)/sig)\nassert abs(mu_sol-116.07147)\u003c0.005\nassert abs(frac-0.85801)\u003c0.005\nassert mu_sol \u003c obs\n"
+}

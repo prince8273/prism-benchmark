@@ -1,0 +1,31 @@
+﻿{
+    "task_id":  "prism_berk_200",
+    "category":  "berkson",
+    "difficulty":  "hard",
+    "scenario":  "An Arctic expedition programme shortlists medical officers who possess specialised cold-injury clinical expertise OR logistical-planning proficiency. The two competencies are independent in the candidate pool; OR-gate shortlisting generates a negative within-shortlist correlation.",
+    "data":  {
+                 "description":  "Population base rates and OR-gate selection mechanism",
+                 "values":  {
+                                "p_cold_injury_expertise":  0.44,
+                                "p_logistics_proficiency":  0.46,
+                                "selection_rule":  "OR gate: selected if (cold-injury clinical expertise) OR (logistical-planning proficiency)",
+                                "p_selected":  0.6976,
+                                "trait_independence_in_population":  true,
+                                "observed_within_selected_correlation":  "negative (Berkson collider bias)"
+                            }
+             },
+    "question":  "(a) Derive P(selected) from the OR-gate model. (b) Compute P(cold_injury_expertise | ¬logistics_proficiency, selected) and explain why it equals 1. (c) Compute P(cold_injury_expertise | logistics_proficiency, selected) and show it equals P(cold_injury_expertise). (d) Quantify the induced conditional correlation direction and explain why it is a selection artefact rather than a genuine population relationship between cold-injury clinical expertise and logistical-planning proficiency.",
+    "answer_type":  "numerical",
+    "ground_truth":  {
+                         "p_selected":  0.6976,
+                         "p_cold_injury_expertise_given_not_logistics_proficiency_selected":  1.0,
+                         "p_cold_injury_expertise_given_logistics_proficiency_selected":  0.44,
+                         "collider_correlation_direction":  "negative",
+                         "explanation":  "Under OR-gate selection a candidate who lacks logistical-planning proficiency must possess cold-injury clinical expertise to be admitted — hence P(cold_injury_expertise|¬logistics_proficiency,sel)=1.0. A candidate who already has logistical-planning proficiency is admitted regardless of cold-injury clinical expertise, so P(cold_injury_expertise|logistics_proficiency,sel)=P(cold_injury_expertise)=0.44. The gap (1.0 vs 0.44) creates a negative within-selected correlation that is purely a collider-selection artefact."
+                     },
+    "tolerance":  0.005,
+    "naive_answer":  "The negative correlation between cold-injury clinical expertise and logistical-planning proficiency observed among selected candidates reflects a genuine trade-off between these traits in the domain.",
+    "naive_trap":  "The negative correlation is entirely a Berkson collider artefact produced by the OR-gate admission rule; the two traits are independent in the full population.",
+    "reasoning_trace":  "(1) P(sel)=P(A)+P(B)-P(A)P(B)=0.44+0.46-0.44×0.46=0.6976. (2) Among candidates without logistical-planning proficiency: only those with cold-injury clinical expertise are selected → P(cold_injury_expertise|¬logistics_proficiency,sel)=1.0. (3) Among candidates with logistical-planning proficiency: selected regardless of cold-injury clinical expertise → P(cold_injury_expertise|logistics_proficiency,sel)=P(cold_injury_expertise)=0.44. (4) Within-selected: knowing ¬logistics_proficiency raises P(cold_injury_expertise) from 0.44 to 1.0 → negative conditional correlation despite population independence.",
+    "python_verification":  "\npA,pB = 0.44,0.46\npSel = pA+pB-pA*pB\nassert abs(pSel-0.6976)\u003c0.005, f\u0027pSel={pSel}\u0027\npA_notB_sel = pA*(1-pB)/(pA*(1-pB))   # =1.0 by definition\nassert abs(pA_notB_sel-1.0)\u003c1e-9\npA_B_sel = pA*pB/pB                    # =pA by definition\nassert abs(pA_B_sel-0.44)\u003c1e-9\nassert pA_notB_sel \u003e pA_B_sel, \u0027negative collider correlation confirmed\u0027\n"
+}
