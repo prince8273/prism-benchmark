@@ -57,10 +57,10 @@ _Results will be updated as evaluations complete._
 
 | Model | Overall ACC | Naive Trap Rate | Simpson | Berkson | Truncated | Survival |
 |-------|-------------|-----------------|---------|---------|-----------|----------|
-| GPT-4o | - | - | - | - | - | - |
-| Claude 3.5 Sonnet | - | - | - | - | - | - |
-| Gemini 1.5 Pro | - | - | - | - | - | - |
-| GPT-3.5 Turbo | - | - | - | - | - | - |
+| claude-haiku-4-5-20251001 | 75.0% | 0.0% | 96.9% | 85.3% | 57.4% | 55.6% |
+| claude-sonnet-4-5 | 76.1% | 0.4% | 97.7% | 86.2% | 57.4% | 58.3% |
+| gemini-2.5-pro | - | - | - | - | - | - |
+| gemini-2.5-flash | - | - | - | - | - | - |
 
 Interpretation guide: if flagship models land around 40-60% overall ACC with a clearly non-trivial naive-trap rate, the benchmark is likely probing the intended failure mode. If all strong models score above 80%, the tasks are probably too easy. If all models score below 20%, inspect parsing and prompting before concluding the benchmark is too hard.
 

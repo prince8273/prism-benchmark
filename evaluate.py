@@ -20,6 +20,7 @@ from typing import Any, Optional
 
 import anthropic
 import openai
+from google import genai as google_genai
 from rich.console import Console
 from rich.progress import track
 from rich.table import Table
@@ -64,7 +65,7 @@ def load_tasks(task_dir: str, category: Optional[str] = None, difficulty: Option
     tasks: list[dict] = []
     task_path = Path(task_dir)
     for fpath in sorted(task_path.glob("*.json")):
-        with open(fpath, encoding="utf-8") as handle:
+        with open(fpath, encoding="utf-8-sig") as handle:
             payload = json.load(handle)
         file_tasks = payload if isinstance(payload, list) else [payload]
         for task in file_tasks:
@@ -76,6 +77,24 @@ def load_tasks(task_dir: str, category: Optional[str] = None, difficulty: Option
             tasks.append(task)
     console.print(f"[dim]Loaded {len(tasks)} tasks from {task_dir}[/dim]")
     return tasks
+
+
+def load_completed_ids(output_dir: str, model_name: str) -> set[str]:
+    """Load task IDs already completed in a previous partial run."""
+    output_path = Path(output_dir)
+    completed: set[str] = set()
+    safe_model = model_name.replace("/", "_").replace(":", "_")
+    for fpath in output_path.glob(f"{safe_model}_*.json"):
+        try:
+            with open(fpath, encoding="utf-8-sig") as handle:
+                results = json.load(handle)
+            for result in results:
+                task_id = result.get("task_id")
+                if task_id:
+                    completed.add(task_id)
+        except Exception:
+            continue
+    return completed
 
 
 def build_prompt(task: dict) -> str:
@@ -120,12 +139,46 @@ def call_anthropic(model: str, prompt: str, max_tokens: int = 1024) -> str:
     return "\n".join(parts)
 
 
+def call_gemini(model: str, prompt: str) -> str:
+    client = google_genai.Client(api_key=os.environ["GEMINI_API_KEY"])
+    last_exc: Optional[Exception] = None
+
+    for attempt in range(5):
+        try:
+            response = client.models.generate_content(
+                model=model,
+                contents=SYSTEM_PROMPT + "\n\n" + prompt,
+            )
+            return response.text or ""
+        except Exception as exc:
+            last_exc = exc
+            error_text = str(exc)
+            transient = any(token in error_text for token in ["503", "UNAVAILABLE", "429", "RESOURCE_EXHAUSTED"])
+            if not transient or attempt == 4:
+                raise
+
+            backoff_seconds = min(30, 5 * (2**attempt))
+            console.print(
+                f"[yellow]Gemini transient error on attempt {attempt + 1}/5; retrying in {backoff_seconds}s...[/yellow]"
+            )
+            time.sleep(backoff_seconds)
+
+    if last_exc:
+        raise last_exc
+    raise RuntimeError("Gemini request failed without an exception.")
+
+
 def call_model(model_name: str, prompt: str) -> str:
-    time.sleep(0.5)
+    if model_name.startswith("gemini"):
+        time.sleep(4)
+    else:
+        time.sleep(0.5)
     if model_name.startswith(("gpt", "o1", "o3")):
         return call_openai(model_name, prompt)
     if model_name.startswith("claude"):
         return call_anthropic(model_name, prompt)
+    if model_name.startswith("gemini"):
+        return call_gemini(model_name, prompt)
     raise ValueError(f"Unknown model provider for: {model_name}. Add routing in call_model().")
 
 
@@ -287,8 +340,24 @@ def run_evaluation(model_name: str, tasks: list[dict], output_dir: str) -> list[
     output_path = Path(output_dir)
     output_path.mkdir(parents=True, exist_ok=True)
 
+    completed_ids = load_completed_ids(output_dir, model_name)
+    if completed_ids:
+        console.print(f"[yellow]Resuming: {len(completed_ids)} tasks already done, skipping.[/yellow]")
+
+    pending = [task for task in tasks if task["task_id"] not in completed_ids]
+    console.print(f"[dim]Running {len(pending)} remaining tasks out of {len(tasks)} total.[/dim]")
+
+    if not pending:
+        console.print("[green]All tasks already completed.[/green]")
+        all_results: list[dict] = []
+        safe_model = model_name.replace("/", "_").replace(":", "_")
+        for fpath in output_path.glob(f"{safe_model}_*.json"):
+            with open(fpath, encoding="utf-8-sig") as handle:
+                all_results.extend(json.load(handle))
+        return all_results
+
     results = []
-    for task in track(tasks, description=f"Evaluating {model_name}"):
+    for task in track(pending, description=f"Evaluating {model_name}"):
         prompt = build_prompt(task)
         try:
             response = call_model(model_name, prompt)
@@ -303,6 +372,13 @@ def run_evaluation(model_name: str, tasks: list[dict], output_dir: str) -> list[
         score_dict["difficulty"] = task["difficulty"]
         score_dict["source_file"] = task.get("_source_file")
         results.append(score_dict)
+
+        if len(results) % 10 == 0:
+            ts = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
+            safe_model = model_name.replace("/", "_").replace(":", "_")
+            checkpoint_file = output_path / f"{safe_model}_{ts}.json"
+            with open(checkpoint_file, "w", encoding="utf-8") as handle:
+                json.dump(results, handle, indent=2)
 
     ts = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
     safe_model = model_name.replace("/", "_").replace(":", "_")
@@ -379,13 +455,23 @@ def print_leaderboard(all_stats: list[dict]) -> None:
 def load_and_aggregate(results_dir: str) -> list[dict]:
     results_path = Path(results_dir)
     model_results: dict[str, list[dict]] = {}
-    for fpath in results_path.glob("*.json"):
-        with open(fpath, encoding="utf-8") as handle:
+    seen_task_ids: dict[str, set[str]] = {}
+
+    for fpath in sorted(results_path.glob("*.json")):
+        with open(fpath, encoding="utf-8-sig") as handle:
             results = json.load(handle)
         if not results:
             continue
         model = results[0]["model"]
-        model_results.setdefault(model, []).extend(results)
+        if model not in model_results:
+            model_results[model] = []
+            seen_task_ids[model] = set()
+
+        for result in results:
+            task_id = result.get("task_id")
+            if task_id and task_id not in seen_task_ids[model]:
+                model_results[model].append(result)
+                seen_task_ids[model].add(task_id)
     return [compute_stats(values) for values in model_results.values()]
 
 
