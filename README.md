@@ -70,6 +70,76 @@ Interpretation guide: if flagship models land around 40-60% overall ACC with a c
 
 ---
 
+## Reproduce These Exact Results
+
+Date of runs: **2026-05-20**
+
+Code commit used for the evaluation runs:
+- `97d245c` (`feat: add Gemini support, resume checkpoints, and README baseline updates`)
+
+Model IDs used:
+- `claude-haiku-4-5-20251001`
+- `claude-sonnet-4-5`
+
+Commands used:
+
+```bash
+# 1) Checkout the exact code version used for these runs
+git checkout 97d245c
+pip install -r requirements.txt
+
+# 2) Run Haiku evaluation
+export ANTHROPIC_API_KEY=sk-ant-...
+python evaluate.py eval --model claude-haiku-4-5-20251001 --tasks data/tasks --output results
+
+# 3) Run Sonnet evaluation
+export ANTHROPIC_API_KEY=sk-ant-...
+python evaluate.py eval --model claude-sonnet-4-5 --tasks data/tasks --output results
+
+# 4) Aggregate leaderboard/report
+python evaluate.py report --results results
+```
+
+Expected result files from the documented runs:
+- `results/claude-haiku-4-5-20251001_20260520_181547.json`
+- `results/claude-sonnet-4-5_20260520_185050.json`
+
+## Evaluation Settings (Affect Scores)
+
+The current harness behavior in `evaluate.py` uses the following settings:
+
+- **Prompting**:
+  - Fixed `SYSTEM_PROMPT` (selection-bias-focused instructions) plus per-task scenario/data/question prompt.
+- **Temperature**:
+  - OpenAI calls use `temperature=0.0`.
+  - Anthropic and Gemini calls do not set temperature explicitly (provider defaults apply).
+- **Max tokens**:
+  - OpenAI: `max_tokens=1024`
+  - Anthropic: `max_tokens=1024`
+  - Gemini: no explicit max token parameter in the current call.
+- **Seed / deterministic sampling**:
+  - No seed parameter is set for any provider in the current harness.
+- **Retries / backoff**:
+  - Gemini only: up to 5 attempts on transient errors (`503`, `UNAVAILABLE`, `429`, `RESOURCE_EXHAUSTED`) with exponential backoff (`5s`, `10s`, `20s`, `30s`, `30s` max).
+  - OpenAI/Anthropic: no custom retry loop in this script.
+- **Rate pacing**:
+  - `0.5s` sleep before OpenAI/Anthropic requests.
+  - `4s` sleep before Gemini requests.
+- **Parsing & scoring rules**:
+  - Numeric answers: match if any extracted response number is within per-task `tolerance` (default `0.02`).
+  - String answers: case/whitespace-normalized substring matching with underscore/hyphen variants.
+  - Boolean answers: keyword heuristics (e.g., yes/true/correct; valid/invalid patterns).
+  - Keys `explanation` and `mechanism` in `ground_truth` are ignored for matching.
+  - Score is `1.0` (all matched), `0.5` (partial match), `0.5` (phenomenon identified but outputs missed), else `0.0`.
+  - `naive_trap_rate` is computed via naive-answer detection heuristics in `detect_naive_answer`.
+- **Resume behavior**:
+  - `eval` resumes by skipping `task_id`s already present in prior `results/{model}_*.json` files.
+  - Checkpoint JSON is written every 10 tasks; final JSON is written at end.
+- **Report aggregation**:
+  - `report` de-duplicates by `(model, task_id)` and keeps first-seen task result per model across JSON files.
+
+---
+
 ## Task Inventory
 
 | Category | Count | Difficulty split |

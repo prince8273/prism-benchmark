@@ -84,16 +84,17 @@ def load_completed_ids(output_dir: str, model_name: str) -> set[str]:
     output_path = Path(output_dir)
     completed: set[str] = set()
     safe_model = model_name.replace("/", "_").replace(":", "_")
-    for fpath in output_path.glob(f"{safe_model}_*.json"):
-        try:
-            with open(fpath, encoding="utf-8-sig") as handle:
-                results = json.load(handle)
-            for result in results:
-                task_id = result.get("task_id")
-                if task_id:
-                    completed.add(task_id)
-        except Exception:
-            continue
+    for pattern in (f"{safe_model}_*.json", f"checkpoint_{safe_model}_*.json"):
+        for fpath in output_path.glob(pattern):
+            try:
+                with open(fpath, encoding="utf-8-sig") as handle:
+                    results = json.load(handle)
+                for result in results:
+                    task_id = result.get("task_id")
+                    if task_id:
+                        completed.add(task_id)
+            except Exception:
+                continue
     return completed
 
 
@@ -351,9 +352,10 @@ def run_evaluation(model_name: str, tasks: list[dict], output_dir: str) -> list[
         console.print("[green]All tasks already completed.[/green]")
         all_results: list[dict] = []
         safe_model = model_name.replace("/", "_").replace(":", "_")
-        for fpath in output_path.glob(f"{safe_model}_*.json"):
-            with open(fpath, encoding="utf-8-sig") as handle:
-                all_results.extend(json.load(handle))
+        for pattern in (f"{safe_model}_*.json", f"checkpoint_{safe_model}_*.json"):
+            for fpath in output_path.glob(pattern):
+                with open(fpath, encoding="utf-8-sig") as handle:
+                    all_results.extend(json.load(handle))
         return all_results
 
     results = []
@@ -376,7 +378,7 @@ def run_evaluation(model_name: str, tasks: list[dict], output_dir: str) -> list[
         if len(results) % 10 == 0:
             ts = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
             safe_model = model_name.replace("/", "_").replace(":", "_")
-            checkpoint_file = output_path / f"{safe_model}_{ts}.json"
+            checkpoint_file = output_path / f"checkpoint_{safe_model}_{ts}.json"
             with open(checkpoint_file, "w", encoding="utf-8") as handle:
                 json.dump(results, handle, indent=2)
 

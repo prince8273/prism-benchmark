@@ -11,7 +11,7 @@ secrets.*
 *.key
 
 # Local results and reports
-results/*.json
+results/checkpoint_*.json
 results/*.html
 results/*.csv
 
