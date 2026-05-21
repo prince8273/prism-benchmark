@@ -55,6 +55,10 @@ Every ground-truth answer is independently verifiable with a `python_verificatio
 
 _Results will be updated as evaluations complete._
 
+Raw result files:
+- [claude-haiku-4-5-20251001_20260520_181547.json](https://github.com/prince8273/prism-benchmark/blob/main/results/claude-haiku-4-5-20251001_20260520_181547.json)
+- [claude-sonnet-4-5_20260520_185050.json](https://github.com/prince8273/prism-benchmark/blob/main/results/claude-sonnet-4-5_20260520_185050.json)
+
 | Model | Overall ACC | Naive Trap Rate | Simpson | Berkson | Truncated | Survival |
 |-------|-------------|-----------------|---------|---------|-----------|----------|
 | claude-haiku-4-5-20251001 | 75.0% | 0.0% | 96.9% | 85.3% | 57.4% | 55.6% |
