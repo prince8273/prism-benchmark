@@ -1,6 +1,6 @@
 # PRISM: Probabilistic Reasoning under Implicit Selection Mechanisms
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://www.apache.org/licenses/LICENSE-2.0)
 [![Python 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/downloads/)
 
 A benchmark for evaluating whether large language models can reason about data-generating processes when selection mechanisms make observed samples unrepresentative of the target population.
@@ -240,4 +240,4 @@ If you use PRISM in your research, please cite:
 
 ## License
 
-MIT License. See [LICENSE](LICENSE).
+Apache License 2.0. See [LICENSE](LICENSE).
