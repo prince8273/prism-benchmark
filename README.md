@@ -240,4 +240,4 @@ If you use PRISM in your research, please cite:
 
 ## License
 
-MIT License. See `LICENSE`.
+MIT License. See [LICENSE](LICENSE).
