@@ -241,10 +241,10 @@ If you use PRISM in your research, please cite:
 ## License
 
 Code (`evaluate.py`, `scripts/`, `requirements.txt`) is licensed under
-the Apache License 2.0. See `LICENSE`.
+the Apache License 2.0. See [LICENSE](LICENSE).
 
 Benchmark tasks and data (`data/tasks/`) are licensed under
 Creative Commons Attribution 4.0 International (CC BY 4.0).
-See `LICENSE-DATA`.
+See [LICENSE-DATA](LICENSE-DATA).
 
 Copyright (c) 2026 PRINCE KUMAR
