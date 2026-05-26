@@ -255,6 +255,6 @@ the Apache License 2.0. See [LICENSE](LICENSE).
 
 Benchmark tasks and data (`data/tasks/`) are licensed under
 Creative Commons Attribution 4.0 International (CC BY 4.0).
-See [DATA-LICENSE.md](DATA-LICENSE.md).
+See [LICENSE-DATA](LICENSE-DATA).
 
 Copyright (c) 2026 PRINCE KUMAR
