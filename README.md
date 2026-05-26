@@ -58,11 +58,13 @@ _Results will be updated as evaluations complete._
 Raw result files:
 - [claude-haiku-4-5-20251001_20260520_181547.json](https://github.com/prince8273/prism-benchmark/blob/main/results/claude-haiku-4-5-20251001_20260520_181547.json)
 - [claude-sonnet-4-5_20260520_185050.json](https://github.com/prince8273/prism-benchmark/blob/main/results/claude-sonnet-4-5_20260520_185050.json)
+- [gpt-4o-mini_20260526_225841.json](https://github.com/prince8273/prism-benchmark/blob/main/results/gpt-4o-mini_20260526_225841.json)
 
 | Model | Overall ACC | Naive Trap Rate | Simpson | Berkson | Truncated | Survival |
 |-------|-------------|-----------------|---------|---------|-----------|----------|
 | claude-haiku-4-5-20251001 | 75.0% | 0.0% | 96.9% | 85.3% | 57.4% | 55.6% |
 | claude-sonnet-4-5 | 76.1% | 0.4% | 97.7% | 86.2% | 57.4% | 58.3% |
+| gpt-4o-mini | 64.8% | 6.5% | 85.9% | 79.3% | 37.0% | 51.9% |
 | gemini-2.5-pro | - | - | - | - | - | - |
 | gemini-2.5-flash | - | - | - | - | - | - |
 
@@ -72,19 +74,21 @@ Interpretation guide: if flagship models land around 40-60% overall ACC with a c
 
 ## Reproduce These Exact Results
 
-Date of runs: **2026-05-20**
+Dates of runs: **2026-05-20**, **2026-05-26**
 
-Code commit used for the evaluation runs:
-- `97d245c` (`feat: add Gemini support, resume checkpoints, and README baseline updates`)
+Code commits used for the documented results:
+- `97d245c` (`feat: add Gemini support, resume checkpoints, and README baseline updates`) for the Claude baseline runs on 2026-05-20
+- `50ee84c` (`Fix resumed evaluation result merging and deduplication`) for the corrected resumed aggregation/reporting of `gpt-4o-mini` on 2026-05-26
 
 Model IDs used:
 - `claude-haiku-4-5-20251001`
 - `claude-sonnet-4-5`
+- `gpt-4o-mini`
 
 Commands used:
 
 ```bash
-# 1) Checkout the exact code version used for these runs
+# 1) Checkout the baseline evaluation code
 git checkout 97d245c
 pip install -r requirements.txt
 
@@ -96,13 +100,21 @@ python evaluate.py eval --model claude-haiku-4-5-20251001 --tasks data/tasks --o
 export ANTHROPIC_API_KEY=sk-ant-...
 python evaluate.py eval --model claude-sonnet-4-5 --tasks data/tasks --output results
 
-# 4) Aggregate leaderboard/report
+# 4) Run GPT-4o mini evaluation
+export OPENAI_API_KEY=sk-proj-...
+python evaluate.py eval --model gpt-4o-mini --tasks data/tasks --output results
+
+# 5) If you resumed the GPT-4o mini run, switch to the resume-fix commit before aggregating
+git checkout 50ee84c
+
+# 6) Aggregate leaderboard/report
 python evaluate.py report --results results
 ```
 
 Expected result files from the documented runs:
 - `results/claude-haiku-4-5-20251001_20260520_181547.json`
 - `results/claude-sonnet-4-5_20260520_185050.json`
+- `results/gpt-4o-mini_20260526_225841.json`
 
 ---
 
