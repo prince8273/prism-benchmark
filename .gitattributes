@@ -1,0 +1,12 @@
+* text=auto
+
+# Keep shell/Python/Markdown/JSON with LF in the repository
+*.sh text eol=lf
+*.py text eol=lf
+*.md text eol=lf
+*.json text eol=lf
+
+# Keep Windows batch scripts with CRLF
+*.bat text eol=crlf
+*.cmd text eol=crlf
+*.ps1 text eol=crlf
