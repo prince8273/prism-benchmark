@@ -79,23 +79,32 @@ def load_tasks(task_dir: str, category: Optional[str] = None, difficulty: Option
     return tasks
 
 
+def load_existing_results(output_dir: str, model_name: str) -> dict[str, dict]:
+    """Load the latest saved result for each task ID for a given model."""
+    output_path = Path(output_dir)
+    results_by_task_id: dict[str, dict] = {}
+    safe_model = model_name.replace("/", "_").replace(":", "_")
+    matched_files: list[Path] = []
+    for pattern in (f"{safe_model}_*.json", f"checkpoint_{safe_model}_*.json"):
+        matched_files.extend(output_path.glob(pattern))
+
+    for fpath in sorted(set(matched_files), key=lambda path: path.name):
+        try:
+            with open(fpath, encoding="utf-8-sig") as handle:
+                results = json.load(handle)
+            for result in results:
+                task_id = result.get("task_id")
+                if task_id:
+                    results_by_task_id[task_id] = result
+        except Exception:
+            continue
+
+    return results_by_task_id
+
+
 def load_completed_ids(output_dir: str, model_name: str) -> set[str]:
     """Load task IDs already completed in a previous partial run."""
-    output_path = Path(output_dir)
-    completed: set[str] = set()
-    safe_model = model_name.replace("/", "_").replace(":", "_")
-    for pattern in (f"{safe_model}_*.json", f"checkpoint_{safe_model}_*.json"):
-        for fpath in output_path.glob(pattern):
-            try:
-                with open(fpath, encoding="utf-8-sig") as handle:
-                    results = json.load(handle)
-                for result in results:
-                    task_id = result.get("task_id")
-                    if task_id:
-                        completed.add(task_id)
-            except Exception:
-                continue
-    return completed
+    return set(load_existing_results(output_dir, model_name))
 
 
 def build_prompt(task: dict) -> str:
@@ -341,7 +350,9 @@ def run_evaluation(model_name: str, tasks: list[dict], output_dir: str) -> list[
     output_path = Path(output_dir)
     output_path.mkdir(parents=True, exist_ok=True)
 
-    completed_ids = load_completed_ids(output_dir, model_name)
+    existing_results = load_existing_results(output_dir, model_name)
+    completed_ids = set(existing_results)
+    task_ids = {task["task_id"] for task in tasks}
     if completed_ids:
         console.print(f"[yellow]Resuming: {len(completed_ids)} tasks already done, skipping.[/yellow]")
 
@@ -350,15 +361,9 @@ def run_evaluation(model_name: str, tasks: list[dict], output_dir: str) -> list[
 
     if not pending:
         console.print("[green]All tasks already completed.[/green]")
-        all_results: list[dict] = []
-        safe_model = model_name.replace("/", "_").replace(":", "_")
-        for pattern in (f"{safe_model}_*.json", f"checkpoint_{safe_model}_*.json"):
-            for fpath in output_path.glob(pattern):
-                with open(fpath, encoding="utf-8-sig") as handle:
-                    all_results.extend(json.load(handle))
-        return all_results
+        return [existing_results[task_id] for task_id in sorted(task_ids) if task_id in existing_results]
 
-    results = []
+    merged_results = {task_id: existing_results[task_id] for task_id in task_ids if task_id in existing_results}
     for task in track(pending, description=f"Evaluating {model_name}"):
         prompt = build_prompt(task)
         try:
@@ -373,22 +378,23 @@ def run_evaluation(model_name: str, tasks: list[dict], output_dir: str) -> list[
         score_dict["category"] = task["category"]
         score_dict["difficulty"] = task["difficulty"]
         score_dict["source_file"] = task.get("_source_file")
-        results.append(score_dict)
+        merged_results[task["task_id"]] = score_dict
 
-        if len(results) % 10 == 0:
+        newly_completed = len(merged_results) - len(existing_results)
+        if newly_completed > 0 and newly_completed % 10 == 0:
             ts = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
             safe_model = model_name.replace("/", "_").replace(":", "_")
             checkpoint_file = output_path / f"checkpoint_{safe_model}_{ts}.json"
             with open(checkpoint_file, "w", encoding="utf-8") as handle:
-                json.dump(results, handle, indent=2)
+                json.dump([merged_results[task_id] for task_id in sorted(merged_results)], handle, indent=2)
 
     ts = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
     safe_model = model_name.replace("/", "_").replace(":", "_")
     out_file = output_path / f"{safe_model}_{ts}.json"
     with open(out_file, "w", encoding="utf-8") as handle:
-        json.dump(results, handle, indent=2)
+        json.dump([merged_results[task_id] for task_id in sorted(merged_results)], handle, indent=2)
     console.print(f"[green]Results saved to {out_file}[/green]")
-    return results
+    return [merged_results[task_id] for task_id in sorted(task_ids) if task_id in merged_results]
 
 
 def compute_stats(results: list[dict]) -> dict:
