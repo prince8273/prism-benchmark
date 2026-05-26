@@ -74,11 +74,7 @@ Interpretation guide: if flagship models land around 40-60% overall ACC with a c
 
 ## Reproduce These Exact Results
 
-Dates of runs: **2026-05-20**, **2026-05-26**
-
-Code commits used for the documented results:
-- `97d245c` (`feat: add Gemini support, resume checkpoints, and README baseline updates`) for the Claude baseline runs on 2026-05-20
-- `50ee84c` (`Fix resumed evaluation result merging and deduplication`) for the corrected resumed aggregation/reporting of `gpt-4o-mini` on 2026-05-26
+Documented result files are listed above in the baseline table section.
 
 Model IDs used:
 - `claude-haiku-4-5-20251001`
@@ -104,10 +100,7 @@ python evaluate.py eval --model claude-sonnet-4-5 --tasks data/tasks --output re
 export OPENAI_API_KEY=sk-proj-...
 python evaluate.py eval --model gpt-4o-mini --tasks data/tasks --output results
 
-# 5) If you resumed the GPT-4o mini run, switch to the resume-fix commit before aggregating
-git checkout 50ee84c
-
-# 6) Aggregate leaderboard/report
+# 5) Aggregate leaderboard/report
 python evaluate.py report --results results
 ```
 
