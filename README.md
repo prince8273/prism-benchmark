@@ -104,6 +104,8 @@ Expected result files from the documented runs:
 - `results/claude-haiku-4-5-20251001_20260520_181547.json`
 - `results/claude-sonnet-4-5_20260520_185050.json`
 
+---
+
 ## Evaluation Settings (Affect Scores)
 
 The current harness behavior in `evaluate.py` uses the following settings:
@@ -207,6 +209,9 @@ python evaluate.py report --results results
 # Optional: generate a small HTML report
 python scripts/generate_report.py --results results --output results/report.html
 ```
+
+PowerShell users can set keys with:
+`$env:OPENAI_API_KEY="sk-..."` and `$env:ANTHROPIC_API_KEY="sk-ant-..."`.
 
 ---
 
