@@ -58,13 +58,13 @@ _Results will be updated as evaluations complete._
 Raw result files:
 - [claude-haiku-4-5-20251001_20260520_181547.json](https://github.com/prince8273/prism-benchmark/blob/main/results/claude-haiku-4-5-20251001_20260520_181547.json)
 - [claude-sonnet-4-5_20260520_185050.json](https://github.com/prince8273/prism-benchmark/blob/main/results/claude-sonnet-4-5_20260520_185050.json)
-- [gpt-4o-mini_20260526_225841.json](https://github.com/prince8273/prism-benchmark/blob/main/results/gpt-4o-mini_20260526_225841.json)
+- [gpt-4o-mini_20260527_003842.json](https://github.com/prince8273/prism-benchmark/blob/main/results/gpt-4o-mini_20260527_003842.json)
 
 | Model | Overall ACC | Naive Trap Rate | Simpson | Berkson | Truncated | Survival |
 |-------|-------------|-----------------|---------|---------|-----------|----------|
 | claude-haiku-4-5-20251001 | 75.0% | 0.0% | 96.9% | 85.3% | 57.4% | 55.6% |
 | claude-sonnet-4-5 | 76.1% | 0.4% | 97.7% | 86.2% | 57.4% | 58.3% |
-| gpt-4o-mini | 64.8% | 6.5% | 85.9% | 79.3% | 37.0% | 51.9% |
+| gpt-4o-mini | 65.9% | 9.6% | 82.0% | 76.7% | 49.1% | 51.9% |
 | gemini-2.5-pro | - | - | - | - | - | - |
 | gemini-2.5-flash | - | - | - | - | - | - |
 
@@ -107,7 +107,7 @@ python evaluate.py report --results results
 Expected result files from the documented runs:
 - `results/claude-haiku-4-5-20251001_20260520_181547.json`
 - `results/claude-sonnet-4-5_20260520_185050.json`
-- `results/gpt-4o-mini_20260526_225841.json`
+- `results/gpt-4o-mini_20260527_003842.json`
 
 ---
 
