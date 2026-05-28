@@ -53,7 +53,7 @@ Every ground-truth answer is independently verifiable with a `python_verificatio
 
 ## Baseline Results
 
-_Results will be updated as evaluations complete._
+Current best documented run: `claude-sonnet-4-5` with `76.1%` overall accuracy.
 
 Raw result files:
 - [claude-haiku-4-5-20251001_20260520_181547.json](https://github.com/prince8273/prism-benchmark/blob/main/results/claude-haiku-4-5-20251001_20260520_181547.json)
@@ -62,8 +62,8 @@ Raw result files:
 
 | Model | Overall ACC | Naive Trap Rate | Simpson | Berkson | Truncated | Survival |
 |-------|-------------|-----------------|---------|---------|-----------|----------|
-| claude-haiku-4-5-20251001 | 75.0% | 0.0% | 96.9% | 85.3% | 57.4% | 55.6% |
 | claude-sonnet-4-5 | 76.1% | 0.4% | 97.7% | 86.2% | 57.4% | 58.3% |
+| claude-haiku-4-5-20251001 | 75.0% | 0.0% | 96.9% | 85.3% | 57.4% | 55.6% |
 | gpt-4o-mini | 65.9% | 9.6% | 82.0% | 76.7% | 49.1% | 51.9% |
 | gemini-2.5-pro | - | - | - | - | - | - |
 | gemini-2.5-flash | - | - | - | - | - | - |
@@ -177,6 +177,7 @@ prism-benchmark/
 |-- docs/
 |   |-- schema.md
 |   |-- scoring.md
+|   |-- eval_settings.md
 |   |-- task_authoring.md
 |   `-- CHANGELOG.md
 |-- scripts/
@@ -185,7 +186,10 @@ prism-benchmark/
 |-- notebooks/
 |   `-- .gitkeep
 `-- results/
-    `-- RESULTS.TXT
+    |-- README.md
+    |-- claude-haiku-4-5-20251001_20260520_181547.json
+    |-- claude-sonnet-4-5_20260520_185050.json
+    `-- gpt-4o-mini_20260527_003842.json
 ```
 
 ---
