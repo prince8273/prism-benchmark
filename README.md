@@ -74,40 +74,16 @@ Interpretation guide: if flagship models land around 40-60% overall ACC with a c
 
 ## Reproduce These Exact Results
 
-Documented result files are listed above in the baseline table section.
+This section differs from **Quickstart** only in the exact baseline inputs used to generate the published results:
 
-Model IDs used:
-- `claude-haiku-4-5-20251001`
-- `claude-sonnet-4-5`
-- `gpt-4o-mini`
+- `git checkout 97d245c`
+- Model IDs: `claude-haiku-4-5-20251001`, `claude-sonnet-4-5`, `gpt-4o-mini`
+- Expected result files:
+  - `results/claude-haiku-4-5-20251001_20260520_181547.json`
+  - `results/claude-sonnet-4-5_20260520_185050.json`
+  - `results/gpt-4o-mini_20260527_003842.json`
 
-Commands used:
-
-```bash
-# 1) Checkout the baseline evaluation code
-git checkout 97d245c
-pip install -r requirements.txt
-
-# 2) Run Haiku evaluation
-export ANTHROPIC_API_KEY=sk-ant-...
-python evaluate.py eval --model claude-haiku-4-5-20251001 --tasks data/tasks --output results
-
-# 3) Run Sonnet evaluation
-export ANTHROPIC_API_KEY=sk-ant-...
-python evaluate.py eval --model claude-sonnet-4-5 --tasks data/tasks --output results
-
-# 4) Run GPT-4o mini evaluation
-export OPENAI_API_KEY=sk-proj-...
-python evaluate.py eval --model gpt-4o-mini --tasks data/tasks --output results
-
-# 5) Aggregate leaderboard/report
-python evaluate.py report --results results
-```
-
-Expected result files from the documented runs:
-- `results/claude-haiku-4-5-20251001_20260520_181547.json`
-- `results/claude-sonnet-4-5_20260520_185050.json`
-- `results/gpt-4o-mini_20260527_003842.json`
+Use the **Quickstart** commands for the full evaluation flow; swap in those model IDs and the commit above when you need to reproduce the documented numbers exactly.
 
 ---
 
