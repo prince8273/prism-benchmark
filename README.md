@@ -18,7 +18,7 @@ Language models often do reasonably well on Bayes' theorem when probabilities ar
 - **Truncated sampling** - inference when only part of a distribution is observable
 - **Survivorship bias** - estimation when non-surviving units are systematically absent
 
-In every task, the naive answer derived from the observed statistics is wrong or incomplete, and the model must reason about the selection mechanism to recover the correct answer. PRISM is designed to make that bias measurable.
+In every task, the naive answer derived from the observed statistics is wrong or incomplete, and the model must reason about the selection mechanism to recover the correct answer. PRISM is designed to make that bias measurable: models that fail here will give confidently wrong answers in domains where data collection is selective: medical studies, hiring audits, financial risk models, and legal evidence.
 
 ---
 
