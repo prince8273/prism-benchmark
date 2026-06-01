@@ -5,7 +5,7 @@
 
 A benchmark for evaluating whether large language models can reason about data-generating processes when selection mechanisms make observed samples unrepresentative of the target population.
 
-GitHub repo: [prince8273/prism-benchmark](https://github.com/prince8273/prism-benchmark)
+Repository: [prince8273/prism-benchmark](https://github.com/prince8273/prism-benchmark)
 
 ---
 
@@ -53,9 +53,9 @@ Every ground-truth answer is independently verifiable with a `python_verificatio
 
 ## Baseline Results
 
-Current best documented run: `claude-sonnet-4-5` with `76.1%` overall accuracy.
+Best documented run so far: `claude-sonnet-4-5` with `76.1%` overall accuracy.
 
-Raw result files:
+Published result files:
 - [claude-haiku-4-5-20251001_20260520_181547.json](https://github.com/prince8273/prism-benchmark/blob/main/results/claude-haiku-4-5-20251001_20260520_181547.json)
 - [claude-sonnet-4-5_20260520_185050.json](https://github.com/prince8273/prism-benchmark/blob/main/results/claude-sonnet-4-5_20260520_185050.json)
 - [gpt-4o-mini_20260527_003842.json](https://github.com/prince8273/prism-benchmark/blob/main/results/gpt-4o-mini_20260527_003842.json)
@@ -195,7 +195,7 @@ python evaluate.py report --results results
 python scripts/generate_report.py --results results --output results/report.html
 ```
 
-PowerShell users can set keys like this:
+PowerShell users can set keys like this, using the same variable names:
 `$env:OPENAI_API_KEY="sk-..."` and `$env:ANTHROPIC_API_KEY="sk-ant-..."`.
 
 ---
