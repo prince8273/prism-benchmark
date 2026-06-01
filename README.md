@@ -195,7 +195,7 @@ python evaluate.py report --results results
 python scripts/generate_report.py --results results --output results/report.html
 ```
 
-PowerShell users can set keys with:
+PowerShell users can set keys like this:
 `$env:OPENAI_API_KEY="sk-..."` and `$env:ANTHROPIC_API_KEY="sk-ant-..."`.
 
 ---
