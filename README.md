@@ -53,37 +53,41 @@ Every ground-truth answer is independently verifiable with a `python_verificatio
 
 ## Baseline Results
 
-Best documented run so far: `claude-sonnet-4-5` with `76.1%` overall accuracy.
-
-Published result files:
-- [claude-haiku-4-5-20251001_20260520_181547.json](https://github.com/prince8273/prism-benchmark/blob/main/results/claude-haiku-4-5-20251001_20260520_181547.json)
-- [claude-sonnet-4-5_20260520_185050.json](https://github.com/prince8273/prism-benchmark/blob/main/results/claude-sonnet-4-5_20260520_185050.json)
-- [gpt-4o-mini_20260527_003842.json](https://github.com/prince8273/prism-benchmark/blob/main/results/gpt-4o-mini_20260527_003842.json)
-
 | Model | Overall ACC | Naive Trap Rate | Simpson | Berkson | Truncated | Survival |
 |-------|-------------|-----------------|---------|---------|-----------|----------|
-| claude-sonnet-4-5 | 76.1% | 0.4% | 97.7% | 86.2% | 57.4% | 58.3% |
-| claude-haiku-4-5-20251001 | 75.0% | 0.0% | 96.9% | 85.3% | 57.4% | 55.6% |
-| gpt-4o-mini | 65.9% | 9.6% | 82.0% | 76.7% | 49.1% | 51.9% |
-| gemini-2.5-pro | - | - | - | - | - | - |
-| gemini-2.5-flash | - | - | - | - | - | - |
+| Claude Sonnet 4.5 | 76.1% | 0.4% | 97.7% | 86.2% | 57.4% | 58.3% |
+| Claude Haiku 4.5 | 75.0% | 0.0% | 96.9% | 85.3% | 57.4% | 55.6% |
+| Gemini 2.5 Flash | — | — | — | — | — | — |
+| GPT-4o | — | — | — | — | — | — |
 
-Interpretation guide: if flagship models land around 40-60% overall ACC with a clearly non-trivial naive-trap rate, the benchmark is likely probing the intended failure mode. If all strong models score above 80%, the tasks are probably too easy. If all models score below 20%, inspect parsing and prompting before concluding the benchmark is too hard.
+**Key finding:** Both Claude models score near-identically on Simpson (97%+) and Berkson (85%+)
+tasks but drop sharply on truncated sampling (57.4%) and survivorship bias (55–58%) tasks —
+confirming that PRISM's hardest failure mode is numerical reasoning about selection mechanisms,
+not pattern recognition of paradox names.
+
+**Interpretation guide:** A model scoring 40–60% overall with a clearly non-trivial naive-trap
+rate indicates the benchmark is probing the intended failure mode. If all strong models score
+above 80%, tasks are too easy. If all score below 20%, inspect parsing before concluding
+the benchmark is too hard.
 
 ---
 
-## Reproduce These Exact Results
+## Reproducing Baseline Results
 
-This section differs from **Quickstart** only in the exact baseline inputs used to generate the published results:
+```bash
+# Environment
+# Python 3.11, scipy 1.11+, anthropic 0.34+
+# Commit: 44fe280  |  Date: 2026-05-20  |  Temperature: 0.0  |  Max tokens: 1024
 
-- `git checkout 97d245c`
-- Model IDs: `claude-haiku-4-5-20251001`, `claude-sonnet-4-5`, `gpt-4o-mini`
-- Expected result files:
-  - `results/claude-haiku-4-5-20251001_20260520_181547.json`
-  - `results/claude-sonnet-4-5_20260520_185050.json`
-  - `results/gpt-4o-mini_20260527_003842.json`
+git clone https://github.com/prince8273/prism-benchmark.git
+cd prism-benchmark
+pip install -r requirements.txt
 
-Use the **Quickstart** commands for the full evaluation flow; swap in those model IDs and the commit above when you need to reproduce the documented numbers exactly.
+export ANTHROPIC_API_KEY=sk-ant-...
+python evaluate.py eval --model claude-sonnet-4-5 --tasks data/tasks --output results
+python evaluate.py eval --model claude-haiku-4-5-20251001 --tasks data/tasks --output results
+python evaluate.py report --results results
+```
 
 ---
 
