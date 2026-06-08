@@ -147,7 +147,7 @@ prism-benchmark/
 |-- requirements.txt
 |-- evaluate.py
 |-- data/
-|   `-- tasks/                     # 230 total task files
+|   `-- tasks/                     # one JSON file per task (230 total)
 |       |-- prism_simp_001.json
 |       |-- prism_berk_002.json
 |       |-- prism_trunc_001.json
