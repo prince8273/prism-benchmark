@@ -73,58 +73,9 @@ the benchmark is too hard.
 
 ---
 
-## Reproducing Baseline Results
+## Evaluation Settings
 
-```bash
-# Environment
-# Python 3.11, scipy 1.11+, anthropic 0.34+
-# Commit: 44fe280  |  Date: 2026-05-20  |  Temperature: 0.0  |  Max tokens: 1024
-
-git clone https://github.com/prince8273/prism-benchmark.git
-cd prism-benchmark
-pip install -r requirements.txt
-
-export ANTHROPIC_API_KEY=sk-ant-...
-python evaluate.py eval --model claude-sonnet-4-5 --tasks data/tasks --output results
-python evaluate.py eval --model claude-haiku-4-5-20251001 --tasks data/tasks --output results
-python evaluate.py report --results results
-```
-
----
-
-## Evaluation Settings (Affect Scores)
-
-The current harness behavior in `evaluate.py` uses the following settings:
-
-- **Prompting**:
-  - Fixed `SYSTEM_PROMPT` (selection-bias-focused instructions) plus per-task scenario/data/question prompt.
-- **Temperature**:
-  - OpenAI calls use `temperature=0.0`.
-  - Anthropic and Gemini calls do not set temperature explicitly (provider defaults apply).
-- **Max tokens**:
-  - OpenAI: `max_tokens=1024`
-  - Anthropic: `max_tokens=1024`
-  - Gemini: no explicit max token parameter in the current call.
-- **Seed / deterministic sampling**:
-  - No seed parameter is set for any provider in the current harness.
-- **Retries / backoff**:
-  - Gemini only: up to 5 attempts on transient errors (`503`, `UNAVAILABLE`, `429`, `RESOURCE_EXHAUSTED`) with exponential backoff (`5s`, `10s`, `20s`, `30s`, `30s` max).
-  - OpenAI/Anthropic: no custom retry loop in this script.
-- **Rate pacing**:
-  - `0.5s` sleep before OpenAI/Anthropic requests.
-  - `4s` sleep before Gemini requests.
-- **Parsing & scoring rules**:
-  - Numeric answers: match if any extracted response number is within per-task `tolerance` (default `0.02`).
-  - String answers: case/whitespace-normalized substring matching with underscore/hyphen variants.
-  - Boolean answers: keyword heuristics (e.g., yes/true/correct; valid/invalid patterns).
-  - Keys `explanation` and `mechanism` in `ground_truth` are ignored for matching.
-  - Score is `1.0` (all matched), `0.5` (partial match), `0.5` (phenomenon identified but outputs missed), else `0.0`.
-  - `naive_trap_rate` is computed via naive-answer detection heuristics in `detect_naive_answer`.
-- **Resume behavior**:
-  - `eval` resumes by skipping `task_id`s already present in prior `results/{model}_*.json` files.
-  - Checkpoint JSON is written every 10 tasks; final JSON is written at end.
-- **Report aggregation**:
-  - `report` de-duplicates by `(model, task_id)` and keeps first-seen task result per model across JSON files.
+For detailed parsing rules and API settings (temperature, rate limits, retries, and resume behavior), please see [`docs/eval_settings.md`](docs/eval_settings.md).
 
 ---
 
@@ -175,15 +126,13 @@ prism-benchmark/
 
 ---
 
-## Quickstart
+## Quickstart & Reproducing Baselines
 
 ```bash
+# Recommended Environment: Python 3.11, scipy 1.11+, anthropic 0.34+
 git clone https://github.com/prince8273/prism-benchmark.git
 cd prism-benchmark
 pip install -r requirements.txt
-
-# Verify all ground truth answers are correct
-python scripts/verify_tasks.py
 
 # Run evaluation on an OpenAI model
 export OPENAI_API_KEY=sk-...
