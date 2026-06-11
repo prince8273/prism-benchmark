@@ -59,6 +59,7 @@ Every ground-truth answer is independently verifiable with a `python_verificatio
 | Claude Haiku 4.5 | 75.0% | 0.0% | 96.9% | 85.3% | 57.4% | 55.6% |
 | Gemini 2.5 Flash | — | — | — | — | — | — |
 | GPT-4o | — | — | — | — | — | — |
+| GPT-4o mini | 65.9% | 9.6% | 82.0% | 76.7% | 49.1% | 51.9% |
 
 **Key finding:** Both Claude models score near-identically on Simpson (97%+) and Berkson (85%+)
 tasks but drop sharply on truncated sampling (57.4%) and survivorship bias (55–58%) tasks —
