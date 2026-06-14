@@ -1,4 +1,4 @@
-# PRISM: Probabilistic Reasoning under Implicit Selection Mechanisms
+# PRISM:  Probabilistic Reasoning under Implicit Selection Mechanisms
 
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://www.apache.org/licenses/LICENSE-2.0)
 [![Python 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/downloads/)
